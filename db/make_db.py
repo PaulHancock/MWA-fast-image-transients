@@ -32,7 +32,7 @@ dec FLOAT,
 freq_res FLOAT,
 time_res FLOAT,
 grb TEXT,
-target_name TEXT
+target_name TEXT,
 calibrator BOOL,
 cal_obs INT,
 archived BOOL,
