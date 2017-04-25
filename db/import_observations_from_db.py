@@ -67,7 +67,7 @@ if __name__ == "__main__":
     conn = sqlite3.connect(dbfile)
     cur = conn.cursor()
 
-    obsdata = getmeta(service='find', params={'projectid':'D0009'}) #'limit':10
+    obsdata = getmeta(service='find', params={'projectid':'D0009', 'limit':100000}) #'limit':10
     for obs in obsdata:
         obs_id = obs[0]
         copy_obs_info(obs_id, cur)
