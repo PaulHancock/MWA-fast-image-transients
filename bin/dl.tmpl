@@ -1,0 +1,20 @@
+#!/bin/bash -l
+#SBATCH --account=mwasci
+#SBATCH --partition=copyq
+#SBATCH --time=01:00:00
+#SBATCH --nodes=1
+#SBATCH --mem=32gb
+#SBATCH --output=/scratch2/mwasci/phancock/D0009/queue/dl_OBSNUM.o%A
+#SBATCH --error=/scratch2/mwasci/phancock/D0009/queue/dl_OBSNUM.e%A
+
+aprun='aprun -n 1 -d 8 -b'
+
+datadir=/scratch2/mwasci/phancock/D0009/processing
+
+cd $datadir
+
+obsnum=OBSNUM
+
+# start download
+aprun obsdownload.py -o ${obsnum}
+# finish download
