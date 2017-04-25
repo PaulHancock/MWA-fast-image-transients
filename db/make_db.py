@@ -18,26 +18,25 @@ best_pos_ref TEXT);
 CREATE TABLE observation
 (
 obs_id INT PRIMARY KEY,
-project TEXT,
-lst FLOAT,
-utc_start TEXT,
+projectid TEXT,
+lst_deg FLOAT,
+starttime TEXT,
 duration_sec INT,
-name TEXT,
+obsname TEXT,
 creator TEXT,
-mode TEXT,
-az FLOAT,
-alt FLOAT,
-ra FLOAT,
-dec FLOAT,
+azimuth_pointing FLOAT,
+elevation_pointing FLOAT,
+ra_pointing FLOAT,
+dec_pointing FLOAT,
 freq_res FLOAT,
-time_res FLOAT,
+int_time FLOAT,
 grb TEXT,
-target_name TEXT,
-calibrator BOOL,
-cal_obs INT,
+calibration BOOL,
+cal_obs_id INT,
+calibrators TEXT,
 archived BOOL,
 FOREIGN KEY(grb) REFERENCES grb(name),
-FOREIGN KEY(cal_obs) REFERENCES observation(obs_id)
+FOREIGN KEY(cal_obs_id) REFERENCES observation(obs_id)
 );
 
 CREATE TABLE processing
