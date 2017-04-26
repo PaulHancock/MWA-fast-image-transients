@@ -15,7 +15,7 @@ fres=FRES
 
 # start task
 cd ${base}
-python bin/track_task.py start --jobid=%A --start_time=`date +%s`
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 # figure out the flag files
 cd ${datadir}/${obsnum}
@@ -32,9 +32,9 @@ fi
 # finish job
 cd ${base}
 # finish download
-if [[ $?{res} -eq 0 ]]
+if [[ ${res} -eq 0 ]]
 then
-  python bin/track_task.py finish --jobid=%A --finish_time=`date +%s`
+  python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 else
-  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 fi

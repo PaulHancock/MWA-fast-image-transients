@@ -16,7 +16,7 @@ ncpus=8
 
 # start download
 cd ${base}
-python bin/track_task.py start --jobid=%A --start_time=`date +%s`
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 # make the high time resolution images but don't clean
 cd ${datadir}
@@ -32,7 +32,7 @@ res=$?
 if [[ ${res} != 0 ]]
 then
   cd ${base}
-  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
   exit ${res}
 fi
 
@@ -48,7 +48,7 @@ cd ${base}
 # finish download
 if [[ ${res} -eq 0 ]]
 then
-  python bin/track_task.py finish --jobid=%A --finish_time=`date +%s`
+  python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 else
-  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 fi
