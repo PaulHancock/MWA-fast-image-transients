@@ -1,0 +1,60 @@
+#! /bin/bash -l
+#SBATCH --account=mwasci
+#SBATCH --partition=workq
+#SBATCH --time=01:00:00
+#SBATCH --nodes=1
+#SBATCH --mem=32gb
+
+aprun='aprun -n 1 -d 20 -b'
+calibrator=CALIBRATOR
+base=BASEDIR
+datadir="${base}/processing"
+modeldir="$MWA_CODE_BASE/anoko/mwa-reduce/models"
+obsnum=OBSNUM
+
+
+# look for the calibrator model
+calmodel=`basename ${modeldir}/model-${calibrator}*comp.txt`
+if [[ ! -e ${modeldir}/${calmodel} ]]
+then
+    calmodel=`basename ${modeldir}/model-${calibrator}*point-source.txt`
+fi
+if [[ ! -e $modeldir/$calmodel ]]
+then
+  echo "Cannot find calibrator model for ${calibrator}"
+  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+  exit 1
+fi
+
+# start download
+cd ${base}
+python bin/track_task.py start --jobid=%A --start_time=`date +%s`
+
+cd ${datadir}/${obsnum}
+
+# Hack to work around broken PYTHONPATH lookup
+if [[ ! -d mwapy ]]
+then
+    mkdir mwapy
+    mkdir mwapy/pb
+    cd mwapy/pb
+    for beammatrix in $MWA_CODE_BASE/MWA_Tools/mwapy/pb/*atrix.fits
+    do
+        ln -s $beammatrix
+    done
+    cd ../../
+fi
+
+$aprun calibrate -j 20 -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
+res=$?
+# delete the symlinks and temp directory
+rm -r mwapy
+
+cd ${base}
+# finish download
+if [[ ${res} -eq 0 ]]
+then
+  python bin/track_task.py finish --jobid=%A --finish_time=`date +%s`
+else
+  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+fi
