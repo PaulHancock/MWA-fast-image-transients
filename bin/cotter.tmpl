@@ -4,8 +4,8 @@
 #SBATCH --time=04:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
-#SBATCH --output=/scratch2/mwasci/phancock/D0009/queue/cotter_OBSNUM.o%A
-#SBATCH --error=/scratch2/mwasci/phancock/D0009/queue/cotter_OBSNUM.e%A
+#SBATCH --output=/scratch2/mwasci/phancock/D0009/queue/logs/cotter_OBSNUM.o%A
+#SBATCH --error=/scratch2/mwasci/phancock/D0009/queue/logs/cotter_OBSNUM.e%A
 
 aprun='aprun -n 1 -d 8 -b'
 

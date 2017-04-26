@@ -4,8 +4,8 @@
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
-#SBATCH --output=/scratch2/mwasci/phancock/D0009/queue/make_images.o%A
-#SBATCH --error=/scratch2/mwasci/phancock/D0009/queue/make_images.e%A
+#SBATCH --output=/scratch2/mwasci/phancock/D0009/queue/logs/make_images.o%A
+#SBATCH --error=/scratch2/mwasci/phancock/D0009/queue/logs/make_images.e%A
 
 aprun='aprun -n 1 -d 8 -b'
 
