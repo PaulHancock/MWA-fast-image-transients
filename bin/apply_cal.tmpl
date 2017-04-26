@@ -1,0 +1,31 @@
+#! /bin/bash -l
+#SBATCH --account=mwasci
+#SBATCH --partition=workq
+#SBATCH --time=01:00:00
+#SBATCH --nodes=1
+#SBATCH --mem=32gb
+
+aprun='aprun -n 1 -d 20 -b'
+calid=CALOBSID
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+
+
+# start calibration
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+cd ${datadir}/${obsnum}
+
+$aprun  applysolutions ${obsnum}.ms ../${calid}/${calid}_*_solutions.bin
+res=$?
+
+cd ${base}
+# finish download
+if [[ ${res} -eq 0 ]]
+then
+  python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+else
+  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+fi
