@@ -41,12 +41,11 @@ FOREIGN KEY(cal_obs_id) REFERENCES observation(obs_id)
 
 CREATE TABLE processing
 (
-id INT PRIMARY KEY,
+job_id INT PRIMARY KEY,
 submission_time TEXT,
 script TEXT,
-args TEXT,
 obs_id INT,
-success BOOL,
+status TEXT,
 batch_file TEXT,
 stderr TEXT,
 stdout TEXT,
