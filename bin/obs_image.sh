@@ -16,8 +16,8 @@ base='/scratch2/mwasci/phancock/D0009/'
 script="${base}queue/image_${obsnum}.sh"
 cat image.tmpl | sed 's/OBSNUM/${obsnum}/g' | sed "s/BASEDIR/${base}/g"  > ${script}
 
-output="${base}queue/logs/cotter_${obsnum}.o%A"
-error="${base}queue/logs/cotter_${obsnum}.e%A"
+output="${base}queue/logs/image_${obsnum}.o%A"
+error="${base}queue/logs/image_${obsnum}.e%A"
 
 # submit job
 jobid=`sbatch ${script} --begin=now+15 --output=${output} --error=${error} ${depend}`

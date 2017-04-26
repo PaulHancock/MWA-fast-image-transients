@@ -20,8 +20,8 @@ base='/scratch2/mwasci/phancock/D0009/'
 script="${base}queue/dl_${obsnum}.sh"
 cat dl.tmpl | sed "s/OBSNUM/${obsnum}/g" | sed "s/BASEDIR/${base}/g"  > ${script}
 
-output="${base}queue/logs/image_${obsnum}.o%A"
-error="${base}queue/logs/iamge_${obsnum}.e%A"
+output="${base}queue/logs/dl_${obsnum}.o%A"
+error="${base}queue/logs/dl_${obsnum}.e%A"
 
 
 # submit job
