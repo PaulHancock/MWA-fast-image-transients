@@ -6,7 +6,7 @@ dep=@2
 if [[ ! -z ${obsnum} ]]
 then
   echo "OBSNUM required as first arg"
-  exit 0
+  exit 1
 fi
 
 depend=""
