@@ -42,8 +42,10 @@ FOREIGN KEY(cal_obs_id) REFERENCES observation(obs_id)
 CREATE TABLE processing
 (
 job_id INT PRIMARY KEY,
-submission_time TEXT,
-script TEXT,
+submission_time INT,
+task TEXT,
+start_time INT,
+end_time INT,
 obs_id INT,
 status TEXT,
 batch_file TEXT,
