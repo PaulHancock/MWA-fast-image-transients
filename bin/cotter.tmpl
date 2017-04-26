@@ -1,11 +1,11 @@
 #! /bin/bash -l
 #SBATCH --account=mwasci
-#SBATCH --partition=gpuq
+#SBATCH --partition=workq
 #SBATCH --time=04:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
 
-aprun='aprun -n 1 -d 8 -b'
+aprun='aprun -n 1 -d 20 -b'
 base=BASEDIR
 datadir=${base}/processing
 
@@ -19,7 +19,7 @@ python bin/track_task.py start --jobid=%A --start_time=`date +%s`
 
 # figure out the flag files
 cd ${datadir}/${obsnum}
-aprun cotter $flagfiles -timeres TRES -freqres FRES *gpubox*.fits \
+$aprun cotter $flagfiles -timeres TRES -freqres FRES *gpubox*.fits \
              -edgewidth 80 -m $OBSNUM.metafits -o OBSNUM.ms
 
 res=$?
