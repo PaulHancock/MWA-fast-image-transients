@@ -1,11 +1,11 @@
 #! /bin/bash -l
 #SBATCH --account=mwasci
-#SBATCH --partition=gpuq
+#SBATCH --partition=workq
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
 
-aprun='aprun -n 1 -d 8 -b'
+aprun='aprun -n 1 -d 20 -b'
 base=BASEDIR
 datadir=${base}/processing
 
@@ -30,6 +30,7 @@ $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 320 320 \
 # test for failure
 res=$?
 if [[ ${res} != 0 ]]
+then
   cd ${base}
   python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
   exit ${res}
@@ -45,7 +46,7 @@ $aprun wsclean -name ${obsnum}/${obsnum}-lr \
 res=$?
 cd ${base}
 # finish download
-if [[ $?{res} -eq 0 ]]
+if [[ ${res} -eq 0 ]]
 then
   python bin/track_task.py finish --jobid=%A --finish_time=`date +%s`
 else
