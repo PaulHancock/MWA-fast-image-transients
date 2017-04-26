@@ -4,25 +4,25 @@
 #SBATCH --time=04:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
-#SBATCH --output=/scratch2/mwasci/phancock/D0009/queue/logs/cotter_OBSNUM.o%A
-#SBATCH --error=/scratch2/mwasci/phancock/D0009/queue/logs/cotter_OBSNUM.e%A
 
 aprun='aprun -n 1 -d 8 -b'
-
-datadir=/scratch2/mwasci/phancock/D0009/processing
-
-cd $datadir
+base=BASEDIR
+datadir=${base}/processing
 
 obsnum=OBSNUM
 tres=TRES
 fres=FRES
 
-# start cotter job
+# start task
+cd ${base}
+python bin/track_task.py start --jobid=%A --start_time=`date +%s`
 
 # figure out the flag files
-
+cd ${datadir}/${obsnum}
 aprun cotter $flagfiles -timeres TRES -freqres FRES *gpubox*.fits \
-             -edgewidth 80 -m $OBSNUM.metafits -o OBSNUM.ms 
+             -edgewidth 80 -m $OBSNUM.metafits -o OBSNUM.ms
+
+res=$?
 
 if [[ -d OBSNUM.ms ]]
 then 
@@ -30,3 +30,11 @@ then
 fi
 
 # finish job
+cd ${base}
+# finish download
+if [[ $?{res} -eq 0 ]]
+then
+  python bin/track_task.py finish --jobid=%A --finish_time=`date +%s`
+else
+  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+fi

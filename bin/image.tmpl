@@ -1,22 +1,25 @@
-#!/bin/bash -l
+#! /bin/bash -l
 #SBATCH --account=mwasci
 #SBATCH --partition=gpuq
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
-#SBATCH --output=/scratch2/mwasci/phancock/D0009/queue/logs/make_images.o%A
-#SBATCH --error=/scratch2/mwasci/phancock/D0009/queue/logs/make_images.e%A
 
 aprun='aprun -n 1 -d 8 -b'
-
-datadir=/scratch2/mwasci/phancock/D0009/processing
+base=BASEDIR
+datadir=${base}/processing
 
 cd $datadir
 
 obsnum=OBSNUM
 ncpus=8
 
+# start download
+cd ${base}
+python bin/track_task.py start --jobid=%A --start_time=`date +%s`
+
 # make the high time resolution images but don't clean
+cd ${datadir}
 $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 320 320 \
                -weight briggs 0.5 -mfsweighting -scale 25.0amin \
                -pol I -niter 0 \
@@ -24,9 +27,27 @@ $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 320 320 \
                -smallinversion -j ${ncpus} \
                ${obsnum}/${obsnum}.ms
 
+# test for failure
+res=$?
+if [[ ${res} != 0 ]]
+  cd ${base}
+  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+  exit ${res}
+fi
+
 # make the 2min image and clean
 $aprun wsclean -name ${obsnum}/${obsnum}-lr \
                -weight briggs 0.5 -mfsweighting -scale 25.0amin \
                -pol xx,yy -j ${ncpus} \
                -joinchannels -stopnegative -joinpolarizations -niter 4000 -threshold 1.0 \
                ${obsnum}/${obsnum}.ms
+
+res=$?
+cd ${base}
+# finish download
+if [[ $?{res} -eq 0 ]]
+then
+  python bin/track_task.py finish --jobid=%A --finish_time=`date +%s`
+else
+  python bin/track_task.py fail --jobid=%A --finish_time=`date +%s`
+fi
