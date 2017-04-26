@@ -16,7 +16,7 @@ cd ${base}
 python bin/track_task.py start --jobid=%A --start_time=`date +%s`
 
 cd ${datadir}
-aprun obsdownload.py -o ${obsnum}
+$aprun obsdownload.py -o ${obsnum}
 
 res=$?
 cd ${base}
