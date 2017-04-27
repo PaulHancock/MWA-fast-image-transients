@@ -20,17 +20,17 @@ fi
 base='/scratch2/mwasci/phancock/D0009/'
 
 script="${base}queue/dl_${obsnum}.sh"
-cat dl.tmpl | sed "s:OBSNUM:${obsnum}:" | sed "s:BASEDIR:${base}:"  > ${script}
+cat ${base}/bin/dl.tmpl | sed "s:OBSNUM:${obsnum}:" | sed "s:BASEDIR:${base}:"  > ${script}
 
 output="${base}queue/logs/dl_${obsnum}.o%A"
 error="${base}queue/logs/dl_${obsnum}.e%A"
 
 
 # submit job
-jobid=`sbatch ${script} -M zeus --begin=now+15 --output=${output} --error=${error} ${depend}`
+jobid=(`sbatch ${script} --begin=now+15 --output=${output} --error=${error} ${depend}`)
 
-jobid=${jobid##* }
+jobid=${jobid[3]}
 
 # record submission
-python track_task.py queue --jobid=${jobid} --task='download' --submission_time=`date +%s` --batch_file=${script} \
+python ${base}/bin/track_task.py queue --jobid=${jobid} --task='download' --submission_time=`date +%s` --batch_file=${script} \
                      --obs_id=${obsnum} --stderr=${error} --stdout=${output}
