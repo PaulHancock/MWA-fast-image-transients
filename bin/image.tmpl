@@ -1,6 +1,7 @@
 #! /bin/bash -l
+#SBATCH -M galaxy
+#SBATCH -p workq
 #SBATCH --account=mwasci
-#SBATCH --partition=workq
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
