@@ -1,7 +1,7 @@
 #! /bin/bash
 
-obsnum=@1
-dep=@2
+obsnum=$1
+dep=$2
 
 sed 's/OBSNUM/${obsnum}/g' image.tmpl > ../queue/image_${obsnum}.sh
 

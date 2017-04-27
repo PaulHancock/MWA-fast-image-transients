@@ -2,9 +2,9 @@
 
 if [[ $1 ]] && [[ $2 ]]
 then
-  obsnum=@1
-  cal=@2
-  dep=@3
+  obsnum=$1
+  cal=$2
+  dep=$3
 else
   echo "obs_calibrate.sh obsnum cal [dep]"
   exit 1

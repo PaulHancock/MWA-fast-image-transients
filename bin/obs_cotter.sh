@@ -1,9 +1,9 @@
 #! /bin/bash
 
-obsnum=@1
-tres=@2
-fres=@3
-dep=@4
+obsnum=$1
+tres=$2
+fres=$3
+dep=$4
 
 if [[ ! -z ${obsnum} ]]
 then
