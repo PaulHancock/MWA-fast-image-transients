@@ -19,6 +19,8 @@ ncpus=8
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
+# TODO fix up the image size/scale
+
 # make the high time resolution images but don't clean
 cd ${datadir}
 $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 320 320 \
