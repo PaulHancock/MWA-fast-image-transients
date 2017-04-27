@@ -19,7 +19,7 @@ fi
 base='/scratch2/mwasci/phancock/D0009/'
 
 script="${base}queue/calibrate_${obsnum}.sh"
-cat calibrate.tmpl | sed "s/OBSNUM/${obsnum}/g" | sed "s/BASEDIR/${base}/g" | sed "s/CALBIRATOR/${cal}/g"  > ${script}
+cat calibrate.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALBIRATOR:${cal}:g"  > ${script}
 
 output="${base}queue/logs/calibrate_${obsnum}.o%A"
 error="${base}queue/logs/calibrate_${obsnum}.e%A"

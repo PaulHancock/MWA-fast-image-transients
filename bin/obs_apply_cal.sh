@@ -19,7 +19,7 @@ fi
 base='/scratch2/mwasci/phancock/D0009/'
 
 script="${base}queue/apply_cal_${obsnum}.sh"
-cat apply_cal.tmpl | sed "s/OBSNUM/${obsnum}/g" | sed "s/BASEDIR/${base}/g" | sed "s/CALOBSID/${cal}/g"  > ${script}
+cat apply_cal.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALOBSID:${cal}:g"  > ${script}
 
 output="${base}queue/logs/apply_cal_${obsnum}.o%A"
 error="${base}queue/logs/apply_cal_${obsnum}.e%A"

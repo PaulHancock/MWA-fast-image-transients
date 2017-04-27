@@ -14,7 +14,7 @@ fi
 base='/scratch2/mwasci/phancock/D0009/'
 
 script="${base}queue/image_${obsnum}.sh"
-cat image.tmpl | sed 's/OBSNUM/${obsnum}/g' | sed "s/BASEDIR/${base}/g"  > ${script}
+cat image.tmpl | sed 's:OBSNUM:${obsnum}:g' | sed "s:BASEDIR:${base}:g"  > ${script}
 
 output="${base}queue/logs/image_${obsnum}.o%A"
 error="${base}queue/logs/image_${obsnum}.e%A"

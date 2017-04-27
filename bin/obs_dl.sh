@@ -1,9 +1,11 @@
 #! /bin/bash
 
-obsnum=@1
-dep=@2
+obsnum=$1
+dep=$2
 
-if [[ ! -z ${obsnum} ]]
+set -x
+
+if [[ -z ${obsnum} ]]
 then
   echo "OBSNUM required as first arg"
   exit 1
@@ -18,14 +20,14 @@ fi
 base='/scratch2/mwasci/phancock/D0009/'
 
 script="${base}queue/dl_${obsnum}.sh"
-cat dl.tmpl | sed "s/OBSNUM/${obsnum}/g" | sed "s/BASEDIR/${base}/g"  > ${script}
+cat dl.tmpl | sed "s:OBSNUM:${obsnum}:" | sed "s:BASEDIR:${base}:"  > ${script}
 
 output="${base}queue/logs/dl_${obsnum}.o%A"
 error="${base}queue/logs/dl_${obsnum}.e%A"
 
 
 # submit job
-jobid=`sbatch ${script} --begin=now+15 --output=${output} --error=${error} ${depend}`
+jobid=`sbatch ${script} -M zeus --begin=now+15 --output=${output} --error=${error} ${depend}`
 
 jobid=${jobid##* }
 
