@@ -27,7 +27,7 @@ error="${base}queue/logs/dl_${obsnum}.e%A"
 
 
 # submit job
-jobid=(`sbatch ${script} --begin=now+15 --output=${output} --error=${error} ${depend}`)
+jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${script}`)
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid
