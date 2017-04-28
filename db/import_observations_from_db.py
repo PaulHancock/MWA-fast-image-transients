@@ -4,12 +4,13 @@ import json
 
 import sqlite3
 
+__author__ = "PaulHancock"
+
 # Append the service name to this base URL, eg 'con', 'obs', etc.
 BASEURL = 'http://mwa-metadata01.pawsey.org.au/metadata/'
 dbfile = 'MWA-GRB.sqlite'
 
-# Function to call a JSON web service and return a dictionary:
-
+# Function to call a JSON web service and return a dictionary: This function by Andrew Williams
 def getmeta(service='obs', params=None):
   """
   Given a JSON web service ('obs', find, or 'con') and a set of parameters as
@@ -51,16 +52,15 @@ INSERT OR REPLACE INTO observation
 (obs_id, projectid,  lst_deg, starttime, duration_sec, obsname, creator,
 azimuth_pointing, elevation_pointing, ra_pointing, dec_pointing,
 freq_res, int_time, grb, 
-calibration, cal_obs_id, calibrators,
+calibration, cal_obs_id, calibrators, nfiles,
 archived
 )
-VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?);
+VALUES (?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?);
 """, (
 obsid, meta['projectid'], metadata['local_sidereal_time_deg'], meta['starttime'], meta['stoptime']-meta['starttime'], meta['obsname'], meta['creator'],
 metadata['azimuth_pointing'], metadata['elevation_pointing'], metadata['ra_pointing'], metadata['dec_pointing'],
 meta['freq_res'], meta['int_time'], None,
-metadata['calibration'], None, metadata['calibrators'],
-False))
+metadata['calibration'], None, metadata['calibrators'],len(meta['files']), False))
     
 
 if __name__ == "__main__":

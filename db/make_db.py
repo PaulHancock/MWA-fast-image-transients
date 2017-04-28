@@ -35,6 +35,8 @@ calibration BOOL,
 cal_obs_id INT,
 calibrators TEXT,
 archived BOOL,
+nfiles INT,
+status TEXT,
 FOREIGN KEY(grb) REFERENCES grb(name),
 FOREIGN KEY(cal_obs_id) REFERENCES observation(obs_id)
 );
