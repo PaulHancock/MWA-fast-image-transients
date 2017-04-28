@@ -6,7 +6,7 @@
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
 
-aprun='aprun -n 1 -d 8 -b'
+#aprun='aprun -n 1 -d 8 -b'
 base=BASEDIR
 datadir=${base}/processing
 
@@ -17,7 +17,7 @@ cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}
-$aprun obsdownload.py -o ${obsnum}
+obsdownload.py -o ${obsnum}
 
 res=$?
 cd ${base}

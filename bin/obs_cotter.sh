@@ -22,7 +22,7 @@ then
 fi
 
 depend=""
-if [[ -z ${dep} ]]
+if [[ ! -z ${dep} ]]
 then
 depend="--dependency=afterok:${dep}"
 fi
@@ -30,13 +30,13 @@ fi
 base='/scratch2/mwasci/phancock/D0009/'
 
 script="${base}queue/cotter_${obsnum}.sh"
-cat ${base}/bin/cotter.tmpl | sed 's:OBSNUM:${obsnum}:g' | sed 's:TRES:${tres}:g' | sed 's:FRES:${fres}:g' | sed "s:BASEDIR:${base}:g"  > ${script}
+cat ${base}/bin/cotter.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:TRES:${tres}:g" | sed "s:FRES:${fres}:g" | sed "s:BASEDIR:${base}:g"  > ${script}
 
 output="${base}queue/logs/cotter_${obsnum}.o%A"
 error="${base}queue/logs/cotter_${obsnum}.e%A"
 
 # submit job
-jobid=(`sbatch ${script} --begin=now+15 --output=${output} --error=${error} ${depend}`)
+jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${script}`)
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid
