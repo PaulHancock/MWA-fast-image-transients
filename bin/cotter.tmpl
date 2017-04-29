@@ -18,18 +18,24 @@ fres=FRES
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
-# TODO figure out the flag files
-flagfiles=""
+zipflag="${obsnum}_flags.zip"
+if [[ -e ${zipflag} ]]
+then
+    unzip ${zipflag}
+    flagfiles='-flagfiles ${obsnum}_%%.mwaf'
+else
+    flagfiles=''
+fi
 
 cd ${datadir}/${obsnum}
-$aprun cotter $flagfiles -timeres ${tres} -freqres ${fres} \
-             -edgewidth 80 -m ${obsnum}_metafits*.fits -o ${obsnum}.ms *gpubox*.fits 
+$aprun cotter ${flagfiles} -timeres ${tres} -freqres ${fres} \
+             -edgewidth 80 -m ${obsnum}_metafits_ppds.fits -o ${obsnum}.ms *gpubox*.fits 
 
 res=$?
 
 if [[ ${res} -eq 0 ]] && [[ -d OBSNUM.ms ]]
 then 
-     rm *gpubox*fits *.zip *.mwaf
+     rm *gpubox*fits *.zip *.mwaf ${obsnum}_metafits_ppds.fits
 fi
 
 # finish job
