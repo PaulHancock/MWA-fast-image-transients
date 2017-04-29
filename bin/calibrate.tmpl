@@ -15,12 +15,13 @@ obsnum=OBSNUM
 
 
 # look for the calibrator model
-calmodel=`basename ${modeldir}/model-${calibrator}*comp.txt`
+calmodel=`ls ${modeldir}/model-${calibrator}*comp.txt | tail -n 1`
+calmodel=`basename ${calmodel}`
 if [[ ! -e ${modeldir}/${calmodel} ]]
 then
     calmodel=`basename ${modeldir}/model-${calibrator}*point-source.txt`
 fi
-if [[ ! -e $modeldir/$calmodel ]]
+if [[ ! -e ${modeldir}/${calmodel} ]]
 then
   echo "Cannot find calibrator model for ${calibrator}"
   python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
