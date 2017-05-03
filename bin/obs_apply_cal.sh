@@ -11,7 +11,7 @@ else
 fi
 
 depend=""
-if [[ -z ${dep} ]]
+if [[ ! -z ${dep} ]]
 then
 depend="--dependency=afterok:${dep}"
 fi
