@@ -19,7 +19,7 @@ best_dec FLOAT,
 pos_err FLOAT,
 best_pos_ref TEXT,
 is_a_grb INT,
-is_short INT,
+type TEXT,
 PRIMARY KEY(fermi_trigger_id, swift_trigger_id)
 );
 
