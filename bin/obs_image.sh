@@ -3,8 +3,14 @@
 obsnum=$1
 dep=$2
 
+if [[ -z ${obsnum} ]]
+then
+    echo "usage: obs_image.sh obs_id [dependency]"
+    exit 1
+fi
+
 depend=""
-if [[ -z ${dep} ]] 
+if [[ ! -z ${dep} ]] 
 then
 depend="--dependancy=afterok:${dep}"
 fi
