@@ -3,8 +3,6 @@
 obsnum=$1
 dep=$2
 
-set -x
-
 if [[ -z ${obsnum} ]]
 then
   echo "OBSNUM required as first arg"
