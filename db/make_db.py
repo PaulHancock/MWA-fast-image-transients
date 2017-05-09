@@ -1,5 +1,7 @@
+#! python
 import sqlite3
 
+__author__ = 'PaulHancock'
 
 dbfile = 'MWA-GRB.sqlite'
 
@@ -7,13 +9,19 @@ schema = """
 PRAGMA foreign_keys=ON;
 
 CREATE TABLE grb
-(name TEXT PRIMARY KEY,
+(name TEXT,
 fermi_trigger_id INT,
+fermi_url TEXT,
 swift_trigger_id INT,
+swift_url TEXT,
 best_ra FLOAT,
 best_dec FLOAT,
 pos_err FLOAT,
-best_pos_ref TEXT);
+best_pos_ref TEXT,
+is_a_grb INT,
+type TEXT,
+PRIMARY KEY(fermi_trigger_id, swift_trigger_id)
+);
 
 CREATE TABLE observation
 (
