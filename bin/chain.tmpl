@@ -1,0 +1,27 @@
+
+
+calname=CALNAME
+calid=CALID
+
+
+base='/scratch2/mwasci/phancock/D0009/'
+cd ${base}
+
+dep=(`./bin/obs_cotter.sh ${obsnum} ${dep}`)
+depend="--dependency=afterok:${dep[3]}"
+
+# if a calibrator
+if [[ ${calname} ]]
+then
+  dep=(`./bin/obs_calibrate.sh ${obsnum} ${calname} ${depend}`)
+  depend="--dependency=afterok:${dep[3]}"
+elif [[ ${calid} ]]
+  dep=(`./bin/obs_apply_cal.sh ${obsnum} ${calid} ${depend}`)
+  depend="--dependency=afterok:${dep[3]}"
+  
+  dep=(`./bin/obs_image.sh ${obsnum} ${depend}`)
+  depend="--dependency=afterok:${dep[3]}"
+
+  #dep=(`./bin/obs_imstack.sh ${obsnum} ${calid} ${depend}`)
+  #depend="--dependency=afterok:${dep[3]}"
+fi
