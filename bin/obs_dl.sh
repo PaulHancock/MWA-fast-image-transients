@@ -2,6 +2,8 @@
 
 obsnum=$1
 dep=$2
+calid=$3
+calname=$4
 
 if [[ -z ${obsnum} ]]
 then
@@ -10,7 +12,7 @@ then
 fi
 
 depend=""
-if [[ ! -z ${dep} ]]
+if [[ ${#dep} -gt 4 ]]
 then
 depend="--dependency=afterok:${dep}"
 fi
@@ -19,6 +21,9 @@ base='/scratch2/mwasci/phancock/D0009/'
 
 script="${base}queue/dl_${obsnum}.sh"
 cat ${base}/bin/dl.tmpl | sed "s:OBSNUM:${obsnum}:" | sed "s:BASEDIR:${base}:"  > ${script}
+# submit extra jobs when the d/l completes
+cat ${base}/bin/chain.tmpl | sed "s:CALNAME:${calname}:" | sed "s:CALID:${calid}:" >> ${script}
+
 
 output="${base}queue/logs/dl_${obsnum}.o%A"
 error="${base}queue/logs/dl_${obsnum}.e%A"
