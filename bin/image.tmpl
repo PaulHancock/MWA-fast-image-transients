@@ -31,12 +31,16 @@ $aprun wsclean -name ${obsnum}/${obsnum}-lr -size 512 512\
 
 # test for failure
 res=$?
+# remove unwanted dirty images
+rm ${obsnum}/${obsnum}*{XX,YY}-dirty.fits
+# log failure if requred
 if [[ ${res} != 0 ]]
 then
   cd ${base}
   python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
   exit ${res}
 fi
+
 
 # make the high time resolution images but don't clean
 $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 512 512 \
@@ -54,4 +58,5 @@ then
   python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 else
   python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+  exit ${res}
 fi
