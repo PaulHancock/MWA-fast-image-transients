@@ -6,7 +6,7 @@ dep=$2
 depend=""
 if [[ -z ${dep} ]] 
 then
-depend="--dependancy=afterok:${dep}"
+depend="--dependency=afterok:${dep}"
 fi
 
 base='/scratch2/mwasci/phancock/D0009/'
