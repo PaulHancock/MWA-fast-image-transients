@@ -13,21 +13,20 @@ datadir=${base}/processing
 cd ${datadir}
 
 obsnum=OBSNUM
-ncpus=8
+ncpus=20
 
 # start download
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
+cd ${datadir}
 # TODO fix up the image size/scale
 
-# make the high time resolution images but don't clean
-cd ${datadir}
-$aprun wsclean -name ${obsnum}/${obsnum}-hr -size 320 320 \
-               -weight briggs 0.5 -mfsweighting -scale 25.0amin \
-               -pol I -niter 0 \
-               -interval 0 232 -intervalsout 232 \
-               -smallinversion -j ${ncpus} \
+# make the 2min image and clean
+$aprun wsclean -name ${obsnum}/${obsnum}-lr -size 512 512\
+               -weight briggs 0.5 -mfsweighting -scale 0.5amin \
+               -pol xx,yy -j ${ncpus} \
+               -stopnegative -joinpolarizations -niter 4000 -threshold 1.0 \
                ${obsnum}/${obsnum}.ms
 
 # test for failure
@@ -39,11 +38,12 @@ then
   exit ${res}
 fi
 
-# make the 2min image and clean
-$aprun wsclean -name ${obsnum}/${obsnum}-lr \
-               -weight briggs 0.5 -mfsweighting -scale 25.0amin \
-               -pol xx,yy -j ${ncpus} \
-               -joinchannels -stopnegative -joinpolarizations -niter 4000 -threshold 1.0 \
+# make the high time resolution images but don't clean
+$aprun wsclean -name ${obsnum}/${obsnum}-hr -size 512 512 \
+               -weight briggs 0.5 -mfsweighting -scale 0.5amin \
+               -pol xx,yy -niter 0 \
+               -interval 0 232 -intervalsout 232 \
+               -smallinversion -j ${ncpus} \
                ${obsnum}/${obsnum}.ms
 
 res=$?
