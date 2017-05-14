@@ -12,9 +12,9 @@ datadir=${base}/processing
 obsnum=OBSNUM
 ncpus=20
 
-xxfiles=`ls ${datadir}/${obsnum}/${obsnum}*hr*xx.fits`
+xxfiles=`ls ${datadir}/${obsnum}/${obsnum}*hr*XX-image.fits`
 xout="${base}/done/${obsnum}_stack_xx.fits"
-yyfiles=`ls ${datadir}/${obsnum}/${obsnum}*hr*yy.fits`
+yyfiles=`ls ${datadir}/${obsnum}/${obsnum}*hr*YY-image.fits`
 yout="${base}/done/${obsnum}_stack_yy.fits"
 
 # start download
@@ -24,6 +24,8 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 # stack the xx and yy images separately
 $aprun python bin/imstack.py --files=${xxfiles} --out=${xout}
 $aprun python bin/imstack.py --files=${yyfiles} --out=${yout}
+# form median images
+# TODO:!
 
 res=$?
 cd ${base}
