@@ -25,7 +25,7 @@ res=$?
 nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
 
 # if we don't have this many files then we have a bad result.
-if [[ nfiles -eq `ls ${obnum}*.{fits,mwaf} | wc` ]]
+if [[ ${nfiles} -eq `ls ${obnum}*.{fits,mwaf} | wc` ]]
 then
   res=1
 fi
