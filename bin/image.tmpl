@@ -20,27 +20,29 @@ cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}
-# TODO fix up the image size/scale
 
-# make the 2min image and clean
-$aprun wsclean -name ${obsnum}/${obsnum}-lr -size 512 512\
-               -weight briggs 0.5 -mfsweighting -scale 0.5amin \
-               -pol xx,yy -j ${ncpus} \
-               -stopnegative -joinpolarizations -niter 4000 -threshold 1.0 \
-               ${obsnum}/${obsnum}.ms
-
-# test for failure
-res=$?
-# remove unwanted dirty images
-rm ${obsnum}/${obsnum}*{XX,YY}-dirty.fits
-# log failure if requred
-if [[ ${res} != 0 ]]
+imfile="${obsnum}/${obsnum}-lr-XX-image.fits" 
+if [[ ! -e ${imfile} ]]
 then
-  cd ${base}
-  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-  exit ${res}
+  # make the 2min image and clean
+  $aprun wsclean -name ${obsnum}/${obsnum}-lr -size 512 512\
+                 -weight briggs 0.5 -mfsweighting -scale 0.5amin \
+                 -pol xx,yy -j ${ncpus} \
+                 -stopnegative -joinpolarizations -niter 4000 -threshold 1.0 \
+                 ${obsnum}/${obsnum}.ms
+  
+  # test for failure
+  res=$?
+  # log failure if requred
+  if [[ ${res} != 0 ]]
+  then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit ${res}
+  fi
+else
+  echo "${imfile} exists, skipping"
 fi
-
 
 # make the high time resolution images but don't clean
 $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 512 512 \
@@ -51,6 +53,8 @@ $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 512 512 \
                ${obsnum}/${obsnum}.ms
 
 res=$?
+# remove unwanted dirty images
+rm ${obsnum}/${obsnum}-hr-*-{XX,YY}-dirty.fits
 cd ${base}
 # finish download
 if [[ ${res} -eq 0 ]]
