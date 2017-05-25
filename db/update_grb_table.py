@@ -179,6 +179,7 @@ def update_grb_table(last_trigger=None):
         if 'CORR_MODE' in id:
             continue
         if 'GRB' in id:
+            # eg GRB467353077_145
             id = id[3:-4]
         if 'GCN' in id:
             id = id[3:]
