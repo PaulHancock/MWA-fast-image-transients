@@ -112,6 +112,8 @@ def report_to_row(f, db, mission='fermi'):
         pos_err /= 60
     is_a_grb = 'GRB' in f['MOST_LIKELY']
     name = 'GRB'+f['GRB_DATE'].split()[-1].replace('/','') + 'A'
+    if not is_a_grb:
+        name = "JUNK"
 
     if 'short grb' in f['COMMENTS'].lower():
         grb_type = 'short'
