@@ -8,12 +8,12 @@ then
     exit 1
 fi
 
-# determine the obsid for the calibrator associated with this GRB
-res=`sqlite3 db/MWA-GRB.sqlite "SELECT obs_id, obsname FROM observation WHERE grb=\"${grb}\" AND calibration" | tr "|" " "`
+# determine the obsid and name of the calibrator associated with this GRB
+res=(`sqlite3 db/MWA-GRB.sqlite "SELECT obs_id, obsname FROM observation WHERE grb=\"${grb}\" AND calibration" | tr "|" " "`)
 calid=${res[0]}
 calname=${res[1]}
 
-solutions=`ls processing/${obsid}/${obsid}*solutions.bin`
+solutions=`ls processing/${obsid}/${calid}*solutions.bin`
 if [[ $? ]]
 then
     # the solutions don't exist so we must make them
