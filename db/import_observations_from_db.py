@@ -42,9 +42,18 @@ def getmeta(service='obs', params=None):
 
 
 def update_observation(obsid, obsname, cur):
-    cur.execute("SELECT count(name) FROM grb WHERE fermi_trigger_id = ?", (obsname,))
+    if 'CORR_MODE' in obsname:
+        return
+    elif 'GRB' in obsname:
+        # eg GRB467353077_145
+        id = obsname[3:-4]
+    elif 'GCN' in obsname:
+        id = obsname[3:]
+    else:
+        id = obsname
+    cur.execute("SELECT count(name) FROM grb WHERE fermi_trigger_id = ?", (id,))
     if cur.fetchone()[0] > 0:
-        cur.execute("SELECT name FROM grb WHERE fermi_trigger_id = ?", (obsname,))
+        cur.execute("SELECT name FROM grb WHERE fermi_trigger_id = ?", (id,))
         grb = cur.fetchone()[0]
         cur.execute("UPDATE observation SET grb = ? WHERE obs_id =?", (grb, obsid))
     return
