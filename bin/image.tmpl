@@ -6,6 +6,15 @@
 #SBATCH --nodes=1
 #SBATCH --mem=32gb
 
+function test_fail {
+if [[ $1 != 0 ]]
+then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit ${res}
+fi
+}
+
 aprun='aprun -n 1 -d 20 -b'
 base=BASEDIR
 datadir=${base}/processing
@@ -21,46 +30,54 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}
 
-imfile="${obsnum}/${obsnum}-lr-XX-image.fits" 
-if [[ ! -e ${imfile} ]]
+imfile="${obsnum}/${obsnum}-lr-pbcorr-I-image.fits" 
+#if [[ ! -e ${imfile} ]]
+if [[ 0 ]]
 then
   # make the 2min image and clean
-  $aprun wsclean -name ${obsnum}/${obsnum}-lr -size 512 512\
-                 -weight briggs 0.5 -mfsweighting -scale 0.5amin \
-                 -pol xx,yy -j ${ncpus} \
-                 -stopnegative -joinpolarizations -niter 4000 -threshold 1.0 \
+  $aprun wsclean -name ${obsnum}/${obsnum}-lr -size 4096 4096 \
+                 -weight briggs -1 -mfsweighting -scale 0.4amin \
+                 -pol xx,yy -j ${ncpus} -minuv-l 30 \
+                 -stopnegative -joinpolarizations -niter 5000 -threshold 1.0 \
                  ${obsnum}/${obsnum}.ms
-  
-  # test for failure
-  res=$?
-  # log failure if requred
-  if [[ ${res} != 0 ]]
-  then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit ${res}
+  test_fail $?
+  cd ${obsnum}
+  # make primary beam models
+  $aprun beam -2014 -proto ${obsnum}-lr-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+  test_fail $?
+  # create stokes iquv images
+  $aprun pbcorrect ${obsnum}-lr image.fits beam-MFS ${obsnum}-lr-pbcorr
+  test_fail $?
   fi
 else
   echo "${imfile} exists, skipping"
 fi
 
-# make the high time resolution images but don't clean
-$aprun wsclean -name ${obsnum}/${obsnum}-hr -size 512 512 \
-               -weight briggs 0.5 -mfsweighting -scale 0.5amin \
-               -pol xx,yy -niter 0 \
-               -interval 0 232 -intervalsout 232 \
-               -smallinversion -j ${ncpus} \
-               ${obsnum}/${obsnum}.ms
 
-res=$?
-# remove unwanted dirty images
-rm ${obsnum}/${obsnum}-hr-*-{XX,YY}-dirty.fits
-cd ${base}
-# finish download
-if [[ ${res} -eq 0 ]]
+imfile="${obsnum}/${obsnum}-hr-t0231-pbcorr-I-image.fits"
+if [[ ! -e ${imfile} ]]
 then
-  python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-else
-  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-  exit ${res}
+    # make the high time resolution images but don't clean
+    $aprun wsclean -name ${obsnum}/${obsnum}-hr -size 4096 4096 \
+               -weight briggs -1 -mfsweighting -scale 0.4amin \
+               -pol xx,yy -j ${ncpus} -minuv-l 30 \
+               -interval 8 232 -intervalsout 4 \
+               -niter 0 \
+               ${obsnum}/${obsnum}.ms
+#               -stopnegative -joinpolarizations -niter 1000 -threshold 5.0 \
+    test_fail $?
+    # remove unwanted dirty images
+    rm ${obsnum}/${obsnum}-hr-*-{XX,YY}-dirty.fits
+    break
+    # create stokes iquv images
+    files=`ls ${image}-hr-t0???-XX-image.fits`
+    for f in ${files}
+    do
+	prefix=${f%%-XX-image.fits}
+	$aprun pbcorrect ${prefix} image.fits beam-MFS ${prefix}-pbcorr
+	test_fail $?
+    done
 fi
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
