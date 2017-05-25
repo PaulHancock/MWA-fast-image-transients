@@ -46,14 +46,14 @@ def update_observation(obsid, obsname, cur):
         return
     elif 'GRB' in obsname:
         # eg GRB467353077_145
-        id = obsname[3:-4]
+        idx = obsname[3:-4]
     elif 'GCN' in obsname:
-        id = obsname[3:]
+        idx = obsname[3:]
     else:
-        id = obsname
-    cur.execute("SELECT count(name) FROM grb WHERE fermi_trigger_id = ?", (id,))
+        idx = obsname
+    cur.execute("SELECT count(name) FROM grb WHERE fermi_trigger_id = ?", (idx,))
     if cur.fetchone()[0] > 0:
-        cur.execute("SELECT name FROM grb WHERE fermi_trigger_id = ?", (id,))
+        cur.execute("SELECT name FROM grb WHERE fermi_trigger_id = ?", (idx,))
         grb = cur.fetchone()[0]
         cur.execute("UPDATE observation SET grb = ? WHERE obs_id =?", (grb, obsid))
     return
@@ -85,11 +85,25 @@ def copy_obs_info(obsid, cur):
 
 
 def update_grb_links(cur):
+    # associate each observation with the corresponding grb
     cur.execute("SELECT obs_id, obsname FROM observation WHERE grb IS NULL")
     # need to do this to exhaust the generator so we can reuse the cursor
     obsids, obsnames = zip(*cur.fetchall())
     for obsid, obsname in zip(obsids, obsnames):
         update_observation(obsid, obsname, cur)
+
+    # now associate each calibration observation with a grb
+    # this relies on the calibration observation being within 150sec of the regular obs
+    cur.execute("""
+    SELECT o.obs_id, b.grb
+    FROM observation o JOIN observation b ON
+    o.obs_id - b.obs_id BETWEEN -150 AND 150
+    AND o.calibration AND b.grb IS NOT NULL
+    AND o.obs_id != b.obs_id
+    """)
+    ids, grbs = zip(*cur.fetchall())
+    for idx, grb in zip(ids, grbs):
+        cur.execute("UPDATE observation SET grb=? WHERE obs_id=?", (grb, idx))
     return
 
 
