@@ -145,7 +145,7 @@ def report_to_row(f, db, mission='fermi'):
         sys.exit()
 
     db.execute("""
-    INSERT INTO grb (name, fermi_trigger_id, fermi_url, swift_trigger_id,
+    INSERT OR REPLACE INTO grb (name, fermi_trigger_id, fermi_url, swift_trigger_id,
 swift_url, best_ra, best_dec, pos_err, best_pos_ref, is_a_grb, type )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (name, fermi_trigger_id, fermi_url, swift_trigger_id,
