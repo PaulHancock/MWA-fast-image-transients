@@ -21,7 +21,4 @@ elif [[ ${calid} ]]
   
   dep=(`./bin/obs_image.sh ${obsnum} ${depend}`)
   depend="--dependency=afterok:${dep[3]}"
-
-  #dep=(`./bin/obs_imstack.sh ${obsnum} ${calid} ${depend}`)
-  #depend="--dependency=afterok:${dep[3]}"
 fi
