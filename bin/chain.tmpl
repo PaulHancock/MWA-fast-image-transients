@@ -8,17 +8,22 @@ base='/scratch2/mwasci/phancock/D0009/'
 cd ${base}
 
 dep=(`./bin/obs_cotter.sh ${obsnum} ${dep}`)
-depend="--dependency=afterok:${dep[3]}"
+depend=${dep[3]}
 
-# if a calibrator
+# if we have a calibrator name then this is a calibration obs
+# so we need to just calculate the colutions
 if [[ ${calname} ]]
 then
   dep=(`./bin/obs_calibrate.sh ${obsnum} ${calname} ${depend}`)
-  depend="--dependency=afterok:${dep[3]}"
+  depend=${dep[3]}
+
+# if we have the calid then this is a normal obs that we need to apply the
+# solution to and then image
 elif [[ ${calid} ]]
+then
   dep=(`./bin/obs_apply_cal.sh ${obsnum} ${calid} ${depend}`)
-  depend="--dependency=afterok:${dep[3]}"
+  depend=${dep[3]}
   
   dep=(`./bin/obs_image.sh ${obsnum} ${depend}`)
-  depend="--dependency=afterok:${dep[3]}"
+  depend=${dep[3]}
 fi
