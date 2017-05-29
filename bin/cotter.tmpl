@@ -18,6 +18,22 @@ fres=FRES
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
+# expected number of files from the archive
+nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
+
+cd ${datadir}/${obsnum}
+# count the number of files that we have
+files=`ls ${obsnum}_*{gpubox,ppds}*.fits ${obsnum}_flags.zip 2>/dev/null | wc -l`
+
+#quit if we are missing files
+if [[ ${nfiles} -eq ${files} ]]
+then
+    echo "Found ${files}/${nfiles} files"
+else
+    echo "expecting ${nfiles} files but only found ${files}"
+    exit 1
+fi
+
 zipflag="${obsnum}_flags.zip"
 if [[ -e ${zipflag} ]]
 then
@@ -27,8 +43,8 @@ else
     flagfiles=''
 fi
 
-cd ${datadir}/${obsnum}
-$aprun cotter ${flagfiles} -timeres ${tres} -freqres ${fres} \
+# allow missing files since we already checked this above.
+$aprun cotter ${flagfiles} -timeres ${tres} -freqres ${fres} -allowmissing \
              -edgewidth 80 -m ${obsnum}_metafits_ppds.fits -o ${obsnum}.ms *gpubox*.fits 
 
 res=$?
