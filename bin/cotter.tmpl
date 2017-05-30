@@ -22,13 +22,16 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
 
 cd ${datadir}/${obsnum}
-# count the number of files that we have
-files=`ls ${obsnum}_*{gpubox,ppds}*.fits ${obsnum}_flags.zip 2>/dev/null | wc -l`
+# count the number of files that we have (but not the flag files)
+files=`ls ${obsnum}_*{gpubox,ppds}*.fits 2>/dev/null | wc -l`
 
 #quit if we are missing files
 if [[ ${nfiles} -eq ${files} ]]
 then
     echo "Found ${files}/${nfiles} files"
+elif [[ ${nfiles} -eq ${files}+1 ]]
+then
+    echo "Found ${files} fits files, assuming the missing file is flags"
 else
     echo "expecting ${nfiles} files but only found ${files}"
     exit 1
