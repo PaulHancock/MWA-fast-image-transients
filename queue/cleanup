@@ -1,2 +1,2 @@
 touch cleanup
-find /home/hancock/Downloads/ -maxdepth 1 -type f -mtime +7 -exec rm {} \;
+find . -maxdepth 1 -type f -mtime +7 -exec rm {} \;
