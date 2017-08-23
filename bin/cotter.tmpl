@@ -14,6 +14,7 @@ obsnum=OBSNUM
 tres=TRES
 fres=FRES
 
+
 # start task
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
@@ -41,10 +42,13 @@ zipflag="${obsnum}_flags.zip"
 if [[ -e ${zipflag} ]]
 then
     unzip ${zipflag}
-    flagfiles='-flagfiles ${obsnum}_%%.mwaf'
+    flagfiles="-flagfiles ${obsnum}_%%.mwaf"
 else
-    flagfiles=''
+    flagfiles=""
 fi
+
+# stop cotter from crashing by swapping these modules
+module swap PrgEnv-gnu PrgEnv-cray
 
 # allow missing files since we already checked this above.
 $aprun cotter ${flagfiles} -timeres ${tres} -freqres ${fres} -allowmissing \
