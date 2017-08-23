@@ -63,9 +63,12 @@ def update_observation(obsid, obsname, cur):
 def copy_obs_info(obsid, cur):
     cur.execute("SELECT count(*) FROM observation WHERE obs_id =?",(obsid,))
     if cur.fetchone()[0] > 0:
-        #print "already imported", obsid
+        print "already imported", obsid
         return
     meta = getmeta(service='obs', params={'obs_id':obsid})
+    if meta is None:
+        print obsid, "has no metadata!"
+        return
     metadata = meta['metadata']
     cur.execute("""
     INSERT OR REPLACE INTO observation
