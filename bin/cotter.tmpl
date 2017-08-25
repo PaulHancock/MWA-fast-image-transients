@@ -26,16 +26,21 @@ cd ${datadir}/${obsnum}
 # count the number of files that we have (but not the flag files)
 files=`ls ${obsnum}_*{gpubox,ppds}*.fits 2>/dev/null | wc -l`
 
-#quit if we are missing files
-if [[ ${nfiles} -eq ${files} ]]
-then
-    echo "Found ${files}/${nfiles} files"
-elif [[ ${nfiles} -eq ${files}+1 ]]
-then
-    echo "Found ${files} fits files, assuming the missing file is flags"
-else
-    echo "expecting ${nfiles} files but only found ${files}"
-    exit 1
+# if nfiles is non-zero then we ensure we have that many files
+# nfiles is zero if we aren't tracking the obsid in the database
+if [[ ! -z ${nfiles} ]]
+then 
+    #quit if we are missing files
+    if [[ ${nfiles} -eq ${files} ]]
+    then
+        echo "Found ${files}/${nfiles} files"
+    elif [[ ${nfiles} -eq ${files}+1 ]]
+    then
+        echo "Found ${files} fits files, assuming the missing file is flags"
+    else
+        echo "expecting ${nfiles} files but only found ${files}"
+        exit 1
+    fi
 fi
 
 zipflag="${obsnum}_flags.zip"
