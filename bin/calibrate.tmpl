@@ -28,7 +28,7 @@ then
   exit 1
 fi
 
-# start download
+# start
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
@@ -47,13 +47,17 @@ then
     cd ../../
 fi
 
+# calibrate
 $aprun calibrate -j 20 -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
 res=$?
+
+# plot calibration solutions
+$aprun aocal_plot.py --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions.bin
+
 # delete the symlinks and temp directory
 rm -r mwapy
 
 cd ${base}
-# finish download
 if [[ ${res} -eq 0 ]]
 then
   python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
