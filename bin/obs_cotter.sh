@@ -36,7 +36,7 @@ output="${base}queue/logs/cotter_${obsnum}.o%A"
 error="${base}queue/logs/cotter_${obsnum}.e%A"
 
 # submit job
-jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${script}`)
+jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}`)
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid

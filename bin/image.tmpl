@@ -4,7 +4,7 @@
 #SBATCH --account=mwasci
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
-#SBATCH --mem=32gb
+
 
 function test_fail {
 if [[ $1 != 0 ]]
@@ -15,7 +15,16 @@ then
 fi
 }
 
-aprun='aprun -n 1 -d 20 -b'
+# automatically set the right number of corse
+# maybe leaving -d blank will do this ...
+if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
+then
+    cores=8
+else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
+    cores=20
+fi
+aprun="aprun -n 1 -d ${cores} -b"
+
 base=BASEDIR
 datadir=${base}/processing
 
