@@ -154,10 +154,19 @@ swift_url, best_ra, best_dec, pos_err, best_pos_ref, is_a_grb, grb_type))
 
 
 def validate(f):
-    for k in ['GRB_RA', 'GRB_DEC', 'GRB_ERROR', 'MOST_LIKELY', 'TRIGGER_NUM', 'GRB_DATE', 'COMMENTS']:
+    print f
+    for k in ['GRB_RA', 'GRB_DEC', 'GRB_ERROR', 'TRIGGER_NUM', 'GRB_DATE', 'COMMENTS']:
         if not k in f:
             return False
-    return True
+    if 'MOST_LIKELY' in f:
+        return True
+    # swift doesn't have a MOST_LIKELY key
+    if 'This is a GRB' in f['COMMENTS']:
+        if 'MOST_LIKELY' not in f:
+            f['MOST_LIKELY'] = 'GRB'
+        return True
+    else:
+        return False
 
 
 def update_grb_table(last_trigger=None):
@@ -174,7 +183,11 @@ def update_grb_table(last_trigger=None):
     ids = zip(*cur.execute("""SELECT obsname
     FROM observation WHERE calibration=0
     AND obsname NOT IN (SELECT fermi_trigger_id FROM grb)
-    GROUP BY obsname""").fetchall())[0]
+    GROUP BY obsname""").fetchall())
+    if len(ids) == 0:
+        return
+    else:
+        ids = ids[0]
     # TODO: test for swift triggers
     for i, id in enumerate(ids):
         mission = 'fermi'
@@ -185,6 +198,9 @@ def update_grb_table(last_trigger=None):
             id = id[3:-4]
         if 'GCN' in id:
             id = id[3:]
+            mission = 'swift'
+        if len(id) == 6:
+            id = id
             mission = 'swift'
         r = get_accumulated_report(id, mission)
         valid = validate(r)
