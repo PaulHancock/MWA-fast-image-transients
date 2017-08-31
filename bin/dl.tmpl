@@ -5,6 +5,14 @@
 #SBATCH --time=01:00:00
 #SBATCH --nodes=1
 
+function test_fail {
+if [[ $1 != 0 ]]
+then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit $1
+fi
+}
 
 #aprun='aprun -n 1 -d 8 -b'
 base=BASEDIR
@@ -19,7 +27,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 cd ${datadir}
 obsdownload.py -o ${obsnum}
 
-res=$?
+test_fail $?
 
 # check how many files we expect to see
 nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
@@ -27,14 +35,9 @@ nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE 
 # if we don't have this many files then we have a bad result.
 if [[ ${nfiles} -eq `ls ${obnum}*.{fits,mwaf} | wc` ]]
 then
-  res=1
+  test_fail 1
 fi
 
 cd ${base}
-# finish download
-if [[ ${res} -eq 0 ]]
-then
-  python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-else
-  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-fi
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+

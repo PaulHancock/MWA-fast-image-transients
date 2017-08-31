@@ -6,6 +6,15 @@
 #SBATCH --nodes=1
 
 
+function test_fail {
+if [[ $1 != 0 ]]
+then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit $1
+fi
+}
+
 # automatically set the right number of corse
 # maybe leaving -d blank will do this ...
 if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
@@ -48,7 +57,7 @@ then
         echo "Found ${files} fits files, assuming the missing file is flags"
     else
         echo "expecting ${nfiles} files but only found ${files}"
-        exit 1
+        test_fail 1
     fi
 fi
 
@@ -68,19 +77,13 @@ module swap PrgEnv-gnu PrgEnv-cray
 $aprun cotter ${flagfiles} -timeres ${tres} -freqres ${fres} -allowmissing \
              -edgewidth 80 -m ${obsnum}_metafits_ppds.fits -o ${obsnum}.ms *gpubox*.fits 
 
-res=$?
+test_fail $?
 
-if [[ ${res} -eq 0 ]] && [[ -d OBSNUM.ms ]]
+if [[ -d OBSNUM.ms ]]
 then 
      rm *gpubox*fits *.zip *.mwaf ${obsnum}_metafits_ppds.fits
 fi
 
-# finish job
 cd ${base}
-# finish download
-if [[ ${res} -eq 0 ]]
-then
-  python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-else
-  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-fi
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+

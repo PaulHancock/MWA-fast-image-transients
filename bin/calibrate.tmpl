@@ -6,6 +6,15 @@
 #SBATCH --nodes=1
 
 
+function test_fail {
+if [[ $1 != 0 ]]
+then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit $1
+fi
+}
+
 # automatically set the right number of corse
 # maybe leaving -d blank will do this ...
 if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
@@ -23,6 +32,11 @@ modeldir="$MWA_CODE_BASE/anoko/mwa-reduce/models"
 obsnum=OBSNUM
 
 
+# start
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+
 # look for the calibrator model
 #calmodel=`ls ${modeldir}/model-${calibrator}*comp.txt | tail -n 1`
 #calmodel=`basename ${calmodel}`
@@ -35,13 +49,10 @@ fi
 if [[ ! -e ${modeldir}/${calmodel} ]]
 then
   echo "Cannot find calibrator model for ${calibrator}"
-  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-  exit 1
+  test_fail 1
 fi
 
-# start
-cd ${base}
-python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
 
 cd ${datadir}/${obsnum}
 
@@ -60,18 +71,15 @@ fi
 
 # calibrate
 $aprun calibrate -j 20 -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
-res=$?
+test_fail $?
 
 # plot calibration solutions
 $aprun aocal_plot.py --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions.bin
+test_fail $?
 
 # delete the symlinks and temp directory
 rm -r mwapy
 
 cd ${base}
-if [[ ${res} -eq 0 ]]
-then
-  python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-else
-  python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-fi
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
