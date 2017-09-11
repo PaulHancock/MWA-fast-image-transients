@@ -64,6 +64,12 @@ stdout TEXT,
 output_files TEXT,
 FOREIGN KEY(obs_id) REFERENCES observation(osb_id)
 );
+
+CREATE TABLE calibrators
+(
+name TEXT,
+calfile TEXT
+);
 """
 
 def main():
