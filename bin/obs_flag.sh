@@ -15,7 +15,7 @@ then
 depend="--dependency=afterok:${dep}"
 fi
 
-base='/scratch2/mwasci/phancock/D0009/'
+base='/astro/mwasci/phancock/D0009/'
 
 flagfile="${base}/processing/${obsnum}/tiles_to_flag.txt"
 if [[ ! -e ${flagfile} ]]

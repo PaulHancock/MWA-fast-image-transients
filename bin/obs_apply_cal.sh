@@ -16,7 +16,7 @@ then
 depend="--dependency=afterok:${dep}"
 fi
 
-base='/scratch2/mwasci/phancock/D0009/'
+base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/apply_cal_${obsnum}.sh"
 cat ${base}/bin/apply_cal.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALOBSID:${cal}:g"  > ${script}
