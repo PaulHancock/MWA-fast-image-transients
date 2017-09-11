@@ -70,7 +70,7 @@ then
 fi
 
 # calibrate
-$aprun calibrate -j 20 -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
+$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
 test_fail $?
 
 # plot calibration solutions
