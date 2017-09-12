@@ -70,11 +70,28 @@ then
 fi
 
 # calibrate
-$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
+$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 test_fail $?
 
 # plot calibration solutions
-$aprun aocal_plot.py --refant=127 --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions.bin
+$aprun aocal_plot.py --refant=127 --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions_initial.bin
+test_fail $?
+
+# apply calibration
+$aprun applysolutions ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions_inital.bin
+test_fail $?
+
+# run aoflagger
+# default is to work on the corrected data column
+$aprun aoflagger ${obsnum$}.ms 
+test_fail $?
+
+# calibrate again!
+$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
+test_fail $?
+
+#plot again
+$aprun aocal_plot.py --refant=127 --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 test_fail $?
 
 # delete the symlinks and temp directory
