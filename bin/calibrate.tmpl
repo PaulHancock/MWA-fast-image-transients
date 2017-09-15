@@ -91,7 +91,11 @@ $aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${o
 test_fail $?
 
 #plot again
-$aprun aocal_plot.py --refant=127 --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions_initial.bin
+$aprun aocal_plot.py --refant=127 --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions.bin
+test_fail $?
+
+# apply calibration again
+$aprun applysolutions ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
 test_fail $?
 
 # delete the symlinks and temp directory
