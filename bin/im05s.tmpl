@@ -1,0 +1,65 @@
+#! /bin/bash -l
+#SBATCH -M galaxy
+#SBATCH -p workq
+#SBATCH --account=mwasci
+#SBATCH --time=10:00:00
+#SBATCH --nodes=1
+
+
+function test_fail {
+if [[ $1 != 0 ]]
+then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit $1
+fi
+}
+
+# automatically set the right number of corse
+# maybe leaving -d blank will do this ...
+if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
+then
+    cores=8
+else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
+    cores=20
+fi
+aprun="aprun -n 1 -d ${cores} -b"
+
+base=BASEDIR
+datadir=${base}/processing
+
+cd ${datadir}
+
+obsnum=OBSNUM
+ncpus=20
+
+# start download
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+cd ${datadir}/${obsnum}
+
+$aprun wsclean -name ${obsnum}-0.5s -size 4096 4096 \
+    -weight briggs -1 -mfsweighting -scale 32asec \
+    -pol xx,yy -j ${ncpus} -minuv-l 30 \
+    -stopnegative -joinpolarizations -niter 0 -threshold 0.2 \
+    -intervalsout 224 \
+    ${obsnum}.ms
+test_fail $?
+
+# make primary beam models
+#$aprun beam -2016 -proto ${obsnum}-28s-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+#test_fail $?
+
+# create stokes iquv images
+files=`ls ${obsnum}-0.5s-t0???-XX-image.fits`
+for f in ${files}
+do
+  prefix=${f%%-XX-image.fits}
+  $aprun pbcorrect ${prefix} image.fits beam-MFS ${prefix}-pbcorr
+  test_fail $?
+done
+
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
