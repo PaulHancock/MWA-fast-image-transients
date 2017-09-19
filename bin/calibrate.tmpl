@@ -38,7 +38,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 
 # look for the calibrator model in the database
-calmodel=`sqlite3 ${bas}/db/MWA-GRB.sqlite "SELECT calfile FROM calibrators WHERE name='${calibrator}'"`
+calmodel=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT calfile FROM calibrators WHERE name='${calibrator}'"`
 echo "using calibrator model : ${calmodel}"
 # if it isn't in the database then uset the point source model
 if [[ -z ${calmodel} ]]
