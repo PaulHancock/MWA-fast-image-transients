@@ -37,22 +37,23 @@ cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 
-# look for the calibrator model
-#calmodel=`ls ${modeldir}/model-${calibrator}*comp.txt | tail -n 1`
-#calmodel=`basename ${calmodel}`
-# use the point source cal model
-calmodel='none'
-if [[ ! -e ${modeldir}/${calmodel} ]]
+# look for the calibrator model in the database
+calmodel=`sqlite3 ${bas}/db/MWA-GRB.sqlite "SELECT calfile FROM calibrators WHERE name='${calibrator}'"`
+echo "using calibrator model : ${calmodel}"
+# if it isn't in the database then uset the point source model
+if [[ -z ${calmodel} ]]
 then
     calmodel=`basename ${modeldir}/model-${calibrator}*point-source.txt`
+else
+    calmodel=`basename ${calmodel}`
 fi
+
+# check that the model exists
 if [[ ! -e ${modeldir}/${calmodel} ]]
 then
   echo "Cannot find calibrator model for ${calibrator}"
   test_fail 1
 fi
-
-
 
 cd ${datadir}/${obsnum}
 
@@ -69,16 +70,18 @@ then
     cd ../../
 fi
 
+solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
+
 # calibrate
-$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions_initial.bin
+$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
-$aprun aocal_plot.py --refant=127 --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions_initial.bin
+$aprun aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 test_fail $?
 
 # apply calibration
-$aprun applysolutions ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions_inital.bin
+$aprun applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
 # run aoflagger
@@ -86,16 +89,17 @@ test_fail $?
 $aprun aoflagger ${obsnum$}.ms 
 test_fail $?
 
+solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
 # calibrate again!
-$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
+$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 #plot again
-$aprun aocal_plot.py --refant=127 --amp_max=2 ${obsnum}_${calmodel%%.txt}_solutions.bin
+$aprun aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 test_fail $?
 
 # apply calibration again
-$aprun applysolutions ${obsnum}.ms ${obsnum}_${calmodel%%.txt}_solutions.bin
+$aprun applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
 # delete the symlinks and temp directory
