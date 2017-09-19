@@ -38,7 +38,7 @@ cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
-
+echo "##WSCLEAN"
 $aprun wsclean -name ${obsnum}-28s -size 4096 4096 \
     -weight briggs -1 -mfsweighting -scale 32asec \
     -pol xx,yy -j ${ncpus} -minuv-l 30 \
@@ -48,10 +48,17 @@ $aprun wsclean -name ${obsnum}-28s -size 4096 4096 \
 test_fail $?
 
 # make primary beam models
-#$aprun beam -2016 -proto ${obsnum}-28s-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
-#test_fail $?
+if [[ `ls beam-MFS-[xy][xy][ri].fits | wc -l` -ne 8 ]]
+then
+    echo "## Making primary beam"
+    $aprun beam -2016 -proto ${obsnum}-28s-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+    test_fail $?
+else
+    echo "## primary beam exists"
+fi
 
 # create stokes iquv images
+echo "## making beam corrected images"
 files=`ls ${obsnum}-28s-t0???-XX-image.fits`
 for f in ${files}
 do
