@@ -43,7 +43,7 @@ imfile="${obsnum}-lr-pbcorr-I-image.fits"
 #if [[ ! -e ${imfile} ]]
 if [[ 0 ]]
 then
-  $aprun wsclean -name ${obsnum}-2m -size 3072 3072 \
+  ${aprun} wsclean -name ${obsnum}-2m -size 3072 3072 \
       -weight briggs -1 -mfsweighting -scale 32asec \
       -pol xx,yy -j ${ncpus} -minuv-l 30 \
       -stopnegative -joinpolarizations -niter 20000 -threshold 0.2 \
