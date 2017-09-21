@@ -86,7 +86,7 @@ test_fail $?
 
 # run aoflagger
 # default is to work on the corrected data column
-$aprun aoflagger ${obsnum$}.ms 
+$aprun aoflagger ${obsnum}.ms 
 test_fail $?
 
 solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
