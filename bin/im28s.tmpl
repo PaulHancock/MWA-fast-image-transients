@@ -47,6 +47,9 @@ $aprun wsclean -name ${obsnum}-28s -size 4096 4096 \
     ${obsnum}.ms
 test_fail $?
 
+# delete the dirty images as they are the same as the regular image
+rm ${obsnum}-28s-??-dirty.fits
+
 # make primary beam models
 if [[ `ls beam-MFS-[xy][xy][ri].fits | wc -l` -ne 8 ]]
 then
@@ -66,6 +69,9 @@ do
   $aprun pbcorrect ${prefix} image.fits beam-MFS ${prefix}-pbcorr
   test_fail $?
 done
+
+# delete the QUV images as they don't mean anything (since we only used xx/yy as input)
+rm ${obsnum}-28s-*-pbcorr-[QUV].fits
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
