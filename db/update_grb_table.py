@@ -55,6 +55,9 @@ def report_to_fields(report, fields=None):
                 if key in fields:
                     fields[key] += (val.strip())
                     continue
+            # Some bug that occurs for swift bursts
+            if key == "TRIGGER_NUM" and "," in val:
+                val = val.split(",")[0]                
             fields[key] = val.strip()
     return fields
 
@@ -184,10 +187,13 @@ def update_grb_table(last_trigger=None):
     FROM observation WHERE calibration=0
     AND obsname NOT IN (SELECT fermi_trigger_id FROM grb)
     GROUP BY obsname""").fetchall())
+    print ids
     if len(ids) == 0:
+        print "No new GRBS"
         return
     else:
         ids = ids[0]
+        print "There are {0} new GRBs".format(len(ids))
     # TODO: test for swift triggers
     for i, id in enumerate(ids):
         mission = 'fermi'
