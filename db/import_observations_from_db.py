@@ -112,9 +112,20 @@ def update_grb_links(cur):
 
 
 if __name__ == "__main__":
+    ids = []
+    for a in sys.argv:
+        try:
+            ids.append(int(a))
+        except ValueError as e:
+            pass
     conn = sqlite3.connect(dbfile)
     cur = conn.cursor()
 
+    if len(ids) > 0:
+        for obs_id in ids:
+            copy_obs_info(obs_id,cur)
+            conn.commit()
+        sys.exit()
     #obsdata = getmeta(service='find', params={'projectid':'D0009', 'limit':100000}) #'limit':10
     obsdata = getmeta(service='find', params={'creator':'mwagrb.py', 'limit':100000}) #'limit':10
     for obs in obsdata:
