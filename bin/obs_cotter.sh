@@ -1,25 +1,16 @@
 #! /bin/bash
 
 obsnum=$1
-tres=$2
-fres=$3
-dep=$4
+dep=$2
 
 if [[ -z ${obsnum} ]]
 then
-  echo "OBSNUM required as first arg"
-  exit 0
+    echo "usage: obs_cotter.sh obs_id [dependency]"
+    exit 1
 fi
 
-# set default values if not given
-if [[ -z ${fres} ]]
-then
-	fres=40
-fi
-if [[ -z ${tres} ]]
-then
-	tres=0.5
-fi
+fres=40
+tres=0.5
 
 depend=""
 if [[ ! -z ${dep} ]]
