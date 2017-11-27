@@ -15,7 +15,6 @@ then
 fi
 }
 
-
 # automatically set the right number of corse
 # maybe leaving -d blank will do this ...
 if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
@@ -31,23 +30,21 @@ datadir="${base}/processing"
 obsnum=OBSNUM
 
 
-# start calibration
+# start
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
+
 cd ${datadir}/${obsnum}
 
-# if there is a tile flagging file then use it to flag the data before applying the calibration solutions.
-if [[ ! -e tiles_to_flag.txt ]]
-then
-    echo "tiles_to_flag.txt not found!"
-    res=1
-else
-    $aprun flagantennae ${obsnum}.ms `cat tiles_to_flag.txt`
-fi
-
+# run aoflagger
+# default is to work on the corrected data column
+$aprun aoflagger ${obsnum$}.ms 
 test_fail $?
 
-cd ${base}
+# delete the symlinks and temp directory
+rm -r mwapy
 
+cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
