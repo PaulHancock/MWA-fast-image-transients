@@ -16,6 +16,10 @@ The pipeline is written for the Pawsey-Galaxy system.
 ## scripts and templates
 Templates for scripts are `bin/*.tmpl`, these are modified by the `bin/obs_*.sh` scripts and the completed script is then put in `queue/<obsid>_*.sh` and submitted to SLURM.
 
+## track_task.py
+Used by the following scripts to track the submission/start/finish/fail of each of the jobs.
+Not intended for use outside of these scripts.
+
 ## process_grb.sh
 Usage: `process_grb.sh grbname`
 - grbname: The name of the GRB as per the database (eg, GRB110715A) which may differ from the official name due to lazyness in implementing the naming strategy.
