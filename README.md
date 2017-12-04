@@ -28,7 +28,7 @@ uses templates:
 - `chian.tmpl` (calname->CALNAME/calid->CALID)
   - run cotter (always)
   - if calname is set then create a calibration solution from this data and stop
-  - if calid is set then apply the calibration solution from calid and then image
+  - if calid is set then apply the calibration solution from calid and then create an image (see `obs_image.sh`)
 
 If dependency is not passed or has fewer than 4 digits then it is ingored.
 That means that you can pass `0` for the dependency and it is ignored.
@@ -69,3 +69,34 @@ uses tempaltes:
   - applies the calibration solution from one data set to another
 
 
+### obs_image.sh
+Usage: `obs_image.sh obsnum [depend]`
+- obsid: MWA observation id
+- depend: slurm job id on which this task depends (afterok)
+
+uses tempaltes:
+- `image.tmpl` (obsnum->OBSNUM)
+  - make a single time/freq image and clean
+  - perform primary beam correction on this image.
+
+### obs_im05s.sh
+Usage: `obs_im05s.sh obsnum [depend]`
+- obsid: MWA observation id
+- depend: slurm job id on which this task depends (afterok)
+
+uses tempaltes:
+- `im05s.tmpl` (obsnum->OBSNUM)
+  - make one image per 0.5sec time interval with no cleaning
+  - perform primary beam correction on these images
+
+
+### obs_im28s.sh
+Usage: `obs_im28s.sh obsnum [depend]`
+- obsid: MWA observation id
+- depend: slurm job id on which this task depends (afterok)
+
+uses tempaltes:
+- `im28s.tmpl` (obsnum->OBSNUM)
+  - make one image per 28sec time interval and clean
+  - perform primary beam correction on these images
+  
