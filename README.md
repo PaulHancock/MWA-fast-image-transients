@@ -43,4 +43,18 @@ uses templates:
 - `cotter.tmpl` (obsnum->OBSNUM)
   - run cotter to convert gpubox .fits files into a measurement set apply online flag files if present
   
- 
+ ### obs_calibrate.sh
+ Usage: `obs_calibrat.sh obsnum cal [depend]`
+- obsid: MWA observation id
+- cal: calibrator name
+- depend: slurm job id on which this task depends (afterok)
+
+uses templates:
+- `calibrate.tmpl` (cal->CALIBRATOR)
+  - creates a new calibration solution using the calibrator model corresponding to the given name: file is <obsnum>_<calmodel>_solutions_initial.bin
+  - plots the calibration solutions
+  - applies the calibration solution to the data
+  - runs aoflagger on the calibrated data
+  - creates a new calibration solution: file is <obsnum>_<calmodel>_solutions.bin
+  - replot the solutions
+  
