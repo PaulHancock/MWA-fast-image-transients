@@ -111,7 +111,13 @@ uses tempaltes:
 
 No job is submitted if the flagging file doesn't exist so this script is safe to include always.
 
+### obs_sfind.sh <<UNDER DEVELOPMENT/TESTING>>
+Usage: `obs_flag.sh obsnum [depend]`
+- obsid: MWA observation id
+- depend: slurm job id on which this task depends (afterok)
 
-  
+uses tempaltes:
+- `sfind.tmpl` (obsnum->OBSNUM)
+  - run `BANE` and then `aegean` on each of the images
   
 
