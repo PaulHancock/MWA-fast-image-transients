@@ -58,3 +58,14 @@ uses templates:
   - creates a new calibration solution: file is <obsnum>_<calmodel>_solutions.bin
   - replot the solutions
   
+### obs_apply_cal.sh
+Usage: `obs_apply_cal.sh obsnum cal [depend]`
+- obsid: MWA observation id
+- cal: calibrator obsid
+- depend: slurm job id on which this task depends (afterok)
+
+uses tempaltes:
+- `apply_cal.tmpl` (obsnum->OBSNUM, cal->CALOBSID)
+  - applies the calibration solution from one data set to another
+
+
