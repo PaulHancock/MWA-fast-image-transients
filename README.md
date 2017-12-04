@@ -32,4 +32,15 @@ uses templates:
 
 If dependency is not passed or has fewer than 4 digits then it is ingored.
 That means that you can pass `0` for the dependency and it is ignored.
-This is useful for when you want to supply the clibrator ID and name but don't wnat to set a dependencyy.
+This is useful for when you want to supply the clibrator ID and name but don't wnat to set a dependency.
+
+### obs_cotter.sh
+Usage: `obs_cotter.sh obsid [depend]`
+- obsid: MWA observation id
+- depend: slurm job id on which this task depends (afterok)
+
+uses templates:
+- `cotter.tmpl` (obsnum->OBSNUM)
+  - run cotter to convert gpubox .fits files into a measurement set apply online flag files if present
+  
+ 
