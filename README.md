@@ -99,4 +99,19 @@ uses tempaltes:
 - `im28s.tmpl` (obsnum->OBSNUM)
   - make one image per 28sec time interval and clean
   - perform primary beam correction on these images
+
+### obs_flag.sh
+Usage: `obs_flag.sh obsnum [depend]`
+- obsid: MWA observation id
+- depend: slurm job id on which this task depends (afterok)
+
+uses tempaltes:
+- `flag.tmpl` (obsnum->OBSNUM)
+  - if `processing/<obsnum>/tiles_to_flag.txt` exists then the tiles listed are flagged.
+
+No job is submitted if the flagging file doesn't exist so this script is safe to include always.
+
+
   
+  
+
