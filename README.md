@@ -24,11 +24,11 @@ Usage: `obs_dl.sh obsid [depend [calid [calname]]]`
 
 uses templates: 
 - `dl.tmpl` (obsnum->OBSNUM) 
--- download data
+  - download data
 - `chian.tmpl` (calname->CALNAME/calid->CALID)
--- run cotter (always)
--- if calname is set then create a calibration solution from this data and stop
--- if calid is set then apply the calibration solution from calid and then image
+  - run cotter (always)
+  - if calname is set then create a calibration solution from this data and stop
+  - if calid is set then apply the calibration solution from calid and then image
 
 If dependency is not passed or has fewer than 4 digits then it is ingored.
 That means that you can pass `0` for the dependency and it is ignored.
