@@ -11,9 +11,31 @@ The pipeline is written for the Pawsey-Galaxy system.
 - processing: directory in which all the data is processed
 - queue: location from which scripts are run
 - queue/logs: log files
+- done: location for final data products (images, catalogues)
 
 ## scripts and templates
 Templates for scripts are `bin/*.tmpl`, these are modified by the `bin/obs_*.sh` scripts and the completed script is then put in `queue/<obsid>_*.sh` and submitted to SLURM.
+
+## process_grb.sh
+Usage: `process_grb.sh grbname`
+- grbname: The name of the GRB as per the database (eg, GRB110715A) which may differ from the official name due to lazyness in implementing the naming strategy.
+
+Currently:
+- download the calibrator data
+- make calibration solution
+- for each of the observations of this GRB:
+  - download, cotter and apply calibration solutions with `obs_dl.sh` (+ `chain.tmpl`)
+
+Eventually:
+- as above then
+- for each observation:
+  - image
+  - source find
+  - push images/catalogues to the `done` directory
+Do the above in a smart manner that will not process GRBs that are flagged as junk or broken.
+Start the processing at the required step by inspecting the db for previous jobs.
+Restart broken jobs.
+
 
 ### obs_dl.sh
 Usage: `obs_dl.sh obsid [depend [calid [calname]]]`
