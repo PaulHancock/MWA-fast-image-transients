@@ -36,6 +36,7 @@ Eventually:
   - image
   - source find
   - push images/catalogues to the `done` directory
+  
 Do the above in a smart manner that will not process GRBs that are flagged as junk or broken.
 Start the processing at the required step by inspecting the db for previous jobs.
 Restart broken jobs.
