@@ -5,6 +5,31 @@
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 
+function test_fail {
+if [[ $1 != 0 ]]
+then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit ${res}
+fi
+}
+
+function bane_aegean {
+if [[ $2 ]]
+then
+    echo $aprun BANE --grid $2 $2 $1
+else
+    echo $aprun BANE $1
+fi
+test_fail $?
+if [[ $3 ]]
+then
+    echo $aprun aegean --autoload $1 --table=$1 --beam $3 $4 $5
+else
+    echo $aprun aegean --autoload $1 --table=$1
+fi
+test_fail $?
+}
 
 # automatically set the right number of corse
 # maybe leaving -d blank will do this ...
@@ -22,22 +47,22 @@ datadir=${base}/processing
 cd ${datadir}
 
 obsnum=OBSNUM
-ncpus=20
 
-# start download
 cd ${base}
-#python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
-cd ${datadir}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
-lrfile_x=${obsnum}/${obsnum}-lr-XX-image.fits
-lrfile_y=${obsnum}/${obsnum}-lr-YY-image.fits
-hrfiles=`ls ${obsnum}/${obsnum}-hr-t*-{XX,YY}-image.fits`
+cd ${datadir}/${obsnum}
+
+# files that need to be processed
+prefix="${obsnum}-"
+suffix="-pbcorr-I.fits"
 
 set -x
 
 # find the BMAJ/BMIN/BPA from the lr (cleaned) image
-stats=( `gethead ${lrfile_x} BMAJ BMIN BPA CDELT2 ` )
+image2m="${prefix}2m${suffix}"
+stats=( `gethead ${image2m} BMAJ BMIN BPA CDELT2 ` )
 bmaj=${stats[0]}
 bmin=${stats[1]}
 bpa=${stats[2]}
@@ -47,35 +72,12 @@ grid=`echo "${bmaj}/${scale}" | bc -l`
 # round this to an integer
 grid=`echo "scale=0;(${grid}+0.5)/1" | bc`
 
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit ${res}
-fi
-}
 
-function bane_aegean {
-if [[ $2 ]]
-then
-    $aprun BANE --grid $2 $2 $1
-else
-    $aprun BANE $1
-fi
-test_fail $?
-if [[ $3 ]]
-then
-    $aprun aegean --autoload $1 --table=$1 --beam $3 $4 $5
-else
-    $aprun aegean --autoload $1 --table=$1
-fi
-test_fail $?
-}
 
-# process the lowres image
-bane_aegean ${lrfile_x}
-bane_aegean ${lrfile_y}
+# process the 2m images
+bane_aegean ${image2m}
+
+hrfiles=`ls ${prefix}0.5s-t????${suffix} ${prefix}28s-t????${suffix}`
 
 #make the background images and source find for all the highres images
 for image in ${hrfiles}
