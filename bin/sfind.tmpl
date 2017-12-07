@@ -76,6 +76,7 @@ grid=`echo "scale=0;(${grid}+0.5)/1" | bc`
 # process the 2m images
 bane_aegean ${image2m}
 
+# find all the higher resolution stokes I images and process them also.
 hrfiles=`ls ${prefix}0.5s-t????${suffix} ${prefix}28s-t????${suffix}`
 
 #make the background images and source find for all the highres images
