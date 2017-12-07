@@ -17,16 +17,16 @@ fi
 function bane_aegean {
 if [[ $2 ]]
 then
-    echo $aprun BANE --grid $2 $2 $1
+    $aprun BANE --grid $2 $2 $1
 else
-    echo $aprun BANE $1
+    $aprun BANE $1
 fi
 test_fail $?
 if [[ $3 ]]
 then
-    echo $aprun aegean --autoload $1 --table=$1 --beam $3 $4 $5
+    $aprun aegean --autoload $1 --table=$1 --beam $3 $4 $5
 else
-    echo $aprun aegean --autoload $1 --table=$1
+    $aprun aegean --autoload $1 --table=$1
 fi
 test_fail $?
 }
