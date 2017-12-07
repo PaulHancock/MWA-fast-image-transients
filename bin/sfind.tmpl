@@ -49,7 +49,6 @@ cd ${datadir}
 obsnum=OBSNUM
 
 cd ${base}
-
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
@@ -85,4 +84,5 @@ do
     bane_aegean ${image} ${grid} ${bmaj} ${bmin} ${bpa}
 done
 
+cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
