@@ -1,4 +1,5 @@
 #! /bin/bash -l
+#SBATCH --export=NONE
 #SBATCH -M zeus
 #SBATCH -p copyq
 #SBATCH --account=mwasci
@@ -24,8 +25,9 @@ obsnum=OBSNUM
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
+# use the non-egg version of the obsdownload
 cd ${datadir}
-obsdownload.py -o ${obsnum}
+python /group/mwasci/code/MWA_Tools/scripts/obsdownload.py -o ${obsnum}
 
 test_fail $?
 

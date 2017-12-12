@@ -1,4 +1,5 @@
 #! /bin/bash -l
+#SBATCH --export=NONE
 #SBATCH -M galaxy
 #SBATCH -p workq
 #SBATCH --account=mwasci
@@ -24,9 +25,9 @@ fi
 test_fail $?
 if [[ $3 ]]
 then
-    $aprun aegean --autoload $1 --table=$1 --beam $3 $4 $5
+    $aprun aegean --autoload $1 --table=$1 --beam $3 $4 $5 --island --negative
 else
-    $aprun aegean --autoload $1 --table=$1
+    $aprun aegean --autoload $1 --table=$1 --island --negative
 fi
 test_fail $?
 }
