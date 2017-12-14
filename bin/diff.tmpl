@@ -48,7 +48,10 @@ for (( i=1; i<${nfiles}; i++ ))
 do
   # run jobs in groups of N=${cores}
   ((j=j%${cores})); ((j++==0)) && wait
-  aprun -n 1 -d 1 -b python ${base}/bin/fitssub.py ${files[i]} ${files[i-1]} ${files[i]%%.fits}_diff.fits &
+  # extract the time stamp id from thesecond file
+  id2=`echo ${files[i-1]} | sed "s/${obsnum-0.5s-\(t????\)-pbcorr-I.fits/\1/g"`
+  outfile= "${files[i]%%pbcorr-I.fits}-${id2}-pbcorr-I_diff.fits"
+  aprun -n 1 -d 1 -b python ${base}/bin/fitssub.py ${files[i]} ${files[i-1]} ${outfile} &
 done
 test_fail $?
 
