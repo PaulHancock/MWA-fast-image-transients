@@ -185,7 +185,11 @@ def update_grb_table(last_trigger=None):
     # select the not-yet processed triggers
     ids = zip(*cur.execute("""SELECT obsname
     FROM observation WHERE calibration=0
-    AND obsname NOT IN (SELECT fermi_trigger_id FROM grb)
+    AND obsname NOT IN (
+    SELECT fermi_trigger_id FROM grb WHERE fermi_trigger_id not NULL 
+    UNION ALL
+    SELECT swift_trigger_id FROM grb WHERE swift_trigger_id not NULL
+    )
     GROUP BY obsname""").fetchall())
     print ids
     if len(ids) == 0:
@@ -208,6 +212,10 @@ def update_grb_table(last_trigger=None):
         if len(id) == 6:
             id = id
             mission = 'swift'
+        try:
+            id = int(id)
+        except ValueError, e:
+            continue
         r = get_accumulated_report(id, mission)
         valid = validate(r)
         print id, "{0}/{1}".format(i, len(ids)), valid
