@@ -24,7 +24,7 @@ then
 else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
     cores=20
 fi
-aprun="aprun -n 1 -d ${cores} -b"
+aprun="srun -n 1 -c ${cores} "
 
 base=BASEDIR
 datadir=${base}/processing
@@ -32,7 +32,6 @@ datadir=${base}/processing
 cd ${datadir}
 
 obsnum=OBSNUM
-ncpus=20
 
 # start download
 cd ${base}
@@ -44,19 +43,19 @@ imfile="${obsnum}-lr-pbcorr-I-image.fits"
 #if [[ ! -e ${imfile} ]]
 if [[ 0 ]]
 then
-  ${aprun} wsclean -name ${obsnum}-2m -size 3072 3072 \
+  wsclean -name ${obsnum}-2m -size 3072 3072 \
       -weight briggs -1 -mfsweighting -scale 32asec \
-      -pol xx,yy -j ${ncpus} -minuv-l 30 \
+      -pol xx,yy -j ${cores} -minuv-l 30 \
       -stopnegative -joinpolarizations -niter 20000 -threshold 0.2 \
       ${obsnum}.ms
   test_fail $?
   
   # make primary beam models
-  $aprun beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+  beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
   test_fail $?
   
   # create stokes iquv images
-  $aprun pbcorrect ${obsnum}-2m image.fits beam-MFS ${obsnum}-2m-pbcorr
+  pbcorrect ${obsnum}-2m image.fits beam-MFS ${obsnum}-2m-pbcorr
   test_fail $?
 else
   echo "${imfile} exists, skipping"
