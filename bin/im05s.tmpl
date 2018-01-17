@@ -24,7 +24,6 @@ then
 else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
     cores=20
 fi
-aprun="aprun -n 1 -d ${cores} -b"
 
 base=BASEDIR
 datadir=${base}/processing
@@ -40,7 +39,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
 echo "##WSCLEAN"
-$aprun wsclean -name ${obsnum}-0.5s -size 4096 4096 \
+wsclean -name ${obsnum}-0.5s -size 4096 4096 \
     -weight briggs -1 -mfsweighting -scale 32asec \
     -pol xx,yy -j ${ncpus} -minuv-l 30 \
     -stopnegative -joinpolarizations -niter 0 -threshold 0.2 \
@@ -55,7 +54,7 @@ rm ${obsnum}-0.5s-??-dirty.fits
 if [[ `ls beam-MFS-[xy][xy][ri].fits | wc -l` -ne 8 ]]
 then
     echo "## Making primary beam"
-    $aprun beam -2016 -proto ${obsnum}-0.5s-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+    beam -2016 -proto ${obsnum}-0.5s-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
     test_fail $?
 else
     echo "## primary beam exists"
@@ -67,7 +66,7 @@ files=`ls ${obsnum}-0.5s-t0???-XX-image.fits`
 for f in ${files}
 do
   prefix=${f%%-XX-image.fits}
-  $aprun pbcorrect ${prefix} image.fits beam-MFS ${prefix}-pbcorr
+  pbcorrect ${prefix} image.fits beam-MFS ${prefix}-pbcorr
   test_fail $?
 done
 

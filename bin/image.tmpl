@@ -24,7 +24,6 @@ then
 else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
     cores=20
 fi
-aprun="srun -n 1 -c ${cores} "
 
 base=BASEDIR
 datadir=${base}/processing

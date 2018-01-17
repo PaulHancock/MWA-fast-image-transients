@@ -24,7 +24,6 @@ then
 else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
     cores=20
 fi
-aprun="aprun -n 1 -d ${cores} -b"
 
 calibrator=CALIBRATOR
 base=BASEDIR
@@ -74,33 +73,33 @@ fi
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
 # calibrate
-$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
+calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
-$aprun aocal_plot.py --refant=127 --amp_max=2 ${solutions}
+aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 test_fail $?
 
 # apply calibration
-$aprun applysolutions ${obsnum}.ms ${solutions}
+applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
 # run aoflagger
 # default is to work on the corrected data column
-$aprun aoflagger ${obsnum}.ms 
+aoflagger ${obsnum}.ms 
 test_fail $?
 
 solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
 # calibrate again!
-$aprun calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
+calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 #plot again
-$aprun aocal_plot.py --refant=127 --amp_max=2 ${solutions}
+aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 test_fail $?
 
 # apply calibration again
-$aprun applysolutions ${obsnum}.ms ${solutions}
+applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
 # delete the symlinks and temp directory

@@ -25,7 +25,6 @@ then
 else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
     cores=20
 fi
-aprun="aprun -n 1 -d ${cores} -b"
 
 calid=CALOBSID
 base=BASEDIR
@@ -42,10 +41,10 @@ cd ${datadir}/${obsnum}
 # if there is a tile flagging file then use it to flag the data before applying the calibration solutions.
 if [[ -e tiles_to_flag.txt ]]
 then
-    $aprun flagantennae `cat tiles_to_flag.txt`
+    flagantennae `cat tiles_to_flag.txt`
 fi
 
-$aprun  applysolutions ${obsnum}.ms ../${calid}/${calid}_*_solutions.bin
+ applysolutions ${obsnum}.ms ../${calid}/${calid}_*_solutions.bin
 test_fail $?
 
 cd ${base}

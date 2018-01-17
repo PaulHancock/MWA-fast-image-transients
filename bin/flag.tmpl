@@ -24,7 +24,6 @@ then
 else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
     cores=20
 fi
-aprun="aprun -n 1 -d ${cores} -b"
 
 base=BASEDIR
 datadir="${base}/processing"
@@ -40,7 +39,7 @@ cd ${datadir}/${obsnum}
 
 # run aoflagger
 # default is to work on the corrected data column
-$aprun aoflagger ${obsnum$}.ms 
+aoflagger ${obsnum$}.ms 
 test_fail $?
 
 # delete the symlinks and temp directory
