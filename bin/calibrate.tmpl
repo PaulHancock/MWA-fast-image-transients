@@ -39,7 +39,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 # look for the calibrator model in the database
 calmodel=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT calfile FROM calibrators WHERE name='${calibrator}'"`
-echo "using calibrator model : ${calmodel}"
+
 # if it isn't in the database then uset the point source model
 if [[ -z ${calmodel} ]]
 then
@@ -47,11 +47,13 @@ then
 else
     calmodel=`basename ${calmodel}`
 fi
+echo "using calibrator model : ${calmodel}"
 
 # check that the model exists
 if [[ ! -e ${modeldir}/${calmodel} ]]
 then
   echo "Cannot find calibrator model for ${calibrator}"
+  echo "File: ${modeldir}/${calmodel} not found"
   test_fail 1
 fi
 
