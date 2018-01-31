@@ -18,9 +18,9 @@ fi
 function bane_aegean {
 if [[ $2 ]]
 then
-    BANE --grid $2 $2 $1
+    BANE --grid $2 $2 $1 --compress
 else
-    BANE $1
+    BANE $1 --compress
 fi
 test_fail $?
 if [[ $3 ]]
