@@ -16,30 +16,19 @@ fi
 }
 
 function bane_aegean {
-if [[ $2 ]]
-then
-    BANE --grid $2 $2 $1 --compress
-else
-    BANE $1 --compress
-fi
-test_fail $?
-if [[ $3 ]]
-then
-    aegean --autoload $1 --table=$1 --beam $3 $4 $5 --island --negative
-else
-    aegean --autoload $1 --table=$1 --island --negative
-fi
-test_fail $?
-}
 
-# automatically set the right number of corse
-# maybe leaving -d blank will do this ...
-if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
-then
-    cores=8
-else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
-    cores=20
+if [[ ! -e ${1%%.fits}_bkg.fits} ]]
+then 
+    BANE ${1} --compress
+    test_fail $?
 fi
+
+if [[ ! -e ${1%%.fits}_comp.fits} ]]
+then
+    aegean --autoload ${1} --table=${1} --island --negative
+    test_fail $?
+fi
+}
 
 base=BASEDIR
 datadir=${base}/processing
@@ -61,19 +50,12 @@ set -x
 
 # find the BMAJ/BMIN/BPA from the lr (cleaned) image
 image2m="${prefix}2m${suffix}"
-stats=( `gethead ${image2m} BMAJ BMIN BPA CDELT2 ` )
+stats=( `gethead ${image2m} BMAJ BMIN BPA` )
 bmaj=${stats[0]}
 bmin=${stats[1]}
 bpa=${stats[2]}
-scale=${stats[3]}
 
-grid=`echo "${bmaj}/${scale}" | bc -l`
-# round this to an integer
-grid=`echo "scale=0;(${grid}+0.5)/1" | bc`
-
-
-
-# process the 2m images
+# process the 2m image
 bane_aegean ${image2m}
 
 # find all the higher resolution stokes I images and process them also.
@@ -82,7 +64,9 @@ hrfiles=`ls ${prefix}0.5s-t????${suffix} ${prefix}28s-t????${suffix}`
 #make the background images and source find for all the highres images
 for image in ${hrfiles}
 do
-    bane_aegean ${image} ${grid} ${bmaj} ${bmin} ${bpa}
+    # update the fits headers for the input image
+    sethead ${image} BMAJ=${bmaj} BMIN=${bmin} BPA=${bpa}
+    bane_aegean ${image}
 done
 
 cd ${base}
