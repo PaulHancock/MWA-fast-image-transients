@@ -41,7 +41,7 @@ cd ${datadir}/${obsnum}
 # if there is a tile flagging file then use it to flag the data before applying the calibration solutions.
 if [[ -e tiles_to_flag.txt ]]
 then
-    flagantennae `cat tiles_to_flag.txt`
+    flagantennae ${obsnum}.ms `cat tiles_to_flag.txt`
 fi
 
  applysolutions ${obsnum}.ms ../${calid}/${calid}_*_solutions.bin
