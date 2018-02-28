@@ -9,6 +9,13 @@ cd ${base}
 dep=(`./bin/obs_cotter.sh ${obsnum} ${dep}`)
 depend=${dep[3]}
 
+
+# If there is a tile flagging file defined then apply it
+if [[ -e "${base}/processing/${obsnum}_tiles_to_flag.txt" ]]
+  dep=($( ./bin/obs_flag_tiles.sh ${obsnum} ${depend} ))
+  depend=${dep[3]}
+fi
+
 # if we have a calibrator name then this is a calibration obs
 # so we need to just calculate the colutions
 if [[ ! -z ${calname} ]]
