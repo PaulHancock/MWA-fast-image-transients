@@ -1,21 +1,56 @@
 #! /bin/bash
 
-obsnum=$1
-dep=$2
-calid=$3
-calname=$4
+usage()
+{
+echo "obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum" 1>&2;
+exit 1;
+}
 
+#initialize as empty
+calid=
+calname=
+dep=
+tst=
+
+# parse args and set options
+while getopts ':td:c:n:' OPTION
+do
+    case "$OPTION" in
+	d)
+	    dep=${OPTARG}
+	    ;;
+
+	c)
+	    calid=${OPTARG}
+	    ;;
+	n)
+	    calname=${OPTARG}
+	    ;;
+	t)
+	    tst=1
+	    ;;
+	? | : | h)
+	    usage
+	    ;;
+  esac
+done
+# set the obsid to be the first non option
+shift  "$(($OPTIND -1))"
+obsnum=$1
+
+# if obsid is empty then just pring help
 if [[ -z ${obsnum} ]]
 then
-  echo "OBSNUM required as first arg"
-  exit 1
+    usage
 fi
 
-depend=""
-if [[ ${#dep} -gt 4 ]]
+# start the real program
+
+if [[ ! -z ${dep} ]]
 then
-depend="--dependency=afterok:${dep}"
+    depend="--dependency=afterok:${dep}"
 fi
+
 
 base='/astro/mwasci/phancock/D0009/'
 
@@ -28,9 +63,18 @@ cat ${base}/bin/chain.tmpl | sed "s:CALNAME:${calname}:" | sed "s:CALID:${calid}
 output="${base}queue/logs/dl_${obsnum}.o%A"
 error="${base}queue/logs/dl_${obsnum}.e%A"
 
-
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend}  ${script}"
+if [[ ! -z ${tst} ]]
+then
+    echo "script is ${script}"
+    echo "submit via:"
+    echo "${sub}"
+    exit 0
+fi
+    
 # submit job
-jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend}  ${script}`)
+#jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend}  ${script}`)
+jobid=($(${sub}))
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid
