@@ -138,6 +138,15 @@ uses tempaltes:
 
 No job is submitted if the flagging file doesn't exist so this script is safe to include always.
 
+### obs_flag_tiles.sh
+Usage: `obs_flag_tiles.sh obsnum [depend]`
+- obsnum: MWA observation id
+- depend: slurm job id on which this task depends (afterok)
+
+uses templates:
+- `flag_tiles.tmpl` (obsnum->OBSNUM)
+  - if processing/<obsnum>_tiles_to_flag.txt` exists then the tiles listed are flagged.
+
 ### obs_sfind.sh <<UNDER DEVELOPMENT/TESTING>>
 Usage: `obs_flag.sh obsnum [depend]`
 - obsid: MWA observation id
