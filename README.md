@@ -149,7 +149,7 @@ Usage: `obs_flag_tiles.sh obsnum [depend]`
 
 uses templates:
 - `flag_tiles.tmpl` (obsnum->OBSNUM)
-  - if processing/<obsnum>_tiles_to_flag.txt` exists then the tiles listed are flagged.
+  - if `processing/<obsnum>_tiles_to_flag.txt` exists then the tiles listed are flagged.
 
 TODO:
 - allow flagging file and obsnum to be different.
