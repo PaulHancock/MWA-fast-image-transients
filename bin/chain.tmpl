@@ -6,7 +6,7 @@ calid=CALID
 base='/astro/mwasci/phancock/D0009/'
 cd ${base}
 
-dep=(`./bin/obs_cotter.sh ${obsnum} ${dep}`)
+dep=(`./bin/obs_cotter.sh -d ${dep} ${obsnum}`)
 depend=${dep[3]}
 
 

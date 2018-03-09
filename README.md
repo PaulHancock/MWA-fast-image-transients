@@ -62,9 +62,15 @@ That means that you can pass `0` for the dependency and it is ignored.
 This is useful for when you want to supply the clibrator ID and name but don't wnat to set a dependency.
 
 ### obs_cotter.sh
-Usage: `obs_cotter.sh obsid [depend]`
-- obsid: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
+usage:
+```
+obs_cotter.sh [-d dep] [-q queue] [-t] obsnum
+  -d dep      : job number for dependency (afterok)
+  -q queue    : job queue, default=gpuq
+  -t          : test. Don't submit job, just make the batch file
+                and then return the submission command
+  obsnum      : the obsid to process
+```
 
 uses templates:
 - `cotter.tmpl` (obsnum->OBSNUM)
