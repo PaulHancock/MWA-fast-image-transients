@@ -144,7 +144,8 @@ format is `<obsid>_tiles_to_flag.txt` (different from above), and should
 contain a list of integers being the tile numbers (all on one line, space separated).
 
 usage: 
-```obs_flag_tiles.sh [-d dep] [-f flagfile] [-t] obsnum
+```
+obs_flag_tiles.sh [-d dep] [-f flagfile] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -f flagfile : file to use for flagging
                 default is processing/<obsnum>_tile_to_flag.txt
