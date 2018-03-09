@@ -143,13 +143,17 @@ Flags a single observation using the corresponding flag file. The flag file
 format is `<obsid>_tiles_to_flag.txt` (different from above), and should
 contain a list of integers being the tile numbers (all on one line, space separated).
 
-Usage: `obs_flag_tiles.sh obsnum [depend]`
-- obsnum: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
+usage: ```obs_flag_tiles.sh [-d dep] [-f flagfile] [-t] obsnum
+  -d dep      : job number for dependency (afterok)
+  -f flagfile : file to use for flagging
+                default is processing/<obsnum>_tile_to_flag.txt
+  -t          : test. Don't submit job, just make the batch file
+                and then return the submission command
+  obsnum      : the obsid to process
+```
 
 uses templates:
 - `flag_tiles.tmpl` (obsnum->OBSNUM)
-  - if `processing/<obsnum>_tiles_to_flag.txt` exists then the tiles listed are flagged.
 
 TODO:
 - allow flagging file and obsnum to be different.
