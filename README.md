@@ -157,9 +157,6 @@ obs_flag_tiles.sh [-d dep] [-f flagfile] [-t] obsnum
 uses templates:
 - `flag_tiles.tmpl` (obsnum->OBSNUM)
 
-TODO:
-- allow flagging file and obsnum to be different.
-
 ### obs_sfind.sh <<UNDER DEVELOPMENT/TESTING>>
 Usage: `obs_flag.sh obsnum [depend]`
 - obsid: MWA observation id
