@@ -2,12 +2,12 @@
 
 usage()
 {
-echo "obs_cotter.sh [-d dep] [-q queue] [-t] obsnum" 1>&2;
-echo "  -d dep      : job number for dependency (afterok)"  1>&2;
-echo "  -q queue    : job queue, default=gpuq" 1>&2;
-echo "  -t          : test. Don't submit job, just make the batch file" 1>&2;
-echo "                and then return the submission command" 1>&2;
-echo "  obsnum      : the obsid to process" 1>&2;
+echo "obs_cotter.sh [-d dep] [-q queue] [-t] obsnum
+  -d dep      : job number for dependency (afterok)
+  -q queue    : job queue, default=gpuq
+  -t          : test. Don't submit job, just make the batch file
+                and then return the submission command
+  obsnum      : the obsid to process" 1>&2;
 exit 1;
 }
 

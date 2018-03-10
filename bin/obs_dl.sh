@@ -12,8 +12,7 @@ echo "obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum
                and so calibration will be done.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
-  obsnum     : the obsid to process
-" 1>&2;
+  obsnum     : the obsid to process" 1>&2;
 exit 1;
 }
 
