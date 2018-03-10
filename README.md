@@ -43,11 +43,20 @@ Restart broken jobs.
 
 
 ### obs_dl.sh
-Usage: `obs_dl.sh obsid [depend [calid [calname]]]`
-- obsid: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
-- calid: obsid for the corresponding calibrator
-- calname: name of the calibrator
+Usage: 
+```
+obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -c calid   : obsid for calibrator.
+               If a calibration solution exists for calid
+               then it will be applied this dataset.
+  -n calname : The name of the calibrator.
+               Implies that this is a calibrator observation
+               and so calibration will be done.
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
 
 uses templates: 
 - `dl.tmpl` (obsnum->OBSNUM) 
@@ -56,10 +65,6 @@ uses templates:
   - run cotter (always)
   - if calname is set then create a calibration solution from this data and stop
   - if calid is set then apply the calibration solution from calid and then create an image (see `obs_image.sh`)
-
-If dependency is not passed or has fewer than 4 digits then it is ingored.
-That means that you can pass `0` for the dependency and it is ignored.
-This is useful for when you want to supply the clibrator ID and name but don't wnat to set a dependency.
 
 ### obs_cotter.sh
 usage:
