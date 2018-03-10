@@ -1,12 +1,12 @@
 #! /bin/bash
 usage()
 {
-echo "obs_calibrate.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
+echo "obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
-  -c calid   : obsid for calibrator. 
-               If a calibration solution exists for calid
-               then it will be applied this dataset.
+  -n calname : The name of the calibrator.
+               Implies that this is a calibrator observation 
+               and so calibration will be done.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
@@ -16,19 +16,19 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p gpuq'
-calid=
+calname=
 tst=
 
 # parse args and set options
-while getopts ':td:q:c:' OPTION
+while getopts ':td:q:n:' OPTION
 do
     case "$OPTION" in
 	d)
 	    dep=${OPTARG}
 	    ;;
 
-	c)
-	    calid=${OPTARG}
+	n)
+	    calname=${OPTARG}
 	    ;;
 	q)
 	    queue="-p ${OPTARG}"
@@ -61,7 +61,7 @@ fi
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/calibrate_${obsnum}.sh"
-cat ${base}/bin/calibrate.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALIBRATOR:${cal}:g"  > ${script}
+cat ${base}/bin/calibrate.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALIBRATOR:${calname}:g"  > ${script}
 
 output="${base}queue/logs/calibrate_${obsnum}.o%A"
 error="${base}queue/logs/calibrate_${obsnum}.e%A"
