@@ -2,30 +2,34 @@
 
 usage()
 {
-echo "obs_flag_tiles.sh [-d dep] [-f flagfile] [-t] obsnum" 1>&2;
-echo "  -d dep      : job number for dependency (afterok)"  1>&2;
-echo "  -f flagfile : file to use for flagging"  1>&2;
-echo "                default is processing/<obsnum>_tile_to_flag.txt" 1>&2;
-echo "  -t          : test. Don't submit job, just make the batch file" 1>&2;
-echo "                and then return the submission command" 1>&2;
-echo "  obsnum      : the obsid to process" 1>&2;
+echo "obs_flag_tiles.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
+  -d dep      : job number for dependency (afterok)
+  -q queue    : job queue, default=gpuq
+  -f flagfile : file to use for flagging
+                default is processing/<obsnum>_tile_to_flag.txt
+  -t          : test. Don't submit job, just make the batch file
+                and then return the submission command
+  obsnum      : the obsid to process" 1>&2;
 exit 1;
 }
 
 #initialize as empty                                                                                                                                      
-flagfile=
 dep=
+queue='-p gpuq'
+flagfile=
 tst=
 
 
 # parse args and set options                                                                                                                              
-while getopts ':td:f:' OPTION
+while getopts ':td:q:f:' OPTION
 do
     case "$OPTION" in
         d)
             dep=${OPTARG}
             ;;
-
+	q)
+	    queue="-p ${OPTARG}"
+	    ;;
         f)
             flagfile=${OPTARG}
             ;;
