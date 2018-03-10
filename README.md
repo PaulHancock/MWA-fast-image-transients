@@ -105,10 +105,18 @@ uses templates:
   - replot the solutions
   
 ### obs_apply_cal.sh
-Usage: `obs_apply_cal.sh obsnum cal [depend]`
-- obsid: MWA observation id
-- cal: calibrator obsid
-- depend: slurm job id on which this task depends (afterok)
+Usage:
+```
+obs_apply_cal.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
+  -d dep      : job number for dependency (afterok)
+  -q queue    : job queue, default=gpuq
+  -c calid    : obsid for calibrator.
+                If a calibration solution exists for calid
+                then it will be applied this dataset.
+  -t          : test. Don't submit job, just make the batch file
+                and then return the submission command
+  obsnum      : the obsid to process
+```
 
 uses tempaltes:
 - `apply_cal.tmpl` (obsnum->OBSNUM, cal->CALOBSID)
