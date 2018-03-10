@@ -60,7 +60,7 @@ if [[ 0 ]]
 then
   wsclean -name ${obsnum}-2m ${imsize} \
       -weight briggs -1 -mfsweighting ${pixscale} \
-      -pol xx,yy -j ${cores} -minuv-l 30 \
+      -pol xx,yy -minuv-l 30 \
       ${clean} ${obsnum}.ms
   test_fail $?
   
