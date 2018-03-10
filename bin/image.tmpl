@@ -3,7 +3,7 @@
 #SBATCH -M galaxy
 #SBATCH -p workq
 #SBATCH --account=mwasci
-#SBATCH --time=10:00:00
+#SBATCH --time=8:00:00
 #SBATCH --nodes=1
 
 
@@ -42,7 +42,7 @@ imfile="${obsnum}-lr-pbcorr-I-image.fits"
 #if [[ ! -e ${imfile} ]]
 if [[ 0 ]]
 then
-  wsclean -name ${obsnum}-2m -size 3072 3072 \
+  wsclean -name ${obsnum}-2m -size 4094 4094 \
       -weight briggs -1 -mfsweighting -scale 32asec \
       -pol xx,yy -j ${cores} -minuv-l 30 \
       -stopnegative -joinpolarizations -niter 20000 -threshold 0.2 \
