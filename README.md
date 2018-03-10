@@ -160,9 +160,17 @@ uses tempaltes:
   - perform primary beam correction on these images
 
 ### obs_flag.sh
-Usage: `obs_flag.sh obsnum [depend]`
-- obsid: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
+Usage:
+```
+obs_flag.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
+  -d dep      : job number for dependency (afterok)
+  -q queue    : job queue, default=gpuq
+  -f flagfile : file to use for flagging
+                default is processing/<obsnum>_tile_to_flag.txt
+  -t          : test. Don't submit job, just make the batch file
+                and then return the submission command
+  obsnum      : the obsid to process
+```
 
 uses tempaltes:
 - `flag.tmpl` (obsnum->OBSNUM)
