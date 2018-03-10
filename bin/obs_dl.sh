@@ -83,7 +83,6 @@ then
 fi
     
 # submit job
-#jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend}  ${script}`)
 jobid=($(${sub}))
 jobid=${jobid[3]}
 
