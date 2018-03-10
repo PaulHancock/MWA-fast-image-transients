@@ -124,10 +124,15 @@ uses tempaltes:
 
 
 ### obs_image.sh
-Usage: `obs_image.sh obsnum [depend]`
-- obsid: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
-
+Usage: 
+```
+obs_image.sh [-d dep] [-q queue] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=gpuq
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
 uses tempaltes:
 - `image.tmpl` (obsnum->OBSNUM)
   - make a single time/freq image and clean
