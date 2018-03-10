@@ -50,12 +50,6 @@ then
     depend="--dependency=afterok:${dep}"
 fi
 
-depend=""
-if [[ ! -z ${dep} ]] 
-then
-    depend="--dependency=afterok:${dep}"
-fi
-
 
 # start the real program
 
