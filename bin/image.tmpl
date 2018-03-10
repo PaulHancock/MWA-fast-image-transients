@@ -27,7 +27,7 @@ datadir=${base}/processing
 cd ${datadir}
 
 # set the image size
-if [[ -z ${imsize} ]]
+if [[ ! -z ${imsize} ]]
 then 
     imsize="-size ${imsize} ${imsize}"
 else
@@ -35,7 +35,7 @@ else
 fi
 
 # set the image scale
-if [[ -z ${pixscale} ]]
+if [[ ! -z ${pixscale} ]]
 then
     pixscale="-scale ${scale}"
 else
@@ -43,7 +43,7 @@ else
 fi
 
 #if clean is set then change it to the correct clean options.
-if [[ -z ${clean} ]]
+if [[ ! -z ${clean} ]]
 then 
     clean="-stopnegative -joinpolarizations -niter 20000 -threshold 0.2"
 fi
