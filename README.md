@@ -84,12 +84,12 @@ uses templates:
 ### obs_calibrate.sh
 Usage:
 ```
-obs_calibrate.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
+obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
-  -c calid   : obsid for calibrator.
-               If a calibration solution exists for calid
-               then it will be applied this dataset.
+  -n calname : The name of the calibrator.
+               Implies that this is a calibrator observation
+               and so calibration will be done.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
