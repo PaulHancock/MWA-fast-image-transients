@@ -7,7 +7,7 @@ echo "obs_image.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-c] [-t] obsnu
   -q queue   : job queue, default=gpuq
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
-  -c         : clean image. Default True.
+  -c         : clean image. Default False.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
