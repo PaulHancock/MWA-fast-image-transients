@@ -2,9 +2,11 @@
 
 usage()
 {
-echo "obs_cotter.sh [-d dep] [-q queue] [-t] obsnum
+echo "obs_cotter.sh [-d dep] [-q queue] [-s timeave] [-k freqav] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
+  -s timeav   : time averaging in sec. default = no averaging
+  -k freqav   : freq averaging in KHz. default = no averaging
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process" 1>&2;
@@ -13,25 +15,27 @@ exit 1;
 
 #initialize as empty
 dep=
-tst=
 queue='-p gpuq'
+tst=
+timeav=
+freqav=
 
 # parse args and set options
-while getopts ':td:' OPTION
+while getopts ':td:s:k:' OPTION
 do
     case "$OPTION" in
         d)
-            dep=${OPTARG}
-            ;;
+            dep=${OPTARG} ;;
 	q)
-	    queue="-p ${OPTARG}"
-	    ;;
+	    queue="-p ${OPTARG}" ;;
+	s)
+	    timeav=${OPTARG} ;;
+	k)
+	    freqav=${OPTARG} ;;
         t)
-            tst=1
-            ;;
+            tst=1 ;;
         ? | : | h)
-            usage
-            ;;
+            usage ;;
   esac
 done
 
@@ -46,8 +50,15 @@ then
     usage
 fi
 
-fres=40
-tres=0.5
+if [[ ! -z ${timeav} ]]
+then
+    timeav=0.5
+fi
+
+if [[ ! -z ${freqav} ]]
+then
+    freqav=40
+fi
 
 if [[ ! -z ${dep} ]]
 then
@@ -57,11 +68,13 @@ fi
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/cotter_${obsnum}.sh"
-cat ${base}/bin/cotter.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:TRES:${tres}:g" | sed "s:FRES:${fres}:g" | sed "s:BASEDIR:${base}:g"  > ${script}
+cat ${base}/bin/cotter.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
+                                  -e "s:TRES:${timeav}:g" \
+                                  -e "s:FRES:${freqav}:g" \
+                                  -e "s:BASEDIR:${base}:g"  > ${script}
 
 output="${base}queue/logs/cotter_${obsnum}.o%A"
 error="${base}queue/logs/cotter_${obsnum}.e%A"
-
 
 sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
@@ -72,10 +85,8 @@ then
     exit 0
 fi
 
-
-
 # submit job
-jobid=($(S{sub}))
+jobid=($(${sub}))
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid

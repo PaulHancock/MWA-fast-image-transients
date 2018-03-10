@@ -69,16 +69,18 @@ uses templates:
 ### obs_cotter.sh
 usage:
 ```
-obs_cotter.sh [-d dep] [-q queue] [-t] obsnum
+obs_cotter.sh [-d dep] [-q queue] [-s timeave] [-k freqav] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
+  -s timeav   : time averaging in sec. default = no averaging
+  -k freqav   : freq averaging in KHz. default = no averaging
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process
 ```
 
 uses templates:
-- `cotter.tmpl` (obsnum->OBSNUM)
+- `cotter.tmpl` (obsnum->OBSNUM/timeav->TRES/freqav->FRES)
   - run cotter to convert gpubox .fits files into a measurement set apply online flag files if present
   
 ### obs_calibrate.sh
