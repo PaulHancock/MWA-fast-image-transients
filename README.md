@@ -185,8 +185,9 @@ contain a list of integers being the tile numbers (all on one line, space separa
 
 usage: 
 ```
-obs_flag_tiles.sh [-d dep] [-f flagfile] [-t] obsnum
+obs_flag_tiles.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
   -d dep      : job number for dependency (afterok)
+  -q queue    : job queue, default=gpuq
   -f flagfile : file to use for flagging
                 default is processing/<obsnum>_tile_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
