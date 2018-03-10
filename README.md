@@ -126,15 +126,18 @@ uses tempaltes:
 ### obs_image.sh
 Usage: 
 ```
-obs_image.sh [-d dep] [-q queue] [-t] obsnum
+obs_image.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-c] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
+  -s imsize  : image size will be imsize x imsize pixels, default 4096
+  -p pixscale: image pixel scale, default is 32asec
+  -c         : clean image. Default True.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
 ```
 uses tempaltes:
-- `image.tmpl` (obsnum->OBSNUM)
+- `image.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE/clean->CLEAN)
   - make a single time/freq image and clean
   - perform primary beam correction on this image.
 

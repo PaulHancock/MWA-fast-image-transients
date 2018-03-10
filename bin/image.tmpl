@@ -16,21 +16,37 @@ then
 fi
 }
 
-# automatically set the right number of corse
-# maybe leaving -d blank will do this ...
-if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
-then
-    cores=8
-else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
-    cores=20
-fi
-
+obsnum=OBSNUM
 base=BASEDIR
+imsize=IMSIZE
+pixscale=SCALE
+clean=CLEAN
+
 datadir=${base}/processing
 
 cd ${datadir}
 
-obsnum=OBSNUM
+# set the image size
+if [[ -z ${imsize} ]]
+then 
+    imsize="-size ${imsize} ${imsize}"
+else
+    imsize="-size 4096 4096"
+fi
+
+# set the image scale
+if [[ -z ${pixscale} ]]
+then
+    pixscale="-scale ${scale}"
+else
+    pixscale="-scale 32asec"
+fi
+
+#if clean is set then change it to the correct clean options.
+if [[ -z ${clean} ]]
+then 
+    clean="-stopnegative -joinpolarizations -niter 20000 -threshold 0.2"
+fi
 
 # start download
 cd ${base}
@@ -38,15 +54,14 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
 
-imfile="${obsnum}-lr-pbcorr-I-image.fits" 
+#imfile="${obsnum}-lr-pbcorr-I-image.fits" 
 #if [[ ! -e ${imfile} ]]
 if [[ 0 ]]
 then
-  wsclean -name ${obsnum}-2m -size 4094 4094 \
-      -weight briggs -1 -mfsweighting -scale 32asec \
+  wsclean -name ${obsnum}-2m ${imsize} \
+      -weight briggs -1 -mfsweighting ${pixscale} \
       -pol xx,yy -j ${cores} -minuv-l 30 \
-      -stopnegative -joinpolarizations -niter 20000 -threshold 0.2 \
-      ${obsnum}.ms
+      ${clean} ${obsnum}.ms
   test_fail $?
   
   # make primary beam models
