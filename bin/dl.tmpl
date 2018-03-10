@@ -3,7 +3,7 @@
 #SBATCH -M zeus
 #SBATCH -p copyq
 #SBATCH --account=mwasci
-#SBATCH --time=01:00:00
+#SBATCH --time=02:00:00
 #SBATCH --nodes=1
 
 function test_fail {
@@ -15,7 +15,6 @@ then
 fi
 }
 
-#aprun='aprun -n 1 -d 8 -b'
 base=BASEDIR
 datadir=${base}/processing
 
@@ -27,7 +26,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 # use the non-egg version of the obsdownload
 cd ${datadir}
-python /group/mwasci/code/MWA_Tools/scripts/obsdownload.py -o ${obsnum}
+obsdownload.py -o ${obsnum}
 
 test_fail $?
 
@@ -35,7 +34,7 @@ test_fail $?
 nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
 
 # if we don't have this many files then we have a bad result.
-if [[ ${nfiles} -eq `ls ${obnum}*.{fits,mwaf} | wc -l` ]]
+if [[ ${nfiles} -eq `ls ${obsnum}*.{fits,mwaf} | wc -l` ]]
 then
   test_fail 1
 fi
