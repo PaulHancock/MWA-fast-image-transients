@@ -20,17 +20,17 @@ fi
 # so we need to just calculate the colutions
 if [[ ! -z ${calname} ]]
 then
-  dep=(`./bin/obs_calibrate.sh ${obsnum} ${calname} ${depend}`)
+  dep=(`./bin/obs_calibrate.sh -c ${calname} ${depend}`)
   depend=${dep[3]}
 
 # if we have the calid then this is a normal obs that we need to apply the
 # solution to and then image
 elif [[ ! -z ${calid} ]]
 then
-  dep=(`./bin/obs_apply_cal.sh ${obsnum} ${calid} ${depend}`)
+  dep=(`./bin/obs_apply_cal.sh -d ${depend} -c ${calid} ${obsnum}`)
   depend=${dep[3]}
   
-  dep=(`./bin/obs_image.sh ${obsnum} ${depend}`)
+  dep=(`./bin/obs_image.sh -d ${depend} ${obsnum}`)
   depend=${dep[3]}
 fi
 ENDSSH
