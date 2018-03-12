@@ -43,6 +43,9 @@ Restart broken jobs.
 
 
 ### obs_dl.sh
+Download the gpubox files associated with the given observation.
+When the download is complete also run cotter and maybe do some calibration.
+
 Usage: 
 ```
 obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum
@@ -67,6 +70,8 @@ uses templates:
   - if calid is set then apply the calibration solution from calid and then create an image (see `obs_image.sh`)
 
 ### obs_cotter.sh
+Run cotter to covert gpubox files into a measurement set.
+
 usage:
 ```
 obs_cotter.sh [-d dep] [-q queue] [-s timeave] [-k freqav] [-t] obsnum
@@ -84,6 +89,9 @@ uses templates:
   - run cotter to convert gpubox .fits files into a measurement set apply online flag files if present
   
 ### obs_calibrate.sh
+Generate calibration solutions for a given observation.
+This is done in a two stage process, and results in the final calibration solutions being applied to the dataset.
+
 Usage:
 ```
 obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-t] obsnum
@@ -107,6 +115,8 @@ uses templates:
   - replot the solutions
   
 ### obs_apply_cal.sh
+Apply a pre-existing calibration solution to a measurement set.
+
 Usage:
 ```
 obs_apply_cal.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
@@ -126,6 +136,8 @@ uses tempaltes:
 
 
 ### obs_image.sh
+Image a single observation.
+
 Usage: 
 ```
 obs_image.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-c] [-t] obsnum
@@ -145,7 +157,7 @@ uses tempaltes:
 
 ### obs_im05s.sh
 Usage: `obs_im05s.sh obsnum [depend]`
-- obsid: MWA observation id
+- obsnum: MWA observation id
 - depend: slurm job id on which this task depends (afterok)
 
 uses tempaltes:
@@ -156,7 +168,7 @@ uses tempaltes:
 
 ### obs_im28s.sh
 Usage: `obs_im28s.sh obsnum [depend]`
-- obsid: MWA observation id
+- obsnum: MWA observation id
 - depend: slurm job id on which this task depends (afterok)
 
 uses tempaltes:
@@ -165,6 +177,9 @@ uses tempaltes:
   - perform primary beam correction on these images
 
 ### obs_flag.sh
+Perform flagging on a measurement set.
+This consists of running `aoflagger` on the dataset.
+
 Usage:
 ```
 obs_flag.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
@@ -179,7 +194,6 @@ obs_flag.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
 
 uses tempaltes:
 - `flag.tmpl` (obsnum->OBSNUM)
-  - if `processing/<obsnum>/tiles_to_flag.txt` exists then the tiles listed are flagged.
 
 No job is submitted if the flagging file doesn't exist so this script is safe to include always.
 
