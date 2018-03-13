@@ -6,8 +6,8 @@ echo "obs_apply_cal.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
   -c calid    : obsid for calibrator.
-                If a calibration solution exists for calid
-                then it will be applied this dataset.
+                processing/calid/calid_*_solutions.bin will be used
+                to calibrate if it exists, otherwise job will fail.
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process" 1>&2;
@@ -61,8 +61,20 @@ fi
 
 base='/astro/mwasci/phancock/D0009/'
 
+# look for the calibrator solutions file
+calfile=($( ls -1 ${base}/processing/${calid}/${calid}_*_solutions.bin))[0]
+if [[ $? != 0 ]]
+then
+    echo "Could not find calibrator file"
+    echo "looked for: ${base}/${calid}/${calid}_*_solutions.bin"
+    exit 1
+fi
+
+
 script="${base}queue/apply_cal_${obsnum}.sh"
-cat ${base}/bin/apply_cal.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALOBSID:${cal}:g"  > ${script}
+cat ${base}/bin/apply_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
+                                     -e "s:BASEDIR:${base}:g" \
+                                     -e "s:CALFILE:${calfile}:g"  > ${script}
 
 output="${base}queue/logs/apply_cal_${obsnum}.o%A"
 error="${base}queue/logs/apply_cal_${obsnum}.e%A"

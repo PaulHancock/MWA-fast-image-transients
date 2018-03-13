@@ -123,8 +123,8 @@ obs_apply_cal.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
   -c calid    : obsid for calibrator.
-                If a calibration solution exists for calid
-                then it will be applied this dataset.
+                processing/calid/calid_*_solutions.bin will be used
+                to calibrate if it exists, otherwise job will fail.
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process
