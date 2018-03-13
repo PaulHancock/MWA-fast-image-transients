@@ -89,7 +89,7 @@ fi
 
 
 # submit job
-jobid=($(S{sub}))
+jobid=($(${sub}))
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid
