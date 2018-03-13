@@ -47,6 +47,7 @@ done
 shift  "$(($OPTIND -1))"
 obsnum=$1
 
+set -uo pipefail
 # if obsid is empty then just print help
 
 if [[ -z ${obsnum} ]]
@@ -56,13 +57,15 @@ fi
 
 if [[ ! -z ${dep} ]]
 then
-    depend="--dependency=afterok:${dep}"
+    dep="--dependency=afterok:${dep}"
 fi
 
 base='/astro/mwasci/phancock/D0009/'
 
 # look for the calibrator solutions file
-calfile=($( ls -1 ${base}/processing/${calid}/${calid}_*_solutions.bin))[0]
+calfile=($( ls -1 ${base}/processing/${calid}/${calid}_*_solutions.bin))
+calfile=${calfile[0]}
+
 if [[ $? != 0 ]]
 then
     echo "Could not find calibrator file"
@@ -79,7 +82,7 @@ cat ${base}/bin/apply_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/apply_cal_${obsnum}.o%A"
 error="${base}queue/logs/apply_cal_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"
