@@ -178,7 +178,8 @@ uses tempaltes:
 
 ### obs_flag.sh
 Perform flagging on a measurement set.
-This consists of running `aoflagger` on the dataset.
+This consists of running `aoflagger` on the dataset (always), and if there is a supplied flag file it will be applied before running `aoflagger`
+
 
 Usage:
 ```
@@ -198,9 +199,10 @@ uses tempaltes:
 No job is submitted if the flagging file doesn't exist so this script is safe to include always.
 
 ### obs_flag_tiles.sh
-Flags a single observation using the corresponding flag file. The flag file
-format is `<obsid>_tiles_to_flag.txt` (different from above), and should
-contain a list of integers being the tile numbers (all on one line, space separated).
+Flags a single observation using the corresponding flag file.
+The flag file should contain a list of integers being the tile numbers (all on one line, space separated).
+This does *not* run `aoflagger`.
+
 
 usage: 
 ```
