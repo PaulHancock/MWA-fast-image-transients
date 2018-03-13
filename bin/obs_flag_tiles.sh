@@ -62,6 +62,8 @@ base='/astro/mwasci/phancock/D0009/'
 if [[ ! -z ${flagfile} ]]
 then
     flagfile="${base}/processing/${obsnum}_tiles_to_flag.txt"
+else
+    flagfile=$( realpath ${flagfile} )
 fi
 
 if [[ ! -e ${flagfile} ]]
@@ -72,7 +74,9 @@ then
 fi
 
 script="${base}queue/flag_tiles_${obsnum}.sh"
-cat ${base}/bin/flag_tiles.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:FLAGFILE:${flagfile}:g" > ${script}
+cat ${base}/bin/flag_tiles.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \ 
+                                      -e "s:BASEDIR:${base}:g" \
+                                      -e "s:FLAGFILE:${flagfile}:g" > ${script}
 
 output="${base}queue/logs/flag_${obsnum}.o%A"
 error="${base}queue/logs/flag_${obsnum}.e%A"
@@ -85,8 +89,6 @@ then
     echo "${sub}"
     exit 0
 fi
-
-
 
 # submit job
 jobid=($(${sub}))
