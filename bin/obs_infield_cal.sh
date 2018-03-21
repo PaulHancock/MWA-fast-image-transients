@@ -43,6 +43,8 @@ done
 shift  "$(($OPTIND -1))"
 obsnum=$1
 
+set -u
+
 # if obsid is empty then just pring help
 if [[ -z ${obsnum} ]]
 then
@@ -63,7 +65,7 @@ fi
 # set dependency
 if [[ ! -z ${dep} ]]
 then
-    depend="--dependency=afterok:${dep}"
+    dep="--dependency=afterok:${dep}"
 fi
 
 # start the real program
@@ -77,7 +79,7 @@ cat ${base}/bin/infield_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/infield_cal_${obsnum}.o%A"
 error="${base}queue/logs/infield_cal_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${queue} ${script}"
 
 if [[ ! -z ${tst} ]]
 then
