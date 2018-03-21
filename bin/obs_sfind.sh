@@ -1,30 +1,75 @@
 #! /bin/bash
+usage()
+{
+echo "obs_sfind.sh [-d dep] [-q queue] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=gpuq
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process" 1>&2;
+exit 1;
+}
 
+#initialize as empty
+dep=
+queue='-p gpuq'
+tst=
+
+# parse args and set options
+while getopts ':td:q:c:' OPTION
+do
+    case "$OPTION" in
+	d)
+	    dep=${OPTARG}
+	    ;;
+	q)
+	    queue="-p ${OPTARG}"
+	    ;;
+	t)
+	    tst=1
+	    ;;
+	? | : | h)
+	    usage
+	    ;;
+  esac
+done
+# set the obsid to be the first non option
+shift  "$(($OPTIND -1))"
 obsnum=$1
-dep=$2
 
+set -u
+
+# if obsid is empty then just pring help
 if [[ -z ${obsnum} ]]
 then
-    echo "usage: obs_sfind.sh obs_id [dependency]"
-    exit 1
+    usage
 fi
 
-depend=""
 if [[ ! -z ${dep} ]] 
 then
-depend="--dependency=afterok:${dep}"
+    dep="--dependency=afterok:${dep}"
 fi
 
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/sfind_${obsnum}.sh"
-cat ${base}/bin/sfind.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g"  > ${script}
+cat ${base}/bin/sfind.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
+                                 -e "s:BASEDIR:${base}:g"  > ${script}
 
 output="${base}queue/logs/sfind_${obsnum}.o%A"
 error="${base}queue/logs/sfind_${obsnum}.e%A"
 
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${queue} ${script}"
+if [[ ! -z ${tst} ]]
+then
+    echo "script is ${script}"
+    echo "submit via:"
+    echo "${sub}"
+    exit 0
+fi
+
 # submit job
-jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}`)
+jobid=($(${sub}))
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid
