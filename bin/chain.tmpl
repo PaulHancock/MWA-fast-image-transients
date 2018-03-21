@@ -1,4 +1,3 @@
-ssh galaxy obsnum=${obsnum} dep=${dep} 'bash -s' <<'ENDSSH'
 calname=CALNAME
 calid=CALID
 
@@ -33,4 +32,3 @@ then
   dep=(`./bin/obs_image.sh -d ${depend} ${obsnum}`)
   depend=${dep[3]}
 fi
-ENDSSH
