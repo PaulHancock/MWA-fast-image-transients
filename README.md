@@ -219,10 +219,21 @@ obs_flag_tiles.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
 uses templates:
 - `flag_tiles.tmpl` (obsnum->OBSNUM)
 
-### obs_sfind.sh <<UNDER DEVELOPMENT/TESTING>>
-Usage: `obs_flag.sh obsnum [depend]`
-- obsid: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
+### obs_sfind.sh
+Run source finding on all the 2m, 28s, and 0.5s cadence stokes I, beam
+corrected images for a given observation. 
+(Or at least the subset which exist).
+
+usage:
+```
+obs_sfind.sh [-d dep] [-q queue] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=gpuq
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+
+```
 
 uses tempaltes:
 - `sfind.tmpl` (obsnum->OBSNUM)
