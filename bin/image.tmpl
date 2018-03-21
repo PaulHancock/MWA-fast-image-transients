@@ -42,10 +42,11 @@ else
     pixscale="-scale 32asec"
 fi
 
-#if clean is set then change it to the correct clean options.
+#if clean is set then change it to the default clean options.
 if [[ ! -z ${clean} ]]
 then 
-    clean="-stopnegative -joinpolarizations -niter 20000 -threshold 0.2"
+    #clean="-stopnegative -joinpolarizations -niter 20000 -threshold 0.2"
+    clean="-joinpolarizations -niter 20000 -threshold 0.2"
 fi
 
 # start download
@@ -63,10 +64,14 @@ then
       -pol xx,yy -minuv-l 30 \
       ${clean} ${obsnum}.ms
   test_fail $?
-  
-  # make primary beam models
-  beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
-  test_fail $?
+
+  # make primary beam models iff they don't already exist
+  beams=$(ls beam-MFS-*.fits | wc )
+  if [[ ${beams} -ne 8 ]]
+  then
+      beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+      test_fail $?
+  fi
   
   # create stokes iquv images
   pbcorrect ${obsnum}-2m image.fits beam-MFS ${obsnum}-2m-pbcorr
