@@ -16,6 +16,7 @@ then
 fi
 }
 
+set -x
 
 base=BASEDIR
 obsnum=OBSNUM
@@ -42,7 +43,7 @@ Dec=$( pyhead.py -p DEC $metafits | awk '{print $3}' )
 
 solutions=${obsnum}_infield_solutions_initial.bin
 
-if [[ ! -e ${solutions} ]]
+if [[ ! -e "local_gleam_model.txt" ]]
 then
     crop_catalogue.py --ra=$RA --dec=$Dec --radius=20 --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile}
     vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt
