@@ -56,13 +56,15 @@ obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum
   -n calname : The name of the calibrator.
                Implies that this is a calibrator observation
                and so calibration will be done.
+  -m minbad  : The minimum number of bad dipoles requried for a
+               tile to be used (not flagged), default = 2
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
 ```
 
 uses templates: 
-- `dl.tmpl` (obsnum->OBSNUM) 
+- `dl.tmpl` (obsnum->OBSNUM, minbad->MINBAD) 
   - download data
 - `chian.tmpl` (calname->CALNAME/calid->CALID)
   - run cotter (always)
