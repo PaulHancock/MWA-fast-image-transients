@@ -30,7 +30,7 @@ cd ${datadir}
 obsdownload.py -o ${obsnum}
 test_fail $?
 
-wget http://mwa-metadata01.pawsey.org.au/metadata/fits?obs_id=${obsnum}\&max_bad_dipoles=${minbad} -O ${obsnum}_metafits.fits
+wget http://mwa-metadata01.pawsey.org.au/metadata/fits?obs_id=${obsnum}\&min_bad_dipoles=${minbad} -O ${obsnum}_metafits.fits
 test_fail $?
 
 # check how many files we expect to see

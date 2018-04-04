@@ -57,7 +57,7 @@ obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum
                Implies that this is a calibrator observation
                and so calibration will be done.
   -m minbad  : The minimum number of bad dipoles requried for a
-               tile to be used (not flagged), default = 2
+               tile to be flagged, default = 2
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
