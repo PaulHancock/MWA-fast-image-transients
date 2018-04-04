@@ -114,6 +114,30 @@ uses templates:
   - creates a new calibration solution: file is `<obsnum>_<calmodel>_solutions.bin`
   - replot the solutions
   
+
+### obs_infield_cal.sh
+Generate calibration solutions for an observation using the sources within the
+field of view.
+The model is generated from the points sources within the FoV that are within
+the GLEAM catalogue.
+Note that GLEAM does not include all areas of sky, and has some bright sources
+cropped.
+This calibration is done in a two stage process as per obs_calibrate.sh
+
+Usage:
+```
+obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=gpuq
+  -c catalog : catalogue file to use.
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
+
+uses templates:
+- `infield_cal.tmpl` (obsnum->OBSNUM, catalog->CATFILE)
+
 ### obs_apply_cal.sh
 Apply a pre-existing calibration solution to a measurement set.
 
