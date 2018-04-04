@@ -10,6 +10,8 @@ echo "obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum
   -n calname : The name of the calibrator.
                Implies that this is a calibrator observation 
                and so calibration will be done.
+  -m minbad  : The minimum number of bad dipoles requried for a 
+               tile to be used (not flagged), default = 2
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
@@ -19,11 +21,12 @@ exit 1;
 #initialize as empty
 calid=
 calname=
+minbad=2
 dep=
 tst=
 
 # parse args and set options
-while getopts ':td:c:n:' OPTION
+while getopts ':td:c:n:m:' OPTION
 do
     case "$OPTION" in
 	d)
@@ -35,6 +38,9 @@ do
 	    ;;
 	n)
 	    calname=${OPTARG}
+	    ;;
+	m)
+	    minbad=${OPTARG}
 	    ;;
 	t)
 	    tst=1
@@ -65,7 +71,9 @@ fi
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/dl_${obsnum}.sh"
-cat ${base}/bin/dl.tmpl | sed "s:OBSNUM:${obsnum}:" | sed "s:BASEDIR:${base}:"  > ${script}
+cat ${base}/bin/dl.tmpl | sed -e "s:OBSNUM:${obsnum}:" \
+                              -e "s:BASEDIR:${base}:" \
+                              -e "s:MINBAD:${minbad}:"  > ${script}
 # submit extra jobs when the d/l completes
 cat ${base}/bin/chain.tmpl | sed "s:CALNAME:${calname}:" | sed "s:CALID:${calid}:" >> ${script}
 
