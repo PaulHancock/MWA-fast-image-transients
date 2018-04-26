@@ -18,6 +18,16 @@ fi
 
 set -x
 
+# automatically set the right number of cores and memory limit
+if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
+then
+    cores=8
+    mem=28
+else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
+    cores=20
+    mem=60
+fi
+
 base=BASEDIR
 obsnum=OBSNUM
 catfile=CATFILE
@@ -51,7 +61,7 @@ fi
 
 
 # calibrate
-calibrate -m local_gleam_model.txt -minuv 20 ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
@@ -69,7 +79,7 @@ test_fail $?
 
 solutions=${obsnum}_infield_solutions.bin
 # calibrate again!
-calibrate -m local_gleam_model.txt -minuv 20 ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 ${obsnum}.ms ${solutions}
 test_fail $?
 
 #plot again

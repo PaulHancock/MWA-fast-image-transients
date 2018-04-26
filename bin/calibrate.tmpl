@@ -16,13 +16,17 @@ then
 fi
 }
 
+set -x
+
 # automatically set the right number of corse
 # maybe leaving -d blank will do this ...
 if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
 then
     cores=8
+    mem=28
 else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
     cores=20
+    mem=60
 fi
 
 calibrator=CALIBRATOR
@@ -40,7 +44,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 # look for the calibrator model in the database
 calmodel=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT calfile FROM calibrators WHERE name='${calibrator}'"`
 
-# if it isn't in the database then uset the point source model
+# if it isn't in the database then use the point source model
 if [[ -z ${calmodel} ]]
 then
     calmodel=`basename ${modeldir}/model-${calibrator}*point-source.txt`
@@ -75,7 +79,7 @@ fi
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
 # calibrate
-calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
@@ -93,7 +97,7 @@ test_fail $?
 
 solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
 # calibrate again!
-calibrate -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 #plot again
