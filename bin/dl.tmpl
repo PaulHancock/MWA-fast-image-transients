@@ -34,12 +34,21 @@ wget http://mwa-metadata01.pawsey.org.au/metadata/fits?obs_id=${obsnum}\&min_bad
 test_fail $?
 
 # check how many files we expect to see
-nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
-
-# if we don't have this many files then we have a bad result.
-if [[ ${nfiles} -eq `ls ${obsnum}*.{fits,mwaf} | wc -l` ]]
+nexpected=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
+# obsid's that aren't in the database will return an empty number of expected files
+# if we expect more than zero files make sure we have the right number
+if [[ ${nexpected} -gt 0 ]]
 then
-  test_fail 1
+    # see how many files there are
+    nfiles=`ls ${obsnum}*.{fits,mwaf} | wc -l`
+    # if we don't have this many files then we have a bad result.
+    if [[ ${nfiles} -eq ${nexpected} ]]
+    then
+	echo "Expected ${nexpected} files but found ${nfiles}, assuming something bad happened."
+	test_fail 1
+    fi
+else
+    echo "Don't know how many files to expect, so assuming everything is ok."
 fi
 
 cd ${base}
