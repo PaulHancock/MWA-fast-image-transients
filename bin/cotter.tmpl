@@ -36,30 +36,31 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
 
 cd ${datadir}/${obsnum}
-# count the number of files that we have (but not the flag files)
-files=`ls ${obsnum}_*{gpubox,ppds}*.fits 2>/dev/null | wc -l`
 
-# if nfiles is non-zero then we ensure we have that many files
-# nfiles is zero if we aren't tracking the obsid in the database
-if [[ ! -z ${nfiles} ]]
-then 
-    #quit if we are missing files
-    if [[ ${nfiles} -eq ${files} ]]
+
+# check how many files we expect to see
+nexpected=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
+# obsid's that aren't in the database will return an empty number of expected files
+# if we expect more than zero files make sure we have the right number
+if [[ ${nexpected} -gt 0 ]]
+then
+    # see how many files there are
+    nfiles=`ls ${obsnum}*.{fits,mwaf} | wc -l`
+    # if we don't have this many files then we have a bad result.
+    if [[ ${nfiles} -eq ${nexpected} ]]
     then
-        echo "Found ${files}/${nfiles} files"
-    elif [[ ${nfiles} -eq ${files}+1 ]]
-    then
-        echo "Found ${files} fits files, assuming the missing file is flags"
-    else
-        echo "expecting ${nfiles} files but only found ${files}"
-        test_fail 1
+	echo "Expected ${nexpected} files but found ${nfiles}, assuming something bad happened."
+	test_fail 1
     fi
+else
+    echo "Don't know how many files to expect, so assuming everything is ok."
 fi
+
 
 zipflag="${obsnum}_flags.zip"
 if [[ -e ${zipflag} ]]
 then
-    unzip ${zipflag}
+    unzip -o ${zipflag}
     flagfiles="-flagfiles ${obsnum}_%%.mwaf"
 else
     flagfiles=""
