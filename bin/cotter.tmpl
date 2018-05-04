@@ -15,6 +15,9 @@ then
     exit $1
 fi
 }
+
+set -x
+
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
 # number of cores (accounting for hyper-threading)
@@ -31,9 +34,6 @@ fres=FRES
 # start task
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
-
-# expected number of files from the archive
-nfiles=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT nfiles FROM observation WHERE obs_id=${obsnum};"`
 
 cd ${datadir}/${obsnum}
 
@@ -68,7 +68,7 @@ fi
 
 # allow missing files since we already checked this above.
 cotter -absmem ${mem} ${flagfiles} -timeres ${tres} -freqres ${fres} -allowmissing \
-    -edgewidth 80 -m ${obsnum}_metafits.fits -o ${obsnum}.ms *gpubox*.fits 
+       -edgewidth 80 -m ${obsnum}_metafits.fits -o ${obsnum}.ms *gpubox*.fits 
 
 test_fail $?
 
