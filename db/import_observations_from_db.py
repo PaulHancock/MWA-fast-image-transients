@@ -130,6 +130,8 @@ if __name__ == "__main__":
     obsdata = getmeta(service='find', params={'creator':'mwagrb.py', 'limit':100000}) #'limit':10
     # For Jai's project - MAXI J1535 - XRB
     #obsdata = getmeta(service='find', params={'obsname':'J1535_%', 'limit':100000}) #'limit':10
+    # For Jai's project - MAXI J1820 - XRB
+    #obsdata = getmeta(service='find', params={'obsname':'J1820_%', 'limit':100000}) #'limit':10
     for obs in obsdata:
         obs_id = obs[0]
         copy_obs_info(obs_id, cur)
