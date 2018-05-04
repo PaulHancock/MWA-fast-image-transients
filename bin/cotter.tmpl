@@ -67,13 +67,13 @@ fi
 
 # allow missing files since we already checked this above.
 cotter -absmem ${mem} ${flagfiles} -timeres ${tres} -freqres ${fres} -allowmissing \
-    -edgewidth 80 -m ${obsnum}_metafits_ppds.fits -o ${obsnum}.ms *gpubox*.fits 
+    -edgewidth 80 -m ${obsnum}_metafits.fits -o ${obsnum}.ms *gpubox*.fits 
 
 test_fail $?
 
 if [[ -d OBSNUM.ms ]]
 then 
-     rm *gpubox*fits *.zip *.mwaf ${obsnum}_metafits_ppds.fits
+     rm *gpubox*fits *.zip *.mwaf
 fi
 
 cd ${base}
