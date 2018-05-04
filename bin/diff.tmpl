@@ -15,15 +15,10 @@ then
     exit $1
 fi
 }
-
-# automatically set the right number of corse
-# maybe leaving -d blank will do this ...
-if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
-then
-    cores=8
-else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
-    cores=20
-fi
+#memory in GB
+mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+# number of cores (accounting for hyper-threading)
+cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
 
 base=BASEDIR
 datadir=${base}/processing
@@ -50,7 +45,7 @@ do
   # extract the time stamp id from thesecond file
   id2=`echo ${files[i-1]} | sed "s/${obsnum-0.5s-\(t????\)-pbcorr-I.fits/\1/g"`
   outfile= "${files[i]%%pbcorr-I.fits}-${id2}-pbcorr-I_diff.fits"
-  aprun -n 1 -d 1 -b python ${base}/bin/fitssub.py ${files[i]} ${files[i-1]} ${outfile} &
+  python ${base}/bin/fitssub.py ${files[i]} ${files[i-1]} ${outfile} &
 done
 test_fail $?
 

@@ -16,6 +16,12 @@ then
 fi
 }
 
+#memory in GB
+mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+# number of cores (accounting for hyper-threading)
+cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
+
+
 obsnum=OBSNUM
 base=BASEDIR
 imsize=IMSIZE
@@ -60,6 +66,7 @@ cd ${datadir}/${obsnum}
 if [[ 0 ]]
 then
   wsclean -name ${obsnum}-2m ${imsize} \
+      -abs-mem ${mem} \
       -weight briggs -1 -mfsweighting ${pixscale} \
       -pol xx,yy -minuv-l 30 \
       ${clean} ${obsnum}.ms

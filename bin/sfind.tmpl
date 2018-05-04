@@ -30,6 +30,12 @@ then
 fi
 }
 
+
+#memory in GB
+mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+# number of cores (accounting for hyper-threading)
+cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
+
 base=BASEDIR
 datadir=${base}/processing
 

@@ -16,15 +16,10 @@ then
 fi
 }
 
-
-# automatically set the right number of corse
-# maybe leaving -d blank will do this ...
-if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
-then
-    cores=8
-else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
-    cores=20
-fi
+#memory in GB
+mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+# number of cores (accounting for hyper-threading)
+cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
 
 #calid=CALOBSID
 calfile=CALFILE

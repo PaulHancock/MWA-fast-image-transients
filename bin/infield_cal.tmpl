@@ -18,15 +18,10 @@ fi
 
 set -x
 
-# automatically set the right number of cores and memory limit
-if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
-then
-    cores=8
-    mem=28
-else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
-    cores=20
-    mem=60
-fi
+#memory in GB
+mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+# number of cores (accounting for hyper-threading)
+cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
 
 base=BASEDIR
 obsnum=OBSNUM
