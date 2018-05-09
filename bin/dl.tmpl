@@ -30,6 +30,8 @@ cd ${datadir}
 obsdownload.py -o ${obsnum}
 test_fail $?
 
+cd ${obsnum} 
+
 wget http://mwa-metadata01.pawsey.org.au/metadata/fits?obs_id=${obsnum}\&min_bad_dipoles=${minbad} -O ${obsnum}_metafits.fits
 test_fail $?
 
@@ -42,7 +44,7 @@ then
     # see how many files there are
     nfiles=`ls ${obsnum}*.{fits,mwaf} | wc -l`
     # if we don't have this many files then we have a bad result.
-    if [[ ${nfiles} -eq ${nexpected} ]]
+    if [[ ${nfiles} -ne ${nexpected} ]]
     then
 	echo "Expected ${nexpected} files but found ${nfiles}, assuming something bad happened."
 	test_fail 1
