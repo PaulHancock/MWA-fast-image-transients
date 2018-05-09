@@ -50,12 +50,12 @@ then
     usage
 fi
 
-if [[ ! -z ${timeav} ]]
+if [[ -z ${timeav} ]]
 then
     timeav=0.5
 fi
 
-if [[ ! -z ${freqav} ]]
+if [[ -z ${freqav} ]]
 then
     freqav=40
 fi
