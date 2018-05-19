@@ -92,7 +92,7 @@ uses templates:
   - run cotter to convert gpubox .fits files into a measurement set apply online flag files if present
 
 ### obs_asvo.sh
-Use the [ASVO-mwa](asvo.mwatelescope.org) service to do the cotter conversion
+Use the [ASVO-mwa](https://asvo.mwatelescope.org) service to do the cotter conversion
 and then download the resulting measurement set. This combines the operation of `obs_dl.sh` and `obs_cotter.sh`.
 
 usage:
