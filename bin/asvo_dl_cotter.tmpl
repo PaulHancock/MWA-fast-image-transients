@@ -37,9 +37,21 @@ cd ${datadir}/${obsnum}
 # encode the conversion options into a csv file
 echo "obs_id=${obsnum}, job_type=c, timeres=${tres}, freqres=${fres}, edgewidth=80, conversion=ms, allowmissing=true, flagdcchannels=true, usepcentre=true" > ${csvfile}
 
+outfile="${obsnum}_ms.zip"
 
-mwa_client --csv=${csvfile} --dir=${datadir}/${obsnum}
+if [[ -e "${outfile}" ]]
+then
+    echo "${outfile} exists, not downloading again"
+else
+    mwa_client --csv=${csvfile} --dir=${datadir}/${obsnum}
+    test_fail $?
+fi
+
+unzip ${outfile}
 test_fail $?
+
+rm ${outfile}
+
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
