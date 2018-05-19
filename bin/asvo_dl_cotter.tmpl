@@ -1,0 +1,46 @@
+#! /bin/bash -l
+#SBATCH --export=NONE
+#SBATCH -M zeus
+#SBATCH -p copyq
+#SBATCH --account=mwasci
+#SBATCH --time=12:00:00
+#SBATCH --nodes=1
+
+function test_fail {
+if [[ $1 != 0 ]]
+then
+    cd ${base}
+    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+    exit $1
+fi
+}
+
+set -x
+
+base=BASEDIR
+datadir=${base}/processing
+
+obsnum=OBSNUM
+tres=TRES
+fres=FRES
+csvfile="${obsnum}_dl.csv"
+
+
+# start task
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+mkdir -p ${datadir}/${obsnum}
+
+cd ${datadir}/${obsnum}
+
+# encode the conversion options into a csv file
+echo "obs_id=${obsnum}, job_type=c, timeres=${tres}, freqres=${fres}, edgewidth=80, conversion=ms, allowmissing=true, flagdcchannels=true, usepcentre=true" > ${csvfile}
+
+
+mwa_client --csv=${csvfile} --dir=${datadir}/${obsnum}
+test_fail $?
+
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
