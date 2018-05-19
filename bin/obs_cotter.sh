@@ -21,7 +21,7 @@ timeav=
 freqav=
 
 # parse args and set options
-while getopts ':td:s:k:' OPTION
+while getopts ':td:q:s:k:' OPTION
 do
     case "$OPTION" in
         d)
