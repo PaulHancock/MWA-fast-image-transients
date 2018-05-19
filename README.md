@@ -97,8 +97,7 @@ and then download the resulting measurement set. This combines the operation of 
 
 usage:
 ```
-obs_asvo.sh 
-obs_dl.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
+obs_asvo.sh  [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -c calid   : obsid for calibrator. 
                If a calibration solution exists for calid

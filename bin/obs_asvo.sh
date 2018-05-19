@@ -2,7 +2,7 @@
 
 usage()
 {
-echo "obs_dl.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
+echo "obs_asvo.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -c calid   : obsid for calibrator. 
                If a calibration solution exists for calid
