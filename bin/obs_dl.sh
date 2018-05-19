@@ -54,7 +54,7 @@ done
 shift  "$(($OPTIND -1))"
 obsnum=$1
 
-# if obsid is empty then just pring help
+# if obsid is empty then just print help
 if [[ -z ${obsnum} ]]
 then
     usage
