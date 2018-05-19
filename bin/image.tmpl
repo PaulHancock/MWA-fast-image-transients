@@ -16,6 +16,8 @@ then
 fi
 }
 
+set -x
+
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
 # number of cores (accounting for hyper-threading)
@@ -73,7 +75,7 @@ then
   test_fail $?
 
   # make primary beam models iff they don't already exist
-  beams=$(ls beam-MFS-*.fits | wc )
+  beams=$( ls beam-MFS-*.fits | wc -l )
   if [[ ${beams} -ne 8 ]]
   then
       beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
