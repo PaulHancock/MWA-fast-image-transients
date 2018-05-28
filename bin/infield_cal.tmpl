@@ -56,7 +56,7 @@ fi
 
 
 # calibrate
-calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 4000 ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
@@ -74,7 +74,7 @@ test_fail $?
 
 solutions=${obsnum}_infield_solutions.bin
 # calibrate again!
-calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 4000 ${obsnum}.ms ${solutions}
 test_fail $?
 
 #plot again

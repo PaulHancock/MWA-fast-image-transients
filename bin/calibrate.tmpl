@@ -72,7 +72,7 @@ fi
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
 # calibrate
-calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 4000 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
@@ -90,7 +90,7 @@ test_fail $?
 
 solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
 # calibrate again!
-calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -applybeam ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 4000 -applybeam ${obsnum}.ms ${solutions}
 test_fail $?
 
 #plot again
