@@ -1,10 +1,16 @@
-
 # A semi-automated pipeline for the reduction of MWA data
 
 The goal of this pipeline is to reduce the data observed as part of the fast
 follow up triggers.
 
-The pipeline is written for the Pawsey-Galaxy system.
+The pipeline is written for the Pawsey-Galaxy system which uses a SLURM job scheduler.
+
+## Credits
+Please credit Paul Hancock and Gemma Anderson if you use this code, or
+incorporate it into your own workflow, as per the [licence](LICENCE.md).
+Please acknowledge the use of this code by citing this repository, and until
+we have a publication accepted on this work, we request that we be added as
+co-authors on papers that rely on this code.
 
 ## Structure
 - bin: executable files and template scripts
