@@ -7,7 +7,7 @@ The pipeline is written for the Pawsey-Galaxy system which uses a SLURM job sche
 
 ## Credits
 Please credit Paul Hancock and Gemma Anderson if you use this code, or
-incorporate it into your own workflow, as per the [licence](LICENCE.md).
+incorporate it into your own workflow, as per the [licence](LICENCE).
 Please acknowledge the use of this code by citing this repository, and until
 we have a publication accepted on this work, we request that we be added as
 co-authors on papers that rely on this code.
