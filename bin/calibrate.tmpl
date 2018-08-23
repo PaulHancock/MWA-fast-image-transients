@@ -45,7 +45,7 @@ calmodel=`sqlite3 ${base}/db/MWA-GRB.sqlite "SELECT calfile FROM calibrators WHE
 # if it isn't in the database then use the point source model
 if [[ -z ${calmodel} ]]
 then
-    calmodel=`basename ${modeldir}/model-${calibrator}*point-source.txt`
+    calmodel=`basename ${modeldir}/model-${calibrator}-*_withalpha.txt`
 else
     calmodel=`basename ${calmodel}`
 fi
