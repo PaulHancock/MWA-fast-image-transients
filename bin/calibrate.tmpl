@@ -61,6 +61,9 @@ fi
 
 cd ${datadir}/${obsnum}
 
+# pythonpath hack
+ln -s /group/mwa/software/mwapy/master/galaxy/lib/python2.7/site-packages/mwapy .
+
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
 # calibrate
@@ -93,8 +96,8 @@ test_fail $?
 applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
-# delete the symlinks and temp directory
-rm -r mwapy
+# delete the symlink
+rm mwapy
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
