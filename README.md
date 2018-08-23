@@ -103,7 +103,8 @@ and then download the resulting measurement set. This combines the operation of 
 
 usage:
 ```
-obs_asvo.sh  [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
+obs_asvo.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t]
+obsnum
   -d dep     : job number for dependency (afterok)
   -c calid   : obsid for calibrator. 
                If a calibration solution exists for calid
@@ -113,11 +114,13 @@ obs_asvo.sh  [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnu
                and so calibration solutions will be calculated.
   -m minbad  : The minimum number of bad dipoles requried for a 
                tile to be used (not flagged), default = 2
+               NOTE: Currently not supported by asvo-mwa so this is IGNORED.
   -s timeav  : time averaging in sec. default = no averaging
   -k freqav  : freq averaging in KHz. default = no averaging
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
+
 ```
 uses templates:
 - `asvo_dl_cotter.tmpl` (obsnum->OBSNUM/timeav->TRES/freqav->FRES)
