@@ -60,11 +60,10 @@ else
     test_fail $?
 fi
 
-unzip ${outfile}
+unzip -n ${outfile}
 test_fail $?
 
 rm ${outfile}
-
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
