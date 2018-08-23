@@ -16,6 +16,11 @@ then
 fi
 }
 
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools/mwa-sci
+module list
+
 set -x
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
@@ -55,19 +60,6 @@ then
 fi
 
 cd ${datadir}/${obsnum}
-
-# Hack to work around broken PYTHONPATH lookup
-if [[ ! -d mwapy ]]
-then
-    mkdir mwapy
-    mkdir mwapy/pb
-    cd mwapy/pb
-    for beammatrix in $MWA_CODE_BASE/MWA_Tools/mwapy/pb/*atrix.fits
-    do
-        ln -s $beammatrix
-    done
-    cd ../../
-fi
 
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
