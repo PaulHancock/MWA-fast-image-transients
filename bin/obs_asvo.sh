@@ -12,6 +12,7 @@ echo "obs_asvo.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] 
                and so calibration solutions will be calculated.
   -m minbad  : The minimum number of bad dipoles requried for a 
                tile to be used (not flagged), default = 2
+               NOTE: Currently not supported by asvo-mwa so this is IGNORED.
   -s timeav  : time averaging in sec. default = no averaging
   -k freqav  : freq averaging in KHz. default = no averaging
   -t         : test. Don't submit job, just make the batch file
