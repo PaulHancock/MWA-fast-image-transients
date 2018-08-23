@@ -15,7 +15,20 @@ then
 fi
 }
 
+source /grop/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load mwapy
+module load manta-ray-client
+module list
+
 set -x
+
+if [[ -z ${ASVO_USER} ]]
+then
+    echo "Error, ASVO_USER not set"
+    echo "Cannot use client"
+    test_fail 1
+fi
 
 base=BASEDIR
 datadir=${base}/processing
