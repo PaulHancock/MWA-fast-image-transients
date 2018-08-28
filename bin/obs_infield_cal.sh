@@ -16,6 +16,7 @@ dep=
 queue='-p gpuq'
 catfile=
 tst=
+base='/astro/mwasci/phancock/D0009/'
 
 # parse args and set options
 while getopts ':td:q:c:' OPTION
@@ -53,7 +54,7 @@ fi
 
 if [[ -z ${catfile} ]]
 then
-    catfile="/group/mwa/software/MWA_Tools/MWA_Tools/catalogues/GLEAM_EGC.fits"
+    catfile="${base}/catalogues/GLEAM_EGC.fits"
 fi
 if [[ ! -e ${catfile} ]]
 then
@@ -69,8 +70,6 @@ then
 fi
 
 # start the real program
-base='/astro/mwasci/phancock/D0009/'
-
 script="${base}queue/infield_cal_${obsnum}.sh"
 cat ${base}/bin/infield_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                        -e "s:BASEDIR:${base}:g" \
