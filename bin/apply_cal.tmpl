@@ -16,6 +16,7 @@ then
 fi
 }
 
+set -x
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
 # number of cores (accounting for hyper-threading)
