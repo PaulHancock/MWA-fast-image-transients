@@ -11,6 +11,7 @@ depend=${dep[3]}
 
 # If there is a tile flagging file defined then apply it
 if [[ -e "${base}/processing/${obsnum}_tiles_to_flag.txt" ]]
+then
   dep=($( ./bin/obs_flag_tiles.sh -d ${depend} ${obsnum} ))
   depend=${dep[3]}
 fi
