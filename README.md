@@ -169,7 +169,7 @@ Usage:
 obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
-  -c catalog : catalogue file to use.
+  -c catalog : catalogue file to use, default=GLEAM_EGC.fits
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
