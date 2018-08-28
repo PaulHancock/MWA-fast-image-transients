@@ -17,7 +17,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p gpuq'
-imscale=
+imsize=
 pixscale=
 clean=
 tst=
@@ -33,7 +33,7 @@ do
 	    queue="-p ${OPTARG}"
 	    ;;
 	s)
-	    imscale=${OPTARG}
+	    imsize=${OPTARG}
 	    ;;
 	p)
 	    pixscale=${OPTARG}
@@ -74,7 +74,7 @@ script="${base}queue/image_${obsnum}.sh"
 cat ${base}/bin/image.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                  -e "s:BASEDIR:${base}:g" \
                                  -e "s:IMSIZE:${imsize}:g" \
-                                 -e "s:SCALE:${imascale}:g" \
+                                 -e "s:SCALE:${pixscale}:g" \
                                  -e "s:CLEAN:${clean}:g" > ${script}
 
 output="${base}queue/logs/image_${obsnum}.o%A"
