@@ -69,6 +69,7 @@ fi
 
 if [[ -z ${freqav} ]]
 then
+    # TODO: increase this, but check BW smearing effects first
     freqav=40
 fi
 
