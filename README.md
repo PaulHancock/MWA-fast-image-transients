@@ -48,58 +48,9 @@ Do the above in a smart manner that will not process GRBs that are flagged as ju
 Start the processing at the required step by inspecting the db for previous jobs.
 Restart broken jobs.
 
-
-### obs_dl.sh
-Download the gpubox files associated with the given observation.
-When the download is complete also run cotter and maybe do some calibration.
-
-Usage: 
-```
-obs_dl.sh [-d dep] [-c calid] [-n calname] [-t] obsnum
-  -d dep     : job number for dependency (afterok)
-  -c calid   : obsid for calibrator.
-               If a calibration solution exists for calid
-               then it will be applied this dataset.
-  -n calname : The name of the calibrator.
-               Implies that this is a calibrator observation
-               and so calibration will be done.
-  -m minbad  : The minimum number of bad dipoles requried for a
-               tile to be flagged, default = 2
-  -t         : test. Don't submit job, just make the batch file
-               and then return the submission command
-  obsnum     : the obsid to process
-```
-
-uses templates: 
-- `dl.tmpl` (obsnum->OBSNUM, minbad->MINBAD) 
-  - download data
-- `chian.tmpl` (calname->CALNAME/calid->CALID)
-  - run cotter (always)
-  - if calname is set then create a calibration solution from this data and stop
-  - if calid is set then apply the calibration solution from calid and then create an image (see `obs_image.sh`)
-
-### obs_cotter.sh
-Run cotter to covert gpubox files into a measurement set.
-
-usage:
-```
-obs_cotter.sh [-d dep] [-q queue] [-s timeave] [-k freqav] [-t] obsnum
-  -d dep      : job number for dependency (afterok)
-  -q queue    : job queue, default=gpuq
-  -s timeav   : time averaging in sec. default = no averaging
-  -k freqav   : freq averaging in KHz. default = no averaging
-  -t          : test. Don't submit job, just make the batch file
-                and then return the submission command
-  obsnum      : the obsid to process
-```
-
-uses templates:
-- `cotter.tmpl` (obsnum->OBSNUM/timeav->TRES/freqav->FRES)
-  - run cotter to convert gpubox .fits files into a measurement set apply online flag files if present
-
 ### obs_asvo.sh
 Use the [ASVO-mwa](https://asvo.mwatelescope.org) service to do the cotter conversion
-and then download the resulting measurement set. This combines the operation of `obs_dl.sh` and `obs_cotter.sh`.
+and then download the resulting measurement set. This replaces the operation of `obs_dl.sh` and `obs_cotter.sh`.
 
 usage:
 ```
