@@ -16,6 +16,14 @@ then
 fi
 }
 
+# begin timestamps
+{
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools/mwa-sci
+module list
+
+
 set -x
 
 #memory in GB
@@ -88,3 +96,4 @@ test_fail $?
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) > >(awk '{print strftime("%F %T")";",$0; fflush()}')

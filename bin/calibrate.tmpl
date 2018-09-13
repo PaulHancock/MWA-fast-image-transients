@@ -16,12 +16,15 @@ then
 fi
 }
 
+# begin timestamps
+{
 source /group/mwa/software/module-reset.sh
 module use /group/mwa/software/modulefiles
 module load MWA_Tools/mwa-sci
 module list
 
 set -x
+
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
 # number of cores (accounting for hyper-threading)
@@ -67,7 +70,7 @@ ln -s /group/mwa/software/mwapy/master/galaxy/lib/python2.7/site-packages/mwapy 
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
 # calibrate
-calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 -applybeam ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
@@ -102,3 +105,4 @@ rm mwapy
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) > >(awk '{print strftime("%F %T")";",$0; fflush()}')
