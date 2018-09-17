@@ -3,7 +3,7 @@
 #SBATCH -M galaxy
 #SBATCH -p workq
 #SBATCH --account=mwasci
-#SBATCH --time=8:00:00
+#SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
 
@@ -45,7 +45,7 @@ fi
 # set the image scale
 if [[ ! -z ${pixscale} ]]
 then
-    pixscale="-scale ${scale}"
+    pixscale="-scale ${pixscale}"
 else
     pixscale="-scale 32asec"
 fi
