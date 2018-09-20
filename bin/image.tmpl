@@ -6,23 +6,15 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit $1
-fi
-}
+# define the test_fail function
+./functions.sh
 
 set -x
 
+# turn on timestamps
+{
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
-# number of cores (accounting for hyper-threading)
-cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
-
 
 obsnum=OBSNUM
 base=BASEDIR
@@ -64,32 +56,27 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
 
-#imfile="${obsnum}-lr-pbcorr-I-image.fits" 
-#if [[ ! -e ${imfile} ]]
-if [[ 0 ]]
-then
-  wsclean -name ${obsnum}-2m ${imsize} \
-      -abs-mem ${mem} \
-      -weight briggs -1 -mfsweighting ${pixscale} \
-      -pol xx,yy -minuv-l 30 \
-      ${clean} ${obsnum}.ms
-  test_fail $?
+wsclean -name ${obsnum}-2m ${imsize} \
+    -abs-mem ${mem} \
+    -weight briggs -1 -mfsweighting ${pixscale} \
+    -pol xx,yy -minuv-l 30 \
+    ${clean} ${obsnum}.ms
+test_fail $?
 
-  # make primary beam models iff they don't already exist
-  beams=$( ls beam-MFS-*.fits | wc -l )
-  if [[ ${beams} -ne 8 ]]
-  then
-      beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
-      test_fail $?
-  fi
-  
-  # create stokes iquv images
-  pbcorrect ${obsnum}-2m image.fits beam-MFS ${obsnum}-2m-pbcorr
-  test_fail $?
-else
-  echo "${imfile} exists, skipping"
+# make primary beam models iff they don't already exist
+beams=$( ls beam-MFS-*.fits | wc -l )
+if [[ ${beams} -ne 8 ]]
+then
+    beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+    test_fail $?
 fi
+
+# create stokes iquv images
+pbcorrect ${obsnum}-2m image.fits beam-MFS ${obsnum}-2m-pbcorr
+test_fail $?
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
