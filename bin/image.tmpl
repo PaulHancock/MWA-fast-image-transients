@@ -54,7 +54,8 @@ fi
 if [[ ! -z ${clean} ]]
 then 
     #clean="-stopnegative -joinpolarizations -niter 20000 -threshold 0.2"
-    clean="-joinpolarizations -niter 20000 -threshold 0.2"
+    #clean="-joinpolarizations -niter 20000 -threshold 0.2"
+    clean="-join-polarizations -niter 100000 -auto-mask 3 -auto-threshold 1 -circular-beam"
 fi
 
 # start download
