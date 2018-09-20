@@ -6,39 +6,50 @@
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 
+# define the test_fail function
+./functions.sh
 
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit $1
-fi
-}
+set -x
+
+# turn on timestamps
+{
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
-# number of cores (accounting for hyper-threading)
-cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
-
-base=BASEDIR
-datadir=${base}/processing
-
-cd ${datadir}
 
 obsnum=OBSNUM
-ncpus=20
+base=BASEDIR
+imsize=IMSIZE
+pixscale=SCALE
 
-# start download
+datadir=${base}/processing
+
+# set the image size
+if [[ ! -z ${imsize} ]]
+then 
+    imsize="-size ${imsize} ${imsize}"
+else
+    imsize="-size 4096 4096"
+fi
+
+# set the image scale
+if [[ ! -z ${pixscale} ]]
+then
+    pixscale="-scale ${pixscale}"
+else
+    pixscale="-scale 32asec"
+fi
+
+
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
 echo "##WSCLEAN"
-wsclean -name ${obsnum}-0.5s -size 4096 4096 \
+wsclean -name ${obsnum}-0.5s ${imsize} \
     -abs-mem ${mem} \
-    -weight briggs -1 -mfsweighting -scale 32asec \
+    -weight briggs -1 -mfsweighting ${imscale} \
     -pol xx,yy -minuv-l 30 \
-    -stopnegative -joinpolarizations -niter 0 -threshold 0.2 \
+    -niter 0  \
     -intervalsout 224 \
     ${obsnum}.ms
 test_fail $?
@@ -47,7 +58,8 @@ test_fail $?
 rm ${obsnum}-0.5s-??-dirty.fits
 
 # make primary beam models
-if [[ `ls beam-MFS-[xy][xy][ri].fits | wc -l` -ne 8 ]]
+beams=$( ls beam-MFS-*.fits | wc -l )
+if [[ ${beams} -ne 8 ]]
 then
     echo "## Making primary beam"
     beam -2016 -proto ${obsnum}-0.5s-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
@@ -72,3 +84,5 @@ rm ${obsnum}-0.5s-*-pbcorr-[QUV].fits
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
