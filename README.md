@@ -170,24 +170,44 @@ uses tempaltes:
   - make a single time/freq image and clean
   - perform primary beam correction on this image.
 
-### obs_im05s.sh
-Usage: `obs_im05s.sh obsnum [depend]`
-- obsnum: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
+### obs_im05s.sh 
+Image an observation once per 0.5 seconds
+
+Usage:
+```
+obs_im05s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=gpuq
+  -s imsize  : image size will be imsize x imsize pixels, default 4096
+  -p pixscale: image pixel scale, default is 32asec
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
 
 uses tempaltes:
-- `im05s.tmpl` (obsnum->OBSNUM)
+- `im05s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE)
   - make one image per 0.5sec time interval with no cleaning
   - perform primary beam correction on these images
 
 
 ### obs_im28s.sh
-Usage: `obs_im28s.sh obsnum [depend]`
-- obsnum: MWA observation id
-- depend: slurm job id on which this task depends (afterok)
+Image an observation once pert 28 seconds
+
+Usage:
+```
+obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=gpuq
+  -s imsize  : image size will be imsize x imsize pixels, default 4096
+  -p pixscale: image pixel scale, default is 32asec
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
 
 uses tempaltes:
-- `im28s.tmpl` (obsnum->OBSNUM)
+- `im28s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE)
   - make one image per 28sec time interval and clean
   - perform primary beam correction on these images
 
