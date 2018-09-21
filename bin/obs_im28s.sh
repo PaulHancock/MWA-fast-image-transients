@@ -64,6 +64,8 @@ base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/im28s_${obsnum}.sh"
 cat ${base}/bin/im28s.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
+                                 -e "s:IMSIZE:${imsize}:g" \
+                                 -e "s:SCALE:${pixscale}:g" \
                                  -e "s:BASEDIR:${base}:g"  > ${script}
 
 output="${base}queue/logs/im28s_${obsnum}.o%A"
