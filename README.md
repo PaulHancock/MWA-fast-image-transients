@@ -218,11 +218,9 @@ This consists of running `aoflagger` on the dataset (always), and if there is a 
 
 Usage:
 ```
-obs_flag.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
+obs_flag.sh [-d dep] [-q queue] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
-  -f flagfile : file to use for flagging
-                default is processing/<obsnum>_tile_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process
@@ -245,14 +243,14 @@ obs_flag_tiles.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
   -f flagfile : file to use for flagging
-                default is processing/<obsnum>_tile_to_flag.txt
+                default is processing/<obsnum>_tiles_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process
 ```
 
 uses templates:
-- `flag_tiles.tmpl` (obsnum->OBSNUM)
+- `flag_tiles.tmpl` (obsnum->OBSNUM, flagfile->FLAGFILE)
 
 ### obs_sfind.sh
 Run source finding on all the 2m, 28s, and 0.5s cadence stokes I, beam
