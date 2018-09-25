@@ -6,15 +6,18 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit $1
-fi
-}
+base=BASEDIR
+datadir=${base}/processing
+obsnum=OBSNUM
+tres=TRES
+fres=FRES
+csvfile="${obsnum}_dl.csv"
 
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
 source /group/mwa/software/module-reset.sh
 module use /group/mwa/software/modulefiles
 module load mwapy
@@ -23,20 +26,14 @@ module list
 
 set -x
 
+
+# check that the ASVO environment variables are set
 if [[ -z ${ASVO_USER} ]]
 then
     echo "Error, ASVO_USER not set"
     echo "Cannot use client"
     test_fail 1
 fi
-
-base=BASEDIR
-datadir=${base}/processing
-
-obsnum=OBSNUM
-tres=TRES
-fres=FRES
-csvfile="${obsnum}_dl.csv"
 
 
 # start task
