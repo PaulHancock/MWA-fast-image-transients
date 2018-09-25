@@ -2,7 +2,7 @@
 
 usage()
 {
-echo "obs_flag.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
+echo "obs_flag.sh [-d dep] [-q queue] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
   -t          : test. Don't submit job, just make the batch file
