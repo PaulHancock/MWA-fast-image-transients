@@ -34,7 +34,7 @@ if [[ ! -e ${modeldir}/${calmodel} ]]
 then
   echo "Cannot find calibrator model for ${calibrator}"
   echo "File: ${modeldir}/${calmodel} not found"
-  test_fail 1
+  exit 1
 fi
 
 cd ${datadir}/${obsnum}
