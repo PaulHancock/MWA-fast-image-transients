@@ -51,14 +51,12 @@ then
     echo "${msfile} exists, not downloading again"
 else
     mwa_client --csv=${csvfile} --dir=${datadir}/${obsnum}
-    test_fail $?
 fi
 
 # unzip the file if it exists
 if [[ -e "${outfile}" ]]
 then
     unzip -n ${outfile}
-    test_fail $?
 
     rm ${outfile}
 fi
