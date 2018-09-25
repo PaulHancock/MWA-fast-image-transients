@@ -23,7 +23,6 @@ cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
 base=BASEDIR
 datadir="${base}/processing"
 obsnum=OBSNUM
-flagfile=FLAGFILE
 
 # start
 cd ${base}
@@ -32,19 +31,10 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
 
-if [[ ! -z ${flagfile} ]]
-then
-    flagantennae ${obsnum}.ms $( cat ${flagfile} )
-    test_fail $?
-fi
-
 # run aoflagger
 # default is to work on the corrected data column
 aoflagger ${obsnum$}.ms 
 test_fail $?
-
-# delete the symlinks and temp directory
-rm -r mwapy
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`

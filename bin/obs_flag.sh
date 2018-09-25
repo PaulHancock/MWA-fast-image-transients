@@ -5,8 +5,6 @@ usage()
 echo "obs_flag.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
-  -f flagfile : file to use for flagging
-                default is processing/<obsnum>_tile_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process" 1>&2;
@@ -16,12 +14,11 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p gpuq'
-flagfile=
 tst=
 
 
 # parse args and set options
-while getopts ':td:q:f:' OPTION
+while getopts ':td:q:' OPTION
 do
     case "$OPTION" in
         d)
@@ -29,9 +26,6 @@ do
             ;;
 	q)
 	    queue="-p ${OPTARG}"
-	    ;;
-	f)
-	    flagfile=${OPTARG}
 	    ;;
         t)
             tst=1
@@ -62,30 +56,9 @@ fi
 
 base='/astro/mwasci/phancock/D0009/'
 
-# if no flag file is given look for a "default" flag file, and use it if it exists
-if [[ -z ${flagfile} ]]
-then
-    flagfile="${base}/processing/${obsnum}_tiles_to_flag.txt"
-    if [[ ! -e ${flagfile} ]]
-    then
-	flagfile=
-    fi
-else
-    # force an abs path
-    flagfile=$( realpath ${flagfile} )
-    # if a flag file is given make sure it exists
-    if [[ ! -e ${flagfile} ]] 
-    then
-	echo "flagging file doesn't exist: ${flagfile}"
-	echo "not submitting job"
-	exit 1
-    fi
-fi
-
 script="${base}queue/flag_${obsnum}.sh"
 cat ${base}/bin/flag.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
-                                -e "s:BASEDIR:${base}:g" \
-                                -e "s:FLAGFILE:${flagfile}:g" > ${script}
+                                -e "s:BASEDIR:${base}:g" > ${script}
 
 output="${base}queue/logs/flag_${obsnum}.o%A"
 error="${base}queue/logs/flag_${obsnum}.e%A"
