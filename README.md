@@ -213,7 +213,7 @@ uses tempaltes:
 
 ### obs_flag.sh
 Perform flagging on a measurement set.
-This consists of running `aoflagger` on the dataset (always), and if there is a supplied flag file it will be applied before running `aoflagger`
+This consists of running `aoflagger` on the dataset.
 
 
 Usage:
