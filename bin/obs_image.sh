@@ -97,8 +97,4 @@ jobid=${jobid[3]}
 error=`echo ${error} | sed "s/%A/${jobid}/"`
 output=`echo ${output} | sed "s/%A/${jobid}/"`
 
-# record submission
-python ${base}/bin/track_task.py queue --jobid=${jobid} --task='image' --submission_time=`date +%s` --batch_file=${script} \
-                     --obs_id=${obsnum} --stderr=${error} --stdout=${output}
-
 echo "Submitted ${script} as ${jobid}"

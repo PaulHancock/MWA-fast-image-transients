@@ -6,16 +6,6 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit $1
-fi
-}
-
 # begin timestamps
 {
 source /group/mwa/software/module-reset.sh
@@ -38,9 +28,6 @@ datadir="${base}/processing"
 
 
 # start
-cd ${base}
-python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
-
 
 cd ${datadir}/${obsnum}
 # make sure that the metafits file exists
@@ -48,7 +35,6 @@ metafits="${obsnum}.metafits"
 if [[ ! -e ${metafits} ]]
 then
     wget "http://mwa-metadata01.pawsey.org.au/metadata/fits?obs_id=${obsnum}" -O ${metafits}
-    test_fail $?
 fi
 
 RA=$( pyhead.py -p RA $metafits | awk '{print $3}' )
@@ -65,35 +51,25 @@ fi
 
 # calibrate
 calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
-test_fail $?
 
 # plot calibration solutions
 aocal_plot.py --refant=127 --amp_max=2 ${solutions}
-test_fail $?
 
 # apply calibration
 applysolutions ${obsnum}.ms ${solutions}
-test_fail $?
 
 # run aoflagger
 # default is to work on the corrected data column
 aoflagger ${obsnum}.ms 
-test_fail $?
 
 solutions=${obsnum}_infield_solutions.bin
 # calibrate again!
 calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
-test_fail $?
 
 #plot again
 aocal_plot.py --refant=127 --amp_max=2 ${solutions}
-test_fail $?
 
 # apply calibration again
 applysolutions ${obsnum}.ms ${solutions}
-test_fail $?
-
-cd ${base}
-python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 
 } 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) > >(awk '{print strftime("%F %T")";",$0; fflush()}')

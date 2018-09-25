@@ -14,9 +14,6 @@ fres=FRES
 csvfile="${obsnum}_dl.csv"
 
 
-# import the tag and test_fail functions
-. ${base}/bin/functions.sh
-
 # setup a clean environment
 source /group/mwa/software/module-reset.sh
 module use /group/mwa/software/modulefiles
@@ -26,7 +23,7 @@ module list
 
 set -x
 
-
+{
 # check that the ASVO environment variables are set
 if [[ -z ${ASVO_USER} ]]
 then
@@ -37,11 +34,7 @@ fi
 
 
 # start task
-cd ${base}
-python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
-
 mkdir -p ${datadir}/${obsnum}
-
 cd ${datadir}/${obsnum}
 
 # encode the conversion options into a csv file
@@ -69,7 +62,4 @@ then
 
     rm ${outfile}
 fi
-
-cd ${base}
-python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) > >(awk '{print strftime("%F %T")";",$0; fflush()}')

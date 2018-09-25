@@ -6,9 +6,6 @@
 #SBATCH --time=00:30:00
 #SBATCH --nodes=1
 
-# define the test_fail function
-./functions.sh
-
 set -x
 
 # turn on timestamps
@@ -19,15 +16,8 @@ obsnum=OBSNUM
 flagfile=FLAGFILE
 
 # start calibration
-cd ${base}
-python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
-
 cd ${datadir}/${obsnum}
-
 flagantennae ${obsnum}.ms $( cat ${flagfile} )
-test_fail $?
 
-cd ${base}
-python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
 } 2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
   1> >(awk '{print strftime("%F %T")";",$0; fflush()}')

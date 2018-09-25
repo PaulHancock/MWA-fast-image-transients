@@ -6,23 +6,8 @@
 #SBATCH --time=06:00:00
 #SBATCH --nodes=1
 
-
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit $1
-fi
-}
-
 set -x
-#memory in GB
-mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
-# number of cores (accounting for hyper-threading)
-cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
-
-#calid=CALOBSID
+{
 calfile=CALFILE
 base=BASEDIR
 datadir="${base}/processing"
@@ -30,13 +15,6 @@ obsnum=OBSNUM
 
 
 # start calibration
-cd ${base}
-python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
-
 cd ${datadir}/${obsnum}
-
 applysolutions ${obsnum}.ms ${calfile}
-test_fail $?
-
-cd ${base}
-python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) > >(awk '{print strftime("%F %T")";",$0; fflush()}')

@@ -6,15 +6,6 @@
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit ${res}
-fi
-}
-
 function bane_aegean {
 
 if [[ ! -e ${1%%.fits}_bkg.fits} ]]
@@ -30,21 +21,14 @@ then
 fi
 }
 
-
+{
+set -x
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
-# number of cores (accounting for hyper-threading)
-cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
 
 base=BASEDIR
 datadir=${base}/processing
-
-cd ${datadir}
-
 obsnum=OBSNUM
-
-cd ${base}
-python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
 
@@ -52,7 +36,6 @@ cd ${datadir}/${obsnum}
 prefix="${obsnum}-"
 suffix="-pbcorr-I.fits"
 
-set -x
 
 # find the BMAJ/BMIN/BPA from the lr (cleaned) image
 image2m="${prefix}2m${suffix}"
@@ -64,16 +47,4 @@ bpa=${stats[2]}
 # process the 2m image
 bane_aegean ${image2m}
 
-# find all the higher resolution stokes I images and process them also.
-hrfiles=`ls ${prefix}0.5s-t????${suffix} ${prefix}28s-t????${suffix}`
-
-#make the background images and source find for all the highres images
-for image in ${hrfiles}
-do
-    # update the fits headers for the input image
-    sethead ${image} BMAJ=${bmaj} BMIN=${bmin} BPA=${bpa}
-    bane_aegean ${image}
-done
-
-cd ${base}
-python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) > >(awk '{print strftime("%F %T")";",$0; fflush()}')
