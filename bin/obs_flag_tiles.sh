@@ -6,7 +6,7 @@ echo "obs_flag_tiles.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=gpuq
   -f flagfile : file to use for flagging
-                default is processing/<obsnum>_tile_to_flag.txt
+                default is processing/<obsnum>_tiles_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process" 1>&2;
@@ -59,22 +59,29 @@ fi
 
 base='/astro/mwasci/phancock/D0009/'
 
-if [[ ! -z ${flagfile} ]]
+# if no flag file is given look for a "default" flag file, and use it if it exists
+if [[ -z ${flagfile} ]]
 then
     flagfile="${base}/processing/${obsnum}_tiles_to_flag.txt"
+    if [[ ! -e ${flagfile} ]]
+    then
+	flagfile=
+    fi
 else
+    # force an abs path
     flagfile=$( realpath ${flagfile} )
 fi
 
-if [[ ! -e ${flagfile} ]]
+# if a flag file is given make sure it exists
+if [[ ! -e ${flagfile} ]] 
 then
-    echo "flagging file doesn't exist: ${flagfile}"
-    echo "not submitting job"
-    exit 1
+	echo "flagging file doesn't exist: ${flagfile}"
+	echo "not submitting job"
+	exit 1
 fi
 
 script="${base}queue/flag_tiles_${obsnum}.sh"
-cat ${base}/bin/flag_tiles.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \ 
+cat ${base}/bin/flag_tiles.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                       -e "s:BASEDIR:${base}:g" \
                                       -e "s:FLAGFILE:${flagfile}:g" > ${script}
 
