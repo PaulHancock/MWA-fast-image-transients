@@ -14,7 +14,6 @@ co-authors on papers that rely on this code.
 
 ## Structure
 - bin: executable files and template scripts
-- db: database location and python scripts for updating the database
 - processing: directory in which all the data is processed
 - queue: location from which scripts are run
 - queue/logs: log files
@@ -23,30 +22,6 @@ co-authors on papers that rely on this code.
 ## scripts and templates
 Templates for scripts are `bin/*.tmpl`, these are modified by the `bin/obs_*.sh` scripts and the completed script is then put in `queue/<obsid>_*.sh` and submitted to SLURM.
 
-## track_task.py
-Used by the following scripts to track the submission/start/finish/fail of each of the jobs.
-Not intended for use outside of these scripts.
-
-## process_grb.sh
-Usage: `process_grb.sh grbname`
-- grbname: The name of the GRB as per the database (eg, GRB110715A) which may differ from the official name due to lazyness in implementing the naming strategy.
-
-Currently:
-- download the calibrator data
-- make calibration solution
-- for each of the observations of this GRB:
-  - download, cotter and apply calibration solutions with `obs_dl.sh` (+ `chain.tmpl`)
-
-Eventually:
-- as above then
-- for each observation:
-  - image
-  - source find
-  - push images/catalogues to the `done` directory
-  
-Do the above in a smart manner that will not process GRBs that are flagged as junk or broken.
-Start the processing at the required step by inspecting the db for previous jobs.
-Restart broken jobs.
 
 ### obs_asvo.sh
 Use the [ASVO-mwa](https://asvo.mwatelescope.org) service to do the cotter conversion
@@ -169,47 +144,6 @@ uses tempaltes:
 - `image.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE/clean->CLEAN)
   - make a single time/freq image and clean
   - perform primary beam correction on this image.
-
-### obs_im05s.sh 
-Image an observation once per 0.5 seconds
-
-Usage:
-```
-obs_im05s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
-  -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
-  -s imsize  : image size will be imsize x imsize pixels, default 4096
-  -p pixscale: image pixel scale, default is 32asec
-  -t         : test. Don't submit job, just make the batch file
-               and then return the submission command
-  obsnum     : the obsid to process
-```
-
-uses tempaltes:
-- `im05s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE)
-  - make one image per 0.5sec time interval with no cleaning
-  - perform primary beam correction on these images
-
-
-### obs_im28s.sh
-Image an observation once pert 28 seconds
-
-Usage:
-```
-obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
-  -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
-  -s imsize  : image size will be imsize x imsize pixels, default 4096
-  -p pixscale: image pixel scale, default is 32asec
-  -t         : test. Don't submit job, just make the batch file
-               and then return the submission command
-  obsnum     : the obsid to process
-```
-
-uses tempaltes:
-- `im28s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE)
-  - make one image per 28sec time interval and clean
-  - perform primary beam correction on these images
 
 ### obs_flag.sh
 Perform flagging on a measurement set.
