@@ -68,7 +68,7 @@ fi
 
 # start the real program
 
-base='/astro/mwasci/phancock/D0009/'
+base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
 
 script="${base}queue/image_${obsnum}.sh"
 cat ${base}/bin/image.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \

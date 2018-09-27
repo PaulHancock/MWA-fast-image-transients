@@ -58,7 +58,7 @@ then
 fi
 
 # start the real program
-base='/astro/mwasci/phancock/D0009/'
+base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
 
 script="${base}queue/calibrate_${obsnum}.sh"
 cat ${base}/bin/calibrate.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALIBRATOR:${calname}:g"  > ${script}

@@ -57,7 +57,7 @@ then
 depend="--dependency=afterok:${dep}"
 fi
 
-base='/astro/mwasci/phancock/D0009/'
+base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
 
 # if no flag file is given look for a "default" flag file, and use it if it exists
 if [[ -z ${flagfile} ]]

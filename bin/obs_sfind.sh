@@ -50,7 +50,7 @@ then
     dep="--dependency=afterok:${dep}"
 fi
 
-base='/astro/mwasci/phancock/D0009/'
+base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
 
 script="${base}queue/sfind_${obsnum}.sh"
 cat ${base}/bin/sfind.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
