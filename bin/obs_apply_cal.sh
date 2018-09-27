@@ -60,27 +60,27 @@ then
     dep="--dependency=afterok:${dep}"
 fi
 
-base='/astro/mwasci/phancock/D0009/'
+base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
 
 # look for the calibrator solutions file
-calfile=($( ls -1 ${base}/processing/${calid}/${calid}_*_solutions.bin))
-calfile=${calfile[0]}
+calfile=($( ls -1 ${base}/processing/${calid}/${calid}_*_solutions.bin 2>/dev/null))
 
 if [[ $? != 0 ]]
 then
     echo "Could not find calibrator file"
-    echo "looked for: ${base}/${calid}/${calid}_*_solutions.bin"
+    echo "looked for: ${base}/processing/${calid}/${calid}_*_solutions.bin"
     exit 1
 fi
 
+calfile=${calfile[0]}
 
-script="${base}queue/apply_cal_${obsnum}.sh"
+script="${base}/queue/apply_cal_${obsnum}.sh"
 cat ${base}/bin/apply_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                      -e "s:BASEDIR:${base}:g" \
                                      -e "s:CALFILE:${calfile}:g"  > ${script}
 
-output="${base}queue/logs/apply_cal_${obsnum}.o%A"
-error="${base}queue/logs/apply_cal_${obsnum}.e%A"
+output="${base}/queue/logs/apply_cal_${obsnum}.o%A"
+error="${base}/queue/logs/apply_cal_${obsnum}.e%A"
 
 sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
