@@ -6,6 +6,11 @@
 #SBATCH --time=06:00:00
 #SBATCH --nodes=1
 
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools/mwa-sci
+module list
+
 set -x
 
 # turn on timestamps

@@ -6,8 +6,6 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-# begin timestamps
-{
 source /group/mwa/software/module-reset.sh
 module use /group/mwa/software/modulefiles
 module load MWA_Tools/mwa-sci
@@ -15,6 +13,8 @@ module list
 
 set -x
 
+# begin timestamps
+{
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
 
