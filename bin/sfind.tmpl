@@ -6,23 +6,13 @@
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 
-function bane_aegean {
-
-if [[ ! -e ${1%%.fits}_bkg.fits} ]]
-then 
-    BANE ${1} --compress
-fi
-
-if [[ ! -e ${1%%.fits}_comp.fits} ]]
-then
-    aegean --autoload ${1} --table=${1} --island --negative
-fi
-}
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load aegean
+module list
 
 {
 set -x
-#memory in GB
-mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
 
 base=BASEDIR
 datadir=${base}/processing
@@ -30,19 +20,14 @@ obsnum=OBSNUM
 
 cd ${datadir}/${obsnum}
 
-# files that need to be processed
 prefix="${obsnum}-"
 suffix="-pbcorr-I.fits"
 
 
-# find the BMAJ/BMIN/BPA from the lr (cleaned) image
 image2m="${prefix}2m${suffix}"
-stats=( `gethead ${image2m} BMAJ BMIN BPA` )
-bmaj=${stats[0]}
-bmin=${stats[1]}
-bpa=${stats[2]}
 
-# process the 2m image
-bane_aegean ${image2m}
+# process the image
+BANE ${image2m} 
+aegean --autoload ${image2m} --table=${image2m} --island --negative --cores 2
 
 } 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) > >(awk '{print strftime("%F %T")";",$0; fflush()}')
