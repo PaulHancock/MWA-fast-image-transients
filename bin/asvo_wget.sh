@@ -6,7 +6,7 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-base=/group/courses01/${USERS}/
+base=/group/courses01/${USER}/
 datadir=${base}/processing
 # target
 #obsnum=1061674824
@@ -36,7 +36,7 @@ then
     echo "${msfile} exists, not downloading again"
 else
     wget -O ${obsnum}_ms.zip "https://asvo.mwatelescope.org:8778/api/download?job_id=57209&file_name=1061673704_ms.zip"
-    wget -O ${obsnum}_ms.zip "https://asvo.mwatelescope.org:8778/api/download?job_id=56678&file_name=1061674824_ms.zip"
+    # wget -O ${obsnum}_ms.zip "https://asvo.mwatelescope.org:8778/api/download?job_id=56678&file_name=1061674824_ms.zip"
     # NOTE THAT THE LINK IS OF THIS FORMAT:
     # https://asvo.mwatelescope.org:8778/api/download?job_id=56678&file_name=1061674824_ms.zip
     #                                                        ^^job id        ^^^obsid
