@@ -42,29 +42,15 @@ cd ${datadir}/${obsnum}
 # pythonpath hack
 ln -s /group/mwa/software/mwapy/master/galaxy/lib/python2.7/site-packages/mwapy .
 
-solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
-
 # calibrate
+solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
+
 calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
 
-# plot calibration solutions
+#plot
 aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 
 # apply calibration
-applysolutions ${obsnum}.ms ${solutions}
-
-# run aoflagger
-# default is to work on the corrected data column
-aoflagger ${obsnum}.ms 
-
-solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
-# calibrate again!
-calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
-
-#plot again
-aocal_plot.py --refant=127 --amp_max=2 ${solutions}
-
-# apply calibration again
 applysolutions ${obsnum}.ms ${solutions}
 
 # delete the symlink
