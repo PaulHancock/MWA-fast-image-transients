@@ -1,8 +1,9 @@
 #! /usr/bin/env bash
 
 # SET UP YOUR VARIABLES HERE
-base='/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/'
-account='mwasci'
-
+base='/group/courses01/${USER}/mwa'
+account='courses01'
+reservation='courseq'
 sed -i -e s:^base=.*:base=${base}:g obs_*.sh
-sed -i -e s:account=.*:account=${account}:g *.tmpl asvo_wget.sh
+sed -i -e s:account=.*:account=${account}:g \
+       -e s:rservation=.*:reservation=${reservation}:g *.tmpl asvo_wget.sh
