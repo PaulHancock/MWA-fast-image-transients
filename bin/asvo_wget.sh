@@ -8,8 +8,10 @@
 
 base=/group/courses01/${USERS}/
 datadir=${base}/processing
-obsnum=1061674824
-
+# target
+#obsnum=1061674824
+# calibrator
+obsnum=1061673704
 
 # setup a clean environment
 source /group/mwa/software/module-reset.sh
@@ -33,6 +35,7 @@ elif [[ -e "${msfile}" ]]
 then
     echo "${msfile} exists, not downloading again"
 else
+    wget -O ${obsnum}_ms.zip "https://asvo.mwatelescope.org:8778/api/download?job_id=57209&file_name=1061673704_ms.zip"
     wget -O ${obsnum}_ms.zip "https://asvo.mwatelescope.org:8778/api/download?job_id=56678&file_name=1061674824_ms.zip"
     # NOTE THAT THE LINK IS OF THIS FORMAT:
     # https://asvo.mwatelescope.org:8778/api/download?job_id=56678&file_name=1061674824_ms.zip
