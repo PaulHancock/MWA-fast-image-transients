@@ -3,7 +3,6 @@
 #SBATCH -M zeus
 #SBATCH -p copyq
 #SBATCH --account=courses01
-#SBATCH --reservation=courseq
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
