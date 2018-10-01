@@ -60,7 +60,7 @@ fi
 # start the real program
 base=/group/courses01/${USER}/mwa
 
-script="${base}queue/calibrate_${obsnum}.sh"
+script="${base}/queue/calibrate_${obsnum}.sh"
 cat ${base}/bin/calibrate.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALIBRATOR:${calname}:g"  > ${script}
 
 output="${base}queue/logs/calibrate_${obsnum}.o%A"
