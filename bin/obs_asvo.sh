@@ -81,7 +81,7 @@ then
 fi
 
 
-base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
+base=/group/courses01/${USER}/mwa
 
 script="${base}queue/asvo_${obsnum}.sh"
 cat ${base}/bin/asvo_dl_cotter.tmpl | sed -e "s:OBSNUM:${obsnum}:" \

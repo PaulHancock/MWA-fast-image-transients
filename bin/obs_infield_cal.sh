@@ -16,7 +16,7 @@ dep=
 queue='-p gpuq'
 catfile=
 tst=
-base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
+base=/group/courses01/${USER}/mwa
 
 # parse args and set options
 while getopts ':td:q:c:' OPTION

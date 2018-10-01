@@ -60,7 +60,7 @@ then
     dep="--dependency=afterok:${dep}"
 fi
 
-base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
+base=/group/courses01/${USER}/mwa
 
 # look for the calibrator solutions file
 calfile=($( ls -1 ${base}/processing/${calid}/${calid}_*_solutions.bin 2>/dev/null))

@@ -2,7 +2,8 @@
 #SBATCH --export=NONE
 #SBATCH -M zeus
 #SBATCH -p copyq
-#SBATCH --account=mwasci
+#SBATCH --account=courses01
+#SBATCH --reservation=courseq
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 

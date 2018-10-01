@@ -54,7 +54,7 @@ then
 fi
 
 
-base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients/
+base=/group/courses01/${USER}/mwa
 
 script="${base}queue/flag_${obsnum}.sh"
 cat ${base}/bin/flag.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
