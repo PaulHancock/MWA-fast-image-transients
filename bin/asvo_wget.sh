@@ -6,7 +6,7 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-base=/astro/mwasci/phancock/RadioSchool/MWA-fast-image-transients
+base=/group/courses01/${USERS}/
 datadir=${base}/processing
 obsnum=1061674824
 
