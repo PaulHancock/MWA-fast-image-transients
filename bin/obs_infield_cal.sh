@@ -16,7 +16,7 @@ dep=
 queue='-p gpuq'
 catfile=
 tst=
-base=/group/courses01/${USER}/mwa
+base=/group/courses01/${USER}/mwa/
 
 # parse args and set options
 while getopts ':td:q:c:' OPTION

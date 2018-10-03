@@ -68,7 +68,7 @@ fi
 
 # start the real program
 
-base=/group/courses01/${USER}/mwa
+base=/group/courses01/${USER}/mwa/
 
 script="${base}queue/image_${obsnum}.sh"
 cat ${base}/bin/image.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \

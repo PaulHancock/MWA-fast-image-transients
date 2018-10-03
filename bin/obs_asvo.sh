@@ -81,7 +81,7 @@ then
 fi
 
 
-base=/group/courses01/${USER}/mwa
+base=/group/courses01/${USER}/mwa/
 
 script="${base}queue/asvo_${obsnum}.sh"
 cat ${base}/bin/asvo_dl_cotter.tmpl | sed -e "s:OBSNUM:${obsnum}:" \
