@@ -48,7 +48,7 @@ fi
 #if clean is set then change it to the default clean options.
 if [[ ! -z ${clean} ]]
 then 
-    clean="-stopnegative -joinpolarizations -niter 20000 -threshold 0.2"
+    clean="-joinpolarizations -niter 20000 -threshold 0.2 -nmiter 1"
 fi
 
 # start download
