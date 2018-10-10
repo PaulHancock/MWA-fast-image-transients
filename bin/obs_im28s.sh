@@ -2,11 +2,12 @@
 
 usage()
 {
-echo "obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
+echo "obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-c] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
+  -c         : clean image. Default False.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
@@ -18,6 +19,7 @@ dep=
 queue='-p gpuq'
 imsize=
 pixscale=
+clean=
 tst=
 
 # parse args and set options
@@ -35,6 +37,9 @@ do
 	    ;;
 	p)
 	    pixscale=${OPTARG}
+	    ;;
+	c)
+	    clean="yes"
 	    ;;
 	t)
 	    tst=1
@@ -64,9 +69,10 @@ base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/im28s_${obsnum}.sh"
 cat ${base}/bin/im28s.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
+                                 -e "s:BASEDIR:${base}:g"  \
                                  -e "s:IMSIZE:${imsize}:g" \
                                  -e "s:SCALE:${pixscale}:g" \
-                                 -e "s:BASEDIR:${base}:g"  > ${script}
+                                 -e "s:CLEAN:${clean}:g" > ${script}
 
 output="${base}queue/logs/im28s_${obsnum}.o%A"
 error="${base}queue/logs/im28s_${obsnum}.e%A"

@@ -11,6 +11,7 @@ datadir="${base}/processing"
 obsnum=OBSNUM
 imsize=IMSIZE
 pixscale=SCALE
+clean=CLEAN
 
 # import the tag and test_fail functions
 . ${base}/bin/functions.sh
@@ -45,6 +46,14 @@ else
     pixscale="-scale 32asec"
 fi
 
+#if clean is set then change it to the default clean options.
+if [[ ! -z ${clean} ]]
+then 
+    #clean="-stopnegative -joinpolarizations -niter 20000 -threshold 0.2"
+    #clean="-joinpolarizations -niter 20000 -threshold 0.2"
+    clean="-join-polarizations -niter 100000 -auto-mask 3 -auto-threshold 1 -circular-beam"
+fi
+
 
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
@@ -57,7 +66,7 @@ wsclean -name ${obsnum}-28s ${imsize} \
     -pol xx,yy -minuv-l 30 \
     -niter 0  \
     -intervalsout 4 \
-    ${obsnum}.ms
+    ${clean} ${obsnum}.ms
 test_fail $?
 
 # delete the dirty images as they are the same as the regular image

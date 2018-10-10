@@ -201,13 +201,14 @@ obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
   -q queue   : job queue, default=gpuq
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
+  -c         : clean image. Default False.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
 ```
 
 uses tempaltes:
-- `im28s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE)
+- `im28s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE/clean->CLEAN)
   - make one image per 28sec time interval and clean
   - perform primary beam correction on these images
 
