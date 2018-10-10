@@ -10,6 +10,7 @@ base=BASEDIR
 datadir="${base}/processing"
 obsnum=OBSNUM
 catfile=CATFILE
+doaoflagger=AOFLAGGER
 
 # import the tag and test_fail functions
 . ${base}/bin/functions.sh
@@ -65,23 +66,29 @@ test_fail $?
 applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
-# run aoflagger
-# default is to work on the corrected data column
-aoflagger ${obsnum}.ms 
-test_fail $?
-
-solutions=${obsnum}_infield_solutions.bin
-# calibrate again!
-calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
-test_fail $?
-
-#plot again
-aocal_plot.py --refant=127 --amp_max=2 ${solutions}
-test_fail $?
-
-# apply calibration again
-applysolutions ${obsnum}.ms ${solutions}
-test_fail $?
+if [[ -z ${doaoflagger} ]]
+then
+  # run aoflagger
+  # default is to work on the corrected data column
+  aoflagger ${obsnum}.ms 
+  test_fail $?
+  
+  solutions=${obsnum}_infield_solutions.bin
+  # calibrate again!
+  calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+  test_fail $?
+  
+  #plot again
+  aocal_plot.py --refant=127 --amp_max=2 ${solutions}
+  test_fail $?
+  
+  # apply calibration again
+  applysolutions ${obsnum}.ms ${solutions}
+  test_fail $?
+else
+  ## rename the calibration file to be the same "final" filename
+  mv ${solutions} ${obsnum}_infield_solutions.bin
+fi
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`

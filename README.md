@@ -117,10 +117,11 @@ This calibration is done in a two stage process as per obs_calibrate.sh
 
 Usage:
 ```
-obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-t] obsnum
+obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-n] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
   -c catalog : catalogue file to use, default=GLEAM_EGC.fits
+  -n         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
@@ -196,7 +197,7 @@ Image an observation once pert 28 seconds
 
 Usage:
 ```
-obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
+obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-c] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
   -s imsize  : image size will be imsize x imsize pixels, default 4096
