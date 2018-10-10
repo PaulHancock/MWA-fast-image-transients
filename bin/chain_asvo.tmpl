@@ -1,3 +1,5 @@
+
+{
 calname=CALNAME
 calid=CALID
 
@@ -34,3 +36,5 @@ then
   dep=(`./bin/obs_image.sh -d ${depend} ${obsnum}`)
   depend=${dep[3]}
 fi
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')

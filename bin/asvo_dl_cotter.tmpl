@@ -26,6 +26,8 @@ module list
 
 set -x
 
+# turn on timestamps
+{
 
 # check that the ASVO environment variables are set
 if [[ -z ${ASVO_USER} ]]
@@ -72,4 +74,5 @@ fi
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')

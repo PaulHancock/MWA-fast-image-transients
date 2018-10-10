@@ -6,26 +6,30 @@
 #SBATCH --time=01:00:00
 #SBATCH --nodes=1
 
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
 
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit $1
-fi
-}
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load python
+module list
+
+set -x
+
+# turn on timestamps
+{
+
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
-# number of cores (accounting for hyper-threading)
-cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
 
-base=BASEDIR
-datadir=${base}/processing
 
 cd ${datadir}
 
-obsnum=OBSNUM
 ncpus=20
 
 # start download
@@ -51,4 +55,5 @@ test_fail $?
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')

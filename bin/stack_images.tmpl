@@ -1,33 +1,28 @@
 #! /bin/bash -l
 #SBATCH --export=NONE
+#SBATCH -M galaxy
+#SBATCH -p=gpuq
 #SBATCH --account=mwasci
-#SBATCH --partition=workq
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit $1
-fi
-}
-
-
-# automatically set the right number of corse
-# maybe leaving -d blank will do this ...
-if [[ $SLURM_JOB_PARTITION -eq "gpuq" ]]
-then
-    cores=8
-else #if [[ $SLURM_JOB_PARTITION -eq "workq" ]]
-    cores=20
-fi
-
 base=BASEDIR
-datadir=${base}/processing
-
+datadir="${base}/processing"
 obsnum=OBSNUM
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
+
+set -x
+
+# turn on timestamps
+{
 
 xxfiles=`ls ${datadir}/${obsnum}/${obsnum}*hr*XX-image.fits`
 xout="${base}/done/${obsnum}_stack_xx.fits"
@@ -49,3 +44,5 @@ test_fail $?
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')

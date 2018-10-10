@@ -6,16 +6,23 @@
 #SBATCH --time=06:00:00
 #SBATCH --nodes=1
 
-# define the test_fail function
-./functions.sh
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
 
 set -x
 
 # turn on timestamps
 {
-base=BASEDIR
-datadir="${base}/processing"
-obsnum=OBSNUM
 
 # start
 cd ${base}
@@ -31,5 +38,5 @@ test_fail $?
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
   1> >(awk '{print strftime("%F %T")";",$0; fflush()}')

@@ -6,14 +6,14 @@
 #SBATCH --time=10:00:00
 #SBATCH --nodes=1
 
-function test_fail {
-if [[ $1 != 0 ]]
-then
-    cd ${base}
-    python bin/track_task.py fail --jobid=${SLURM_JOBID} --finish_time=`date +%s`
-    exit ${res}
-fi
-}
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+catfile=CATFILE
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
 
 function bane_aegean {
 
@@ -30,18 +30,16 @@ then
 fi
 }
 
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools/mwa-sci
+module list
 
-#memory in GB
-mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
-# number of cores (accounting for hyper-threading)
-cores=$( echo "$SLURM_TASKS_PER_NODE / 2" | bc )
+set -x
 
-base=BASEDIR
-datadir=${base}/processing
-
-cd ${datadir}
-
-obsnum=OBSNUM
+# turn on timestamps
+{
 
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
@@ -52,7 +50,6 @@ cd ${datadir}/${obsnum}
 prefix="${obsnum}-"
 suffix="-pbcorr-I.fits"
 
-set -x
 
 # find the BMAJ/BMIN/BPA from the lr (cleaned) image
 image2m="${prefix}2m${suffix}"
@@ -77,3 +74,5 @@ done
 
 cd ${base}
 python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')

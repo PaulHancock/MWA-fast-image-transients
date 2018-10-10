@@ -6,17 +6,25 @@
 #SBATCH --time=00:30:00
 #SBATCH --nodes=1
 
-# define the test_fail function
-./functions.sh
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+flagfile=FLAGFILE
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
 
 set -x
 
 # turn on timestamps
 {
-base=BASEDIR
-datadir="${base}/processing"
-obsnum=OBSNUM
-flagfile=FLAGFILE
 
 # start calibration
 cd ${base}
