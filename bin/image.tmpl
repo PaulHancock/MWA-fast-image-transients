@@ -6,23 +6,32 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-# define the test_fail function
-./functions.sh
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+imsize=IMSIZE
+pixscale=SCALE
+clean=CLEAN
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
 
 set -x
 
 # turn on timestamps
 {
+
+
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
 
-obsnum=OBSNUM
-base=BASEDIR
-imsize=IMSIZE
-pixscale=SCALE
-clean=CLEAN
-
-datadir=${base}/processing
 
 cd ${datadir}
 
@@ -67,8 +76,11 @@ test_fail $?
 beams=$( ls beam-MFS-*.fits | wc -l )
 if [[ ${beams} -ne 8 ]]
 then
+    echo "## Making primary beam"
     beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
     test_fail $?
+else
+    echo "## primary beam exists"
 fi
 
 # create stokes iquv images
