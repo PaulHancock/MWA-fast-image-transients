@@ -1,6 +1,6 @@
 function tag {
     $@ \
-        2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
+        2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
          > >(awk '{print strftime("%F %T")";",$0; fflush()}')
 }
 
