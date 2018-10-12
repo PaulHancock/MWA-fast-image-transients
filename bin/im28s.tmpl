@@ -3,7 +3,7 @@
 #SBATCH -M galaxy
 #SBATCH -p gpuq
 #SBATCH --account=mwasci
-#SBATCH --time=10:00:00
+#SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
 base=BASEDIR
@@ -62,10 +62,10 @@ cd ${datadir}/${obsnum}
 echo "##WSCLEAN"
 wsclean -name ${obsnum}-28s ${imsize} \
     -abs-mem ${mem} \
-    -weight briggs -1 -mfsweighting ${imscale} \
+    -weight briggs -1 -mfs-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
     -niter 0  \
-    -intervalsout 4 \
+    -intervals-out 4 \
     ${clean} ${obsnum}.ms
 test_fail $?
 
