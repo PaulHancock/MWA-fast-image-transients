@@ -9,6 +9,7 @@
 base=BASEDIR
 datadir="${base}/processing"
 obsnum=OBSNUM
+doaoflagger=AOFLAGGER
 
 calibrator=CALIBRATOR
 modeldir="/group/mwa/software/mwa-reduce/mwa-reduce/models"
@@ -67,7 +68,6 @@ solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 # calibrate
 calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
 test_fail $?
-
 # plot calibration solutions
 aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 test_fail $?
@@ -76,23 +76,29 @@ test_fail $?
 applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
-# run aoflagger
-# default is to work on the corrected data column
-aoflagger ${obsnum}.ms 
-test_fail $?
-
-solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
-# calibrate again!
-calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
-test_fail $?
-
-#plot again
-aocal_plot.py --refant=127 --amp_max=2 ${solutions}
-test_fail $?
-
-# apply calibration again
-applysolutions ${obsnum}.ms ${solutions}
-test_fail $?
+if [[ -z ${doaoflagger} ]]
+then
+  # run aoflagger
+  # default is to work on the corrected data column
+  aoflagger ${obsnum}.ms 
+  test_fail $?
+  
+  solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
+  # calibrate again!
+  calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+  test_fail $?
+  
+  #plot again
+  aocal_plot.py --refant=127 --amp_max=2 ${solutions}
+  test_fail $?
+  
+  # apply calibration again
+  applysolutions ${obsnum}.ms ${solutions}
+  test_fail $?
+else
+  ## rename the calibration file to be the same "final" filename
+  mv ${solutions} ${obsnum}_solutions.bin
+fi
 
 # delete the symlink
 rm mwapy
