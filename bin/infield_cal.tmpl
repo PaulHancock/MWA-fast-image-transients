@@ -66,7 +66,7 @@ test_fail $?
 applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
-if [[ -z ${doaoflagger} ]]
+if [[ ! -z ${doaoflagger} ]]
 then
   # run aoflagger
   # default is to work on the corrected data column
