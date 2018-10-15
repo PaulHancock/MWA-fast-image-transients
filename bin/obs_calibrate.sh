@@ -66,9 +66,9 @@ fi
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/calibrate_${obsnum}.sh"
-cat ${base}/bin/calibrate.tmpl | sed -e "a:OBSNUM:${obsnum}:g" \
+cat ${base}/bin/calibrate.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                      -e "s:BASEDIR:${base}:g" \
-                                     -e "s:CALIBRATOR:${calname}:g"\
+                                     -e "s:CALIBRATOR:${calname}:g" \
                                      -e "s:AOFLAGGER:${doaoflagger}:g" > ${script}
 
 output="${base}queue/logs/calibrate_${obsnum}.o%A"
