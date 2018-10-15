@@ -23,7 +23,7 @@ fi
 # so we need to just calculate the colutions
 if [[ ! -z ${calname} ]]
 then
-  dep=(`./bin/obs_calibrate.sh -c ${calname} ${depend} ${obsnum}`)
+  dep=(`./bin/obs_calibrate.sh -c ${calname} -d ${depend} ${obsnum}`)
   depend=${dep[3]}
 
 # if we have the calid then this is a normal obs that we need to apply the
