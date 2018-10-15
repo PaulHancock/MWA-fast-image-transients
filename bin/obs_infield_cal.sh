@@ -5,7 +5,7 @@ echo "obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-n] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
   -c catalog : catalogue file to use, default=GLEAM_EGC.fits
-  -n         : turn OFF aoflagger and second iteration of calibration
+  -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
@@ -21,7 +21,7 @@ doaoflagger=
 base='/astro/mwasci/phancock/D0009/'
 
 # parse args and set options
-while getopts ':tnd:q:c:' OPTION
+while getopts ':tad:q:c:' OPTION
 do
     case "$OPTION" in
 	d)
@@ -34,7 +34,7 @@ do
 	q)
 	    queue="-p ${OPTARG}"
 	    ;;
-	n)
+	a)
 	    aoflagger='no'
 	    ;;
 	t)
