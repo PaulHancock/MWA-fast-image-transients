@@ -22,7 +22,7 @@ tst=
 doaoflagger=
 
 # parse args and set options
-while getopts ':ta:q:n:' OPTION
+while getopts ':taq:n:' OPTION
 do
     case "$OPTION" in
 	d)
