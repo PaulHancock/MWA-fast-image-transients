@@ -64,13 +64,13 @@ base='/astro/mwasci/phancock/D0009/'
 
 # look for the calibrator solutions file
 calfile=($( ls -1 ${base}/processing/${calid}/${calid}_*_solutions.bin))
-calfile=${calfile[0]}
-
-if [[ $? != 0 ]]
+if [[ ${#calfile[@]} -eq 0 ]]
 then
     echo "Could not find calibrator file"
     echo "looked for: ${base}/${calid}/${calid}_*_solutions.bin"
     exit 1
+else
+    calfile=${calfile[0]}
 fi
 
 
