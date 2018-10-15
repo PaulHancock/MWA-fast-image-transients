@@ -85,12 +85,13 @@ This is done in a two stage process, and results in the final calibration soluti
 
 Usage:
 ```
-obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-t] obsnum
+obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
   -n calname : The name of the calibrator.
                Implies that this is a calibrator observation
                and so calibration will be done.
+  -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
@@ -117,11 +118,11 @@ This calibration is done in a two stage process as per obs_calibrate.sh
 
 Usage:
 ```
-obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-n] [-t] obsnum
+obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
   -c catalog : catalogue file to use, default=GLEAM_EGC.fits
-  -n         : turn OFF aoflagger and second iteration of calibration
+  -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
