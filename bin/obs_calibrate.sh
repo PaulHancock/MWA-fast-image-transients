@@ -1,12 +1,13 @@
 #! /bin/bash
 usage()
 {
-echo "obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-t] obsnum
+echo "obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=gpuq
   -n calname : The name of the calibrator.
                Implies that this is a calibrator observation 
                and so calibration will be done.
+  -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
@@ -18,9 +19,10 @@ dep=
 queue='-p gpuq'
 calname=
 tst=
+doaoflagger=
 
 # parse args and set options
-while getopts ':td:q:n:' OPTION
+while getopts ':ta:q:n:' OPTION
 do
     case "$OPTION" in
 	d)
@@ -32,6 +34,9 @@ do
 	    ;;
 	q)
 	    queue="-p ${OPTARG}"
+	    ;;
+	a)
+	    aoflagger='no'
 	    ;;
 	t)
 	    tst=1
@@ -61,7 +66,10 @@ fi
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/calibrate_${obsnum}.sh"
-cat ${base}/bin/calibrate.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g" | sed "s:CALIBRATOR:${calname}:g"  > ${script}
+cat ${base}/bin/calibrate.tmpl | sed -e "a:OBSNUM:${obsnum}:g" \
+                                     -e "s:BASEDIR:${base}:g" \
+                                     -e "s:CALIBRATOR:${calname}:g"\
+                                     -e "s:AOFLAGGER:${doaoflagger}:g" > ${script}
 
 output="${base}queue/logs/calibrate_${obsnum}.o%A"
 error="${base}queue/logs/calibrate_${obsnum}.e%A"
