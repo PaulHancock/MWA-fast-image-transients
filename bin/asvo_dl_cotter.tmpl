@@ -67,9 +67,11 @@ fi
 if [[ -e "${outfile}" ]]
 then
     # -n = don't ask for user input
-    # -K = scrap permissions
-    unzip -n -K ${outfile}
+    unzip -n ${outfile}
     test_fail $?
+    # update permissions because they come out of the zip file wrong
+    chmod -R ugo+r ${msfile}
+    chmod -R ug+w ${msfile}
 
     rm ${outfile}
 fi
