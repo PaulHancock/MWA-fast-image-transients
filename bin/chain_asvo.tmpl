@@ -16,25 +16,25 @@ cd ${base}
 if [[ -e "${base}/processing/${obsnum}_tiles_to_flag.txt" ]]
 then
   dep=($( ./bin/obs_flag_tiles.sh -d ${depend} ${obsnum} ))
-  depend=${dep[3]}
+  depend="-d ${dep[3]}"
 fi
 
 # if we have a calibrator name then this is a calibration obs
 # so we need to just calculate the colutions
 if [[ ! -z ${calname} ]]
 then
-  dep=(`./bin/obs_calibrate.sh -c ${calname} -d ${depend} ${obsnum}`)
-  depend=${dep[3]}
+  dep=(`./bin/obs_calibrate.sh -c ${calname} ${depend} ${obsnum}`)
+  depend="-d ${dep[3]}"
 
 # if we have the calid then this is a normal obs that we need to apply the
 # solution to and then image
 elif [[ ! -z ${calid} ]]
 then
-  dep=(`./bin/obs_apply_cal.sh -d ${depend} -c ${calid} ${obsnum}`)
-  depend=${dep[3]}
+  dep=(`./bin/obs_apply_cal.sh ${depend} -c ${calid} ${obsnum}`)
+  depend="-d ${dep[3]}"
   
-  dep=(`./bin/obs_image.sh -d ${depend} ${obsnum}`)
-  depend=${dep[3]}
+  dep=(`./bin/obs_image.sh ${depend} ${obsnum}`)
+  depend="-d ${dep[3]}"
 fi
 } 2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
   1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
