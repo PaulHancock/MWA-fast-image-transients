@@ -47,10 +47,10 @@ cd ${datadir}/${obsnum}
 echo "##WSCLEAN"
 wsclean -name ${obsnum}-0.5s ${imsize} \
     -abs-mem ${mem} \
-    -weight briggs -1 -mfsweighting ${pixscale} \
+    -weight briggs -1 -mfs-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
     -niter 0  \
-    -intervalsout 224 \
+    -intervals-out 224 \
     ${obsnum}.ms
 test_fail $?
 
