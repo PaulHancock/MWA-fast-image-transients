@@ -6,8 +6,20 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
-# define the test_fail function
-./functions.sh
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+imsize=IMSIZE
+pixscale=SCALE
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
 
 set -x
 
@@ -15,13 +27,6 @@ set -x
 {
 #memory in GB
 mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
-
-obsnum=OBSNUM
-base=BASEDIR
-imsize=IMSIZE
-pixscale=SCALE
-
-datadir=${base}/processing
 
 # set the image size
 if [[ ! -z ${imsize} ]]
@@ -44,13 +49,27 @@ cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
+
+# detect number of intervals
+dataintervals = $( taql 'NELEMENTS([select distinct TIME from ${obsnum}.ms])' )
+
+# either 224 or 240 intervals
+if [[ ${dataintervals} -eq 240 ]]
+then
+    # 240 -> flag first 4s and last 6s
+    intervals='-intervals 8 229'
+else
+    # 224 -> process as below
+    intervals=''
+fi
+
 echo "##WSCLEAN"
 wsclean -name ${obsnum}-0.5s ${imsize} \
     -abs-mem ${mem} \
     -weight briggs -1 -mfs-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
     -niter 0  \
-    -intervals-out 224 \
+    ${intervals} -intervals-out 220 \
     ${obsnum}.ms
 test_fail $?
 
