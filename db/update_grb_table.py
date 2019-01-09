@@ -202,6 +202,7 @@ def update_grb_table(last_trigger=None):
     for i, id in enumerate(ids):
         mission = 'fermi'
         if 'CORR_MODE' in id:
+            print "{0} -> CORR_MODE".format(i)
             continue
         if 'GRB' in id:
             # eg GRB467353077_145
@@ -215,6 +216,7 @@ def update_grb_table(last_trigger=None):
         try:
             id = int(id)
         except ValueError, e:
+            print "{0} is unknown [{1}]".format(i,id)
             continue
         r = get_accumulated_report(id, mission)
         valid = validate(r)
