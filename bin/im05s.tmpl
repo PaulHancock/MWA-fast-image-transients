@@ -57,7 +57,7 @@ dataintervals = $( taql 'NELEMENTS([select distinct TIME from ${obsnum}.ms])' )
 if [[ ${dataintervals} -eq 240 ]]
 then
     # 240 -> flag first 4s and last 6s
-    intervals='-intervals 8 229'
+    intervals='-interval 8 229'
 else
     # 224 -> process as below
     intervals=''
