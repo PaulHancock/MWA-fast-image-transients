@@ -54,8 +54,7 @@ and then download the resulting measurement set. This replaces the operation of 
 
 usage:
 ```
-obs_asvo.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t]
-obsnum
+obs_asvo.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -c calid   : obsid for calibrator. 
                If a calibration solution exists for calid
@@ -71,7 +70,6 @@ obsnum
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
-
 ```
 uses templates:
 - `asvo_dl_cotter.tmpl` (obsnum->OBSNUM/timeav->TRES/freqav->FRES)
@@ -85,11 +83,12 @@ This is done in a two stage process, and results in the final calibration soluti
 
 Usage:
 ```
-obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-a] [-t] obsnum
+obs_calibrate.sh [-d dep] [-q queue] [-M cluster] [-n calname] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -n calname : The name of the calibrator.
-               Implies that this is a calibrator observation
+               Implies that this is a calibrator observation 
                and so calibration will be done.
   -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
@@ -118,9 +117,10 @@ This calibration is done in a two stage process as per obs_calibrate.sh
 
 Usage:
 ```
-obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-a] [-t] obsnum
+obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-c catalog] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -c catalog : catalogue file to use, default=GLEAM_EGC.fits
   -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
@@ -136,9 +136,10 @@ Apply a pre-existing calibration solution to a measurement set.
 
 Usage:
 ```
-obs_apply_cal.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
+obs_apply_cal.sh [-d dep] [-q queue] [-M cluster] [-c calid] [-t] obsnum
   -d dep      : job number for dependency (afterok)
-  -q queue    : job queue, default=gpuq
+  -q queue    : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -c calid    : obsid for calibrator.
                 processing/calid/calid_*_solutions.bin will be used
                 to calibrate if it exists, otherwise job will fail.
@@ -157,9 +158,10 @@ Image a single observation.
 
 Usage: 
 ```
-obs_image.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-c] [-t] obsnum
+obs_image.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-c] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
   -c         : clean image. Default False.
@@ -177,9 +179,10 @@ Image an observation once per 0.5 seconds
 
 Usage:
 ```
-obs_im05s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
+obs_im05s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
   -t         : test. Don't submit job, just make the batch file
@@ -198,9 +201,10 @@ Image an observation once pert 28 seconds
 
 Usage:
 ```
-obs_im28s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-c] [-t] obsnum
+obs_im28s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-c] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
   -c         : clean image. Default False.
@@ -221,9 +225,10 @@ This consists of running `aoflagger` on the dataset.
 
 Usage:
 ```
-obs_flag.sh [-d dep] [-q queue] [-t] obsnum
+obs_flag.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
   -d dep      : job number for dependency (afterok)
-  -q queue    : job queue, default=gpuq
+  -q queue    : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process
@@ -242,9 +247,10 @@ This does *not* run `aoflagger`.
 
 usage: 
 ```
-obs_flag_tiles.sh [-d dep] [-q queue] [-f flagfile] [-t] obsnum
+obs_flag_tiles.sh [-d dep] [-q queue] [-M cluster] [-f flagfile] [-t] obsnum
   -d dep      : job number for dependency (afterok)
-  -q queue    : job queue, default=gpuq
+  -q queue    : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -f flagfile : file to use for flagging
                 default is processing/<obsnum>_tiles_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
@@ -262,17 +268,16 @@ corrected images for a given observation.
 
 usage:
 ```
-obs_sfind.sh [-d dep] [-q queue] [-t] obsnum
+obs_sfind.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
-
 ```
 
 uses tempaltes:
 - `sfind.tmpl` (obsnum->OBSNUM)
   - run `BANE` and then `aegean` on each of the images
-  
 
