@@ -1,9 +1,10 @@
 #! /bin/bash
 usage()
 {
-echo "obs_calibrate.sh [-d dep] [-q queue] [-n calname] [-a] [-t] obsnum
+echo "obs_calibrate.sh [-d dep] [-q queue] [-M cluster] [-n calname] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -n calname : The name of the calibrator.
                Implies that this is a calibrator observation 
                and so calibration will be done.
@@ -16,24 +17,27 @@ exit 1;
 
 #initialize as empty
 dep=
-queue='-p gpuq'
+queue='-p workq'
+cluster='-M zeus'
 calname=
 tst=
 doaoflagger=
 
 # parse args and set options
-while getopts ':taq:n:' OPTION
+while getopts ':d:q:M:n:at' OPTION
 do
     case "$OPTION" in
 	d)
 	    dep=${OPTARG}
 	    ;;
-
-	n)
-	    calname=${OPTARG}
-	    ;;
 	q)
 	    queue="-p ${OPTARG}"
+	    ;;
+	M)
+	    cluster="-M ${OPTARG}"
+	    ;;
+	n)
+	    calname=${OPTARG}
 	    ;;
 	a)
 	    aoflagger='no'
@@ -74,7 +78,7 @@ cat ${base}/bin/calibrate.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/calibrate_${obsnum}.o%A"
 error="${base}queue/logs/calibrate_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${queue} ${script}"
 
 if [[ ! -z ${tst} ]]
 then

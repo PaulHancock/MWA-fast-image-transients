@@ -2,9 +2,10 @@
 
 usage()
 {
-echo "obs_apply_cal.sh [-d dep] [-q queue] [-c calid] [-t] obsnum
+echo "obs_apply_cal.sh [-d dep] [-q queue] [-M cluster] [-c calid] [-t] obsnum
   -d dep      : job number for dependency (afterok)
-  -q queue    : job queue, default=gpuq
+  -q queue    : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -c calid    : obsid for calibrator.
                 processing/calid/calid_*_solutions.bin will be used
                 to calibrate if it exists, otherwise job will fail.
@@ -16,13 +17,14 @@ exit 1;
 
 #initialize as empty
 dep=
-queue='-p gpuq'
+queue='-p workq'
+cluster='-M zeus'
 calid=
 tst=
 
 
 # parse args and set options
-while getopts ':td:q:c:' OPTION
+while getopts 'd:q:M:c:t' OPTION
 do
     case "$OPTION" in
         d)
@@ -33,6 +35,9 @@ do
 	    ;;
 	q)
 	    queue="-p ${OPTARG}"
+	    ;;
+	M)
+	    cluster="-M ${OPTARG}"
 	    ;;
         t)
             tst=1
@@ -82,7 +87,7 @@ cat ${base}/bin/apply_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/apply_cal_${obsnum}.o%A"
 error="${base}queue/logs/apply_cal_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"

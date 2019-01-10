@@ -1,9 +1,10 @@
 #! /bin/bash
 usage()
 {
-echo "obs_infield_cal.sh [-d dep] [-q queue] [-c catalog] [-n] [-t] obsnum
+echo "obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-c catalog] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -c catalog : catalogue file to use, default=GLEAM_EGC.fits
   -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
@@ -15,24 +16,27 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p gpuq'
+cluster='-M zeus'
 catfile=
 tst=
 doaoflagger=
 base='/astro/mwasci/phancock/D0009/'
 
 # parse args and set options
-while getopts ':tad:q:c:' OPTION
+while getopts 'd:q:M:c:at' OPTION
 do
     case "$OPTION" in
 	d)
 	    dep=${OPTARG}
 	    ;;
-
-	c)
-	    catfile=${OPTARG}
-	    ;;
 	q)
 	    queue="-p ${OPTARG}"
+	    ;;
+	M)
+	    cluster="-M ${OPTARG}"
+	    ;;
+	c)
+	    catfile=${OPTARG}
 	    ;;
 	a)
 	    aoflagger='no'
@@ -84,7 +88,7 @@ cat ${base}/bin/infield_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/infield_cal_${obsnum}.o%A"
 error="${base}queue/logs/infield_cal_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${queue} ${script}"
 
 if [[ ! -z ${tst} ]]
 then

@@ -2,9 +2,10 @@
 
 usage()
 {
-echo "obs_im05s.sh [-d dep] [-q queue] [-s imsize] [-p pixscale] [-t] obsnum
+echo "obs_im05s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
   -d dep     : job number for dependency (afterok)
-  -q queue   : job queue, default=gpuq
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
   -t         : test. Don't submit job, just make the batch file
@@ -15,13 +16,14 @@ exit 1;
 
 #initialize as empty
 dep=
-queue='-p gpuq'
+queue='-p workq'
+cluster='-M zeus'
 imsize=
 pixscale=
 tst=
 
 # parse args and set options
-while getopts ':tcd:q:s:p:' OPTION
+while getopts 'd:q:M:s:p:t' OPTION
 do
     case "$OPTION" in
 	d)
@@ -29,6 +31,9 @@ do
 	    ;;
 	q)
 	    queue="-p ${OPTARG}"
+	    ;;
+	M)
+	    cluster="-M ${OPTARG}"
 	    ;;
 	s)
 	    imsize=${OPTARG}
@@ -71,7 +76,7 @@ cat ${base}/bin/im05s.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/im05s_${obsnum}.o%A"
 error="${base}queue/logs/im05s_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"

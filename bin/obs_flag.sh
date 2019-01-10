@@ -2,9 +2,10 @@
 
 usage()
 {
-echo "obs_flag.sh [-d dep] [-q queue] [-t] obsnum
+echo "obs_flag.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
   -d dep      : job number for dependency (afterok)
-  -q queue    : job queue, default=gpuq
+  -q queue    : job queue, default=workq
+  -M cluster : cluster, default=zeus
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process" 1>&2;
@@ -13,12 +14,13 @@ exit 1;
 
 #initialize as empty
 dep=
-queue='-p gpuq'
+queue='-p workq'
+cluster='-M zeus'
 tst=
 
 
 # parse args and set options
-while getopts ':td:q:' OPTION
+while getopts 'd:q:M:t' OPTION
 do
     case "$OPTION" in
         d)
@@ -26,6 +28,9 @@ do
             ;;
 	q)
 	    queue="-p ${OPTARG}"
+	    ;;
+	M)
+	    cluster="-M ${OPTARG}"
 	    ;;
         t)
             tst=1
@@ -63,7 +68,7 @@ cat ${base}/bin/flag.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/flag_${obsnum}.o%A"
 error="${base}queue/logs/flag_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"
