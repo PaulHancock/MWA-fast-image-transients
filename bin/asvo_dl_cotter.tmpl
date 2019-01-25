@@ -30,9 +30,9 @@ set -x
 {
 
 # check that the ASVO environment variables are set
-if [[ -z ${ASVO_USER} ]]
+if [[ -z ${MWA_ASVO_API_KEY} ]]
 then
-    echo "Error, ASVO_USER not set"
+    echo "Error, MWA_ASVO_API_KEY not set"
     echo "Cannot use client"
     test_fail 1
 fi
