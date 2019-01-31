@@ -31,7 +31,11 @@ set -x
 {
 
 #memory in GB
-mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+mem=$(get_mem)
+echo "Found ${mem}GB of ram"
+
+cores=$(get_cores)
+echo "Using ${cores} cores"
 
 # start
 cd ${base}
@@ -66,7 +70,7 @@ ln -s /group/mwa/software/mwapy/master/galaxy/lib/python2.7/site-packages/mwapy 
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
 # calibrate
-calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
 test_fail $?
 # plot calibration solutions
 aocal_plot.py --refant=127 --amp_max=2 ${solutions}
@@ -80,12 +84,12 @@ if [[ ! -z ${doaoflagger} ]]
 then
   # run aoflagger
   # default is to work on the corrected data column
-  aoflagger ${obsnum}.ms 
+  aoflagger -j ${cores} ${obsnum}.ms 
   test_fail $?
   
   solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
   # calibrate again!
-  calibrate -absmem ${mem} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+  calibrate -absmem ${mem} -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
   test_fail $?
   
   #plot again
