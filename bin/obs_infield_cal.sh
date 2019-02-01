@@ -16,7 +16,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p gpuq'
-cluster='-M zeus'
+cluster='-M zeus --ntasks=28'
 catfile=
 tst=
 doaoflagger=

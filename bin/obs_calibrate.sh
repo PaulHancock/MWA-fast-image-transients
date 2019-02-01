@@ -18,7 +18,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M zeus --ntasks=28'
 calname=
 tst=
 doaoflagger=
