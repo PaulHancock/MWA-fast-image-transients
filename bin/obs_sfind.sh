@@ -14,8 +14,9 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus --ntasks=28'
+cluster='-M zeus'
 tst=
+extras=
 
 # parse args and set options
 while getopts 'd:q:M:t' OPTION
@@ -50,10 +51,17 @@ then
     usage
 fi
 
-if [[ ! -z ${dep} ]] 
+# set dependency
+if [[ ! -z ${dep} ]]
 then
-    dep="--dependency=afterok:${dep}"
+    depend="--dependency=afterok:${dep}"
 fi
+
+# set up extra flags that may be needed
+if [[ ${cluster} == *"zeus"* ]]; then
+    extras="--ntasks=28"
+fi
+
 
 base='/astro/mwasci/phancock/D0009/'
 
@@ -64,7 +72,7 @@ cat ${base}/bin/sfind.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/sfind_${obsnum}.o%A"
 error="${base}queue/logs/sfind_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${extras} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"
