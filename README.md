@@ -281,3 +281,20 @@ uses tempaltes:
 - `sfind.tmpl` (obsnum->OBSNUM)
   - run `BANE` and then `aegean` on each of the images
 
+### obs_diff.sh
+Create difference images for adjacent pairs of 0.5sec images.
+
+usage:
+```
+obs_diff.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
+
+uses template:
+- `diff.tmpl` (obsnum->OBSNUM)
+  - create difference images
