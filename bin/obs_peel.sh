@@ -24,7 +24,7 @@ model=
 minuvm=
 maxuvm=
 ntsteps=
-caldatacolumn=DATA
+caldatacolumn='-datacolumn DATA'
 dobeam=
 tst=
 
