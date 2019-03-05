@@ -77,6 +77,29 @@ uses templates:
   - if calname is set then create a calibration solution from this data and stop
   - if calid is set then apply the calibration solution from calid and then create an image (see `obs_image.sh`)
 
+### obs_peel.sh
+Peel a sky model from a given observation.
+
+Usage:
+```
+obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-p model] [-n minuvm] [-x maxuvm] [-s steps] [-a] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
+  -p model   : model to peel, 'AO' format
+  -n minuvm  : minuv distance in m
+  -x maxuvm  : maxuv distance in m
+  -s steps   : number of timesteps to average over, default = all
+  -a         : turn ON applybeam, default=assume model has beem applied
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
+
+uses template:
+- `peel.tmpl`
+
+
 ### obs_calibrate.sh
 Generate calibration solutions for a given observation.
 This is done in a two stage process, and results in the final calibration solutions being applied to the dataset.
