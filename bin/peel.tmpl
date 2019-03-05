@@ -1,0 +1,64 @@
+#! /bin/bash -l
+#SBATCH --export=NONE
+#SBATCH -M zeus
+#SBATCH -p workq
+#SBATCH --account=mwasci
+#SBATCH --time=4:00:00
+#SBATCH --nodes=1
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+model=MODEL
+caldatacolumn=CALDATACOLUMN
+minuvm=MINUVM
+maxuvm=MAXUVM
+ntsteps=NTSTEPS
+dobeam=DOBEAM
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools/mwa-sci
+module list
+
+set -x
+
+# turn on timestamps
+{
+#memory in GB
+mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+
+# start
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+
+cd ${datadir}/${obsnum}
+
+# prepend min/max uv with - options
+if [[ ! -z ${minuvm} ]]; then
+    minuvm="-minuv ${minuvm}"
+fi
+
+if [[ ! -z ${maxuvm} ]]; then
+    maxuvm="-maxuv ${maxuvm}"
+fi
+
+if [[ ! -z ${dobeam} ]]; then
+    dobeam="-applybeam"
+fi
+
+# peel
+peel ${caldatacolumn} ${minuvm} ${maxuvm} -m ${model} ${dobeam} -t ${ntsteps} ${obsnum}.ms
+test_fail $?
+
+
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
