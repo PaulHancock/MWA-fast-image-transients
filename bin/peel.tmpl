@@ -30,7 +30,7 @@ set -x
 # turn on timestamps
 {
 #memory in GB
-mem=$( echo "$SLURM_MEM_PER_NODE / 1000" | bc )
+mem=get_mem
 
 # start
 cd ${base}
