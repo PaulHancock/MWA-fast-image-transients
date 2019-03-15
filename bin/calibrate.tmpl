@@ -32,7 +32,7 @@ set -x
 {
 
 #memory in GB
-mem=get_mem
+mem=$(get_mem)
 echo "Found ${mem}GB of ram"
 
 cores=$(get_cores)
@@ -71,7 +71,7 @@ ln -s /group/mwa/software/mwapy/master/galaxy/lib/python2.7/site-packages/mwapy 
 solutions=${obsnum}_${calmodel%%.txt}_solutions_initial.bin
 
 # calibrate
-calibrate -abs-mem ${mem} -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
 test_fail $?
 # plot calibration solutions
 aocal_plot.py --refant=127 --amp_max=2 ${solutions}
@@ -90,7 +90,7 @@ then
   
   solutions=${obsnum}_${calmodel%%.txt}_solutions.bin
   # calibrate again!
-  calibrate -abs-mem ${mem} -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+  calibrate -absmem ${mem} -j ${cores} -m ${modeldir}/${calmodel} -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
   test_fail $?
   
   #plot again
