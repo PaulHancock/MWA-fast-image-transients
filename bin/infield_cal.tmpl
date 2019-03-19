@@ -5,6 +5,7 @@
 #SBATCH --account=mwasci
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
+#SBATCH --ntasks=28
 
 base=BASEDIR
 datadir="${base}/processing"
@@ -26,7 +27,7 @@ set -x
 # turn on timestamps
 {
 #memory in GB
-mem=get_mem
+mem=$(get_mem)
 
 # start
 cd ${base}
