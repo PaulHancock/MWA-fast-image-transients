@@ -76,7 +76,7 @@ fi
 # set dependency
 if [[ ! -z ${dep} ]]
 then
-    depend="--dependency=afterok:${dep}"
+    dep="--dependency=afterok:${dep}"
 fi
 
 # set up extra flags that may be needed
@@ -94,7 +94,7 @@ cat ${base}/bin/infield_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/infield_cal_${obsnum}.o%A"
 error="${base}queue/logs/infield_cal_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${exras} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${extras} ${queue} ${script}"
 
 if [[ ! -z ${tst} ]]
 then
