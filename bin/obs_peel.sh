@@ -82,7 +82,7 @@ fi
 # set dependency
 if [[ ! -z ${dep} ]]
 then
-    depend="--dependency=afterok:${dep}"
+    dep="--dependency=afterok:${dep}"
 fi
 
 # set up extra flags that may be needed
@@ -97,14 +97,14 @@ cat ${base}/bin/peel.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                 -e "s:MODEL:${model}:g" \
                                 -e "s:CALDATACOLUMN:${caldatacolumn}:g" \
                                 -e "s:MINUVM:${minuvm}:g" \
-                                -e "s:MAXUVM:${maxuvm:g" \
+                                -e "s:MAXUVM:${maxuvm}:g" \
                                 -e "s:NTSTEPS:${ntsteps}:g" \
                                 -e "s:DOBEAM:${dobeam}:g" > ${script}
 
 output="${base}queue/logs/peel_${obsnum}.o%A"
 error="${base}queue/logs/peel_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${exras} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${extras} ${queue} ${script}"
 
 if [[ ! -z ${tst} ]]
 then
