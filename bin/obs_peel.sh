@@ -18,7 +18,7 @@ exit 1;
 
 #initialize as empty
 dep=
-queue='-p gpuq'
+queue='-p workq'
 cluster='-M zeus'
 model=
 minuvm=
