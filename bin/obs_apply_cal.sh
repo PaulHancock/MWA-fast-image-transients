@@ -16,7 +16,7 @@ exit 1;
 }
 
 #initialize as empty
-dep=
+depend=
 queue='-p workq'
 cluster='-M zeus'
 calid=
@@ -28,7 +28,7 @@ while getopts 'd:q:M:c:t' OPTION
 do
     case "$OPTION" in
         d)
-            dep=${OPTARG}
+            depend=${OPTARG}
             ;;
 	c)
 	    calid=${OPTARG}
@@ -61,7 +61,7 @@ then
 fi
 
 # set dependency
-if [[ ! -z ${dep} ]]
+if [[ ! -z ${depend} ]]
 then
     depend="--dependency=afterok:${dep}"
 fi
