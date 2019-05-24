@@ -74,7 +74,7 @@ wsclean -name ${obsnum}-0.5s ${imsize} \
 test_fail $?
 
 # delete the dirty images as they are the same as the regular image
-rm ${obsnum}-0.5s-??-dirty.fits
+rm ${obsnum}-0.5s-t0???-*-dirty.fits
 
 # make primary beam models
 beams=$( ls beam-MFS-*.fits | wc -l )
