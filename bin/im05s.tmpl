@@ -68,7 +68,7 @@ wsclean -name ${obsnum}-0.5s ${imsize} \
     -abs-mem ${mem} \
     -weight briggs -1 -mfs-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
-    -niter 0  \
+    -niter 0 -make-psf  \
     ${intervals} -intervals-out 220 \
     ${obsnum}.ms
 test_fail $?
