@@ -1,0 +1,146 @@
+#! /bin/bash -l
+#SBATCH --export=NONE
+#SBATCH -M zeus
+#SBATCH -p workq
+#SBATCH --account=mwasci
+#SBATCH --time=24:00:00
+#SBATCH --nodes=1
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+imsize=IMSIZE
+pixscale=SCALE
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
+
+set -x
+
+# turn on timestamps
+{
+#memory in GB
+mem=$(get_mem)
+
+# set the image size
+if [[ ! -z ${imsize} ]]
+then 
+    imsize="-size ${imsize} ${imsize}"
+else
+    imsize="-size 4096 4096"
+fi
+
+# set the image scale
+if [[ ! -z ${pixscale} ]]
+then
+    pixscale="-scale ${pixscale}"
+else
+    pixscale="-scale 32asec"
+fi
+
+
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+cd ${datadir}/${obsnum}
+
+# detect number of intervals
+dataintervals=$( taql "NELEMENTS([select distinct TIME from ${obsnum}.ms])" )
+
+# either 224 or 240 intervals
+if [[ ${dataintervals} -eq 240 ]]
+then
+    # 240 -> flag first 4s and last 6s
+    intervals='-interval 8 229'
+else
+    # 224 -> process as below
+    intervals=''
+fi
+
+# Using new wsclean with the primary beam feature
+
+# WSCLEAN whole dataset into 24 coarse channels to create 24 beams
+echo "##WSCLEAN for 24 coarse channel beams"
+wsclean -name ${obsnum}-24c ${imsize} \
+    -abs-mem ${mem} \
+    -weight briggs -1 -mfs-weighting ${pixscale} \
+    -apply-primary-beam \
+    -pol I -minuv-l 30 \
+    -niter 0 -make-psf  \
+    -channels-out 24 \
+    ${obsnum}.ms
+test_fail $?
+
+# WSCLEAN with a for loop to create 0.5s images in 24 coarse channels (do not calculate beam)
+echo "##WSCLEAN for 0.5s images in 24 coarse channels"
+for i in `seq 8 229`;
+do
+    j=$((i+1))
+    wsclean -name ${obsnum}-0.5s-24c-t${i}-${j} ${imsize} \
+    -abs-mem ${mem} \
+    -weight briggs -1 -mfs-weighting ${pixscale} \
+    -pol xx,yy -minuv-l 30 \
+    -niter 0 -make-psf \
+    -interval ${i} ${j} -channels-out 24 \
+    ${obsnum}.ms
+    test_fail $?
+done
+
+
+# delete the dirty images as they are the same as the regular image
+rm ${obsnum}-0.5s-24c-*-dirty.fits
+
+# Create symbolic links of coarse channel beam files as the wsclean beamfiles have a different suffix to what is requred by pbcorrect
+
+# files than need an 'r' on the end
+for f in $(ls *beam-[XY][XY].fits); do
+    nf=$(echo ${f} | tr 'XY' 'xy')
+    ln -s ${f} ${nf%.fits}r.fits
+done;
+
+# files that don't need an 'r'
+for f in $(ls *beam-[XY][XY]i.fits); do
+    nf=$(echo ${f} | tr 'XY' 'xy')
+    ln -s ${f} ${nf}
+done;
+
+
+# create stokes iquv images
+echo "## making beam corrected 0.5s images in 24 coarse channels - channel 0"
+
+for i in `seq 0 9`;
+do
+    files=`ls ${obsnum}-0.5s-24c-t*-000${i}*XX-image.fits`
+    for f in ${files}
+    do
+	prefix=${f%%-XX-image.fits}
+	pbcorrect ${prefix} image.fits ${obsnum}-24c-000${i}-beam ${prefix}-pbcorr
+	test_fail $?
+    done
+done
+
+for i in `seq 10 23`;
+do
+    files=`ls ${obsnum}-0.5s-24c-t*-00${i}-XX-image.fits`
+    for f in ${files}
+    do
+	prefix=${f%%-XX-image.fits}
+	pbcorrect ${prefix} image.fits ${obsnum}-24c-00${i}-beam ${prefix}-pbcorr
+	test_fail $?
+    done
+done
+
+# delete the QUV images as they don't mean anything (since we only used xx/yy as input)
+rm ${obsnum}-0.5s-24c-t*-pbcorr-[QUV].fits
+
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2 ) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
