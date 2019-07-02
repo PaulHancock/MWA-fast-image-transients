@@ -47,8 +47,9 @@ do
   # run jobs in groups of N=${cores}
   ((j=j%${cores})); ((j++==0)) && wait
   # extract the time stamp id from thesecond file
-  id2=`echo ${files[i-1]} | sed "s/${obsnum-0.5s-\(t????\)-pbcorr-I.fits/\1/g"`
-  outfile= "${files[i]%%pbcorr-I.fits}-${id2}-pbcorr-I_diff.fits"
+  #id2=`echo ${files[i-1]} | sed "s/${obsnum}-0.5s-\(t????\)-pbcorr-I.fits/\1/g"`
+  id2=`echo ${files[i-1]} | awk -F'[t-]' '{print $4}'`
+  outfile=`echo "${files[i]%%-pbcorr-I.fits}-${id2}-pbcorr-I_diff.fits"`
   python ${base}/bin/fitssub.py ${files[i]} ${files[i-1]} ${outfile} &
 done
 test_fail $?
