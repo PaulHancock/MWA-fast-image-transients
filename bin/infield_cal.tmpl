@@ -3,7 +3,7 @@
 #SBATCH -M zeus
 #SBATCH -p workq
 #SBATCH --account=mwasci
-#SBATCH --time=12:00:00
+#SBATCH --time=24:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=28
 
@@ -19,8 +19,10 @@ doaoflagger=AOFLAGGER
 # setup a clean environment
 source /group/mwa/software/module-reset.sh
 module use /group/mwa/software/modulefiles
-module load MWA_Tools/mwa-sci
-module load mwapy
+# use MWA_Tools/mwa-sci_test to work around some h5py and crop_catalogue.py issues
+module load MWA_Tools/mwa-sci_test
+# use /master_2 to make crop_catalogue.py available
+module load mwapy/master_2
 module list
 
 set -x
