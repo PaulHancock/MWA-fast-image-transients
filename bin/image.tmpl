@@ -69,7 +69,7 @@ cd ${datadir}/${obsnum}
 wsclean -name ${obsnum}-2m ${imsize} \
     -abs-mem ${mem} \
     -weight briggs -1 -mfsweighting ${pixscale} \
-    -pol xx,yy -minuv-l 30 \
+    -pol xx,yy -minuv-l 30 -make-psf \
     ${clean} ${obsnum}.ms
 test_fail $?
 
