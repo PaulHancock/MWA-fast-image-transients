@@ -1,0 +1,48 @@
+#! /bin/bash -l
+#SBATCH --export=NONE
+#SBATCH -M zeus
+#SBATCH -p workq
+#SBATCH --account=mwasci
+#SBATCH --time=12:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=28
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+ra=RAPOINT
+dec=DECPOINT
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
+
+set -x
+
+# turn on timestamps
+{
+
+#memory in GB
+mem=$(get_mem)
+echo "Found ${mem}GB of ram"
+
+cores=$(get_cores)
+echo "Using ${cores} cores"
+
+# start
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+chgcentre ${obsnum}.ms $ra $dec
+
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
+
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
