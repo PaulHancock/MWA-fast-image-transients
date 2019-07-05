@@ -23,7 +23,7 @@ doaoflagger=
 extras=
 
 # parse args and set options
-while getopts ':d:q:M:n:at' OPTION
+while getopts ':d:q:M:r:e:t' OPTION
 do
     case "$OPTION" in
 	d)
