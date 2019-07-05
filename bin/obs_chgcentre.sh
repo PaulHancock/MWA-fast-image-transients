@@ -76,8 +76,8 @@ base='/astro/mwasci/phancock/D0009/'
 script="${base}queue/chgcentre_${obsnum}.sh"
 cat ${base}/bin/chgcentre.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                      -e "s:BASEDIR:${base}:g" \
-                                     -e "s:RAPOINT:${ra}:g" \
-                                     -e "s:DECPOINT:${dec}:g" > ${script}
+                                     -e "s;RAPOINT;${ra};g" \
+                                     -e "s;DECPOINT;${dec};g" > ${script}
 
 output="${base}queue/logs/chgcentre_${obsnum}.o%A"
 error="${base}queue/logs/chgcentre_${obsnum}.e%A"
