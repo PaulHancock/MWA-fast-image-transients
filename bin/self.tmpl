@@ -1,0 +1,123 @@
+#! /bin/bash -l
+#SBATCH --export=NONE
+#SBATCH -M zeus
+#SBATCH -p workq
+#SBATCH --account=mwasci
+#SBATCH --time=12:00:00
+#SBATCH --nodes=1
+#SBATCH --ntasks=28
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+imsize=IMSIZE
+pixscale=SCALE
+clean=CLEAN
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
+
+set -x
+
+# turn on timestamps
+{
+
+
+#memory in GB
+mem=$(get_mem)
+
+
+cd ${datadir}
+
+# set the image size
+if [[ ! -z ${imsize} ]]
+then 
+    imsize="-size ${imsize} ${imsize}"
+else
+    imsize="-size 4096 4096"
+fi
+
+# set the image scale
+if [[ ! -z ${pixscale} ]]
+then
+    pixscale="-scale ${pixscale}"
+else
+    pixscale="-scale 32asec"
+fi
+
+# start download
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+cd ${datadir}/${obsnum}
+
+# Meta-data for observation
+metafits=`ls -t ${obsnum}*metafits* | head -1`
+
+# Set up channel-dependent options
+chan=`pyhead.py -p CENTCHAN ${metafits} | awk '{print $3}'`
+
+# Minimum baseline of 75 lambda (=250m at 88 MHz) for self-calibration
+minuv=75
+
+# Calculate min uvw in metres
+minuvm=`echo "234 * $minuv / $chan" | bc -l`
+
+# Number of cores
+cores=`grep -P '^core id\t' /proc/cpuinfo  | wc -l`
+
+# Hard-coding since MWA-fast-transients doesn't auto-set based on telescope config
+robust=-1.0
+
+# Initial clean
+if [[ ! -e ${obsnum}_initial-MFS-image.fits ]]
+then
+    wsclean -j $cores \
+        -apply-primary-beam \
+        -mwa-path /group/mwa/software/mwa_pb/mwa_pb/mwa_pb/data/ \
+        -name ${obsnum}_initial \
+        -size ${imsize} ${imsize} \
+        -nmiter 1 \
+        -niter 40000 \
+        -threshold 0.01 \
+        -pol I \
+        -weight briggs ${robust} \
+        -scale ${pixscale} \
+        -stopnegative \
+        -mgain 0.85 \
+        -channels-out 4 \
+        -join-channels \
+        ${obsnum}.ms
+fi
+
+if [[ ! -e ${obsnum}_initial-MFS-image.fits ]]
+then
+    echo "Initial image did not generate! Something wrong with WSClean?"
+    test_fail $?
+fi
+
+# Self-cal -- using the now-populated MODEL column
+calibrate -j ${cores} -minuv $minuvm ${obsnum}.ms ${obsnum}_self_solutions.bin
+
+aocal_plot.py --refant=127 ${obsnum}_self_solutions.bin
+
+flaggedchans=`grep "gains to NaN" calibrate.log | awk '{printf("%03d\n",$2)}' | sort | uniq | wc -l`
+
+if [[ $flaggedchans -gt 200 || ! -s ${obsnum}_self_solutions.bin ]]
+then
+    echo "More than a third of the channels were flagged!"
+    echo "Do not apply these calibration solutions."
+    mv ${obsnum}_self_solutions.bin ${obsnum}_self_solutions.bad
+fi
+
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2 ) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
