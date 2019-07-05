@@ -38,6 +38,7 @@ echo "Using ${cores} cores"
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
+cd ${datadir}/${obsnum}
 chgcentre ${obsnum}.ms $ra $dec
 
 cd ${base}
