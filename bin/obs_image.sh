@@ -2,12 +2,13 @@
 
 usage()
 {
-echo "obs_image.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-c] [-t] obsnum
+echo "obs_image.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-b beamsize] [-c] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
+  -b beamsize: circular beam size in arcsecond, default is no circular beam
   -c         : clean image. Default False.
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
@@ -21,12 +22,13 @@ queue='-p workq'
 cluster='-M zeus'
 imsize=
 pixscale=
+beamsize=
 clean=
 tst=
 extras=
 
 # parse args and set options
-while getopts 'd:q:M:s:p:ct' OPTION
+while getopts 'd:q:M:s:p:b:ct' OPTION
 do
     case "$OPTION" in
 	d)
@@ -43,6 +45,9 @@ do
 	    ;;
 	p)
 	    pixscale=${OPTARG}
+	    ;;
+	b)
+	    beamsize=${OPTARG}
 	    ;;
 	c)
 	    clean="yes"
@@ -84,6 +89,7 @@ cat ${base}/bin/image.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                  -e "s:BASEDIR:${base}:g" \
                                  -e "s:IMSIZE:${imsize}:g" \
                                  -e "s:SCALE:${pixscale}:g" \
+                                 -e "s:BEAM:${beamsize}:g"   \
                                  -e "s:CLEAN:${clean}:g" > ${script}
 
 output="${base}queue/logs/image_${obsnum}.o%A"
