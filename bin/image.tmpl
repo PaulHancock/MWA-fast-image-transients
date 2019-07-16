@@ -13,6 +13,7 @@ datadir="${base}/processing"
 obsnum=OBSNUM
 imsize=IMSIZE
 pixscale=SCALE
+beamsize=BEAM
 clean=CLEAN
 
 # import the tag and test_fail functions
@@ -52,6 +53,14 @@ else
     pixscale="-scale 32asec"
 fi
 
+# set a user input circular beam
+if [[ ! -z ${beamsize} ]]
+then
+    beamsize="-beam-size ${beamsize}"
+else
+    beamsize="-elliptical-beam"
+fi
+
 #if clean is set then change it to the default clean options.
 if [[ ! -z ${clean} ]]
 then 
@@ -68,8 +77,9 @@ cd ${datadir}/${obsnum}
 
 wsclean -name ${obsnum}-2m ${imsize} \
     -abs-mem ${mem} \
-    -weight briggs -1 -mfsweighting ${pixscale} \
-    -pol xx,yy -minuv-l 30 -make-psf \
+    -weight briggs -1 -mfs-weighting ${pixscale} \
+    -pol xx,yy -minuv-l 30 \
+    ${beamsize} -make-psf \
     ${clean} ${obsnum}.ms
 test_fail $?
 
