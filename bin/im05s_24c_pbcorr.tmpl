@@ -79,7 +79,7 @@ test_fail $?
 
 # WSCLEAN with a for loop to create 0.5s images in 24 coarse channels (do not calculate beam)
 echo "##WSCLEAN for 0.5s images in 24 coarse channels"
-for i in `seq 8 229`;
+for i in `seq 8 228`;
 do
     j=$((i+1))
     wsclean -name ${obsnum}-0.5s-24c-t${i}-${j} ${imsize} \
