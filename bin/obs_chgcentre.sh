@@ -1,7 +1,7 @@
 #! /bin/bash
 usage()
 {
-echo "obs_chgcentre.sh [-d dep] [-q queue] [-M cluster] [-r RA] [-e Dec] [-a] [-t] obsnum
+echo "obs_chgcentre.sh [-d dep] [-q queue] [-M cluster] [-r RA] [-e Dec] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -19,7 +19,6 @@ queue='-p workq'
 cluster='-M zeus'
 calname=
 tst=
-doaoflagger=
 extras=
 
 # parse args and set options
