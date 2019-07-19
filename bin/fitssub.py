@@ -40,6 +40,6 @@ mid = t1 + (t2-t1)/2
 fits1[0].header['DATE-OBS'] = mid.strftime(format='%Y-%m-%dT%H:%M:%S.%f')
 
 fits1[0].header['HISTORY'] = "Diff image"
-fits1[0].header['HISTORY'] = "{0} + {1} = this file".format(file1, file2)
+fits1[0].header['HISTORY'] = "{0} - {1} = this file".format(file1, file2)
 fits1.writeto(out,overwrite=True)
 #fits1.writeto(out,clobber=True)
