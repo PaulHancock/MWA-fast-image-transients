@@ -57,31 +57,50 @@ dataintervals=$( taql "NELEMENTS([select distinct TIME from ${obsnum}.ms])" )
 if [[ ${dataintervals} -eq 240 ]]
 then
     # 240 -> flag first 4s and last 6s
-    intervals='-interval 8 229'
+    #intervals='-interval 8 229'
+    start=8
+    end=228 #(note that interval 228 to 229 is imageable, which is done by the code below)
 else
     # 224 -> process as below
-    intervals=''
+    #intervals=''
+    end=0
+    end=224
 fi
 
-echo "##WSCLEAN"
-wsclean -name ${obsnum}-0.5s ${imsize} \
+# WSCLEAN loop to create 0.5s images where the intervals imaged are known
+echo "##WSCLEAN for 0.5s images"
+for i in `seq ${start} ${end}`;
+do
+    j=$((i+1))
+    wsclean -name ${obsnum}-0.5s-t${i}-${j} ${imsize} \
     -abs-mem ${mem} \
     -weight briggs -1 -mfs-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
     -niter 0 -make-psf  \
-    ${intervals} -intervals-out 220 \
+    -interval ${i} ${j} \
     ${obsnum}.ms
-test_fail $?
+    test_fail $?
+done
+
+# Old wsclean command below
+#wsclean -name ${obsnum}-0.5s ${imsize} \
+#    -abs-mem ${mem} \
+#    -weight briggs -1 -mfs-weighting ${pixscale} \
+#    -pol xx,yy -minuv-l 30 \
+#    -niter 0 -make-psf  \
+#    ${intervals} -intervals-out 220 \
+#    ${obsnum}.ms
+#test_fail $?
 
 # delete the dirty images as they are the same as the regular image
-rm ${obsnum}-0.5s-t0???-*-dirty.fits
+rm ${obsnum}-0.5s-t*-dirty.fits
 
 # make primary beam models
 beams=$( ls beam-MFS-*.fits | wc -l )
 if [[ ${beams} -ne 8 ]]
 then
     echo "## Making primary beam"
-    beam -2016 -proto ${obsnum}-0.5s-t0000-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+    beam -2016 -proto ${obsnum}-0.5s-t8-9-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
     test_fail $?
 else
     echo "## primary beam exists"
@@ -89,7 +108,7 @@ fi
 
 # create stokes iquv images
 echo "## making beam corrected images"
-files=`ls ${obsnum}-0.5s-t0???-XX-image.fits`
+files=`ls ${obsnum}-0.5s-t*-XX-image.fits`
 for f in ${files}
 do
   prefix=${f%%-XX-image.fits}
