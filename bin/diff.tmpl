@@ -52,6 +52,8 @@ do
   outfile=`echo "${files[i]%%-pbcorr-I.fits}-${id2}-pbcorr-I_diff.fits"`
   python ${base}/bin/fitssub.py ${files[i]} ${files[i-1]} ${outfile} &
 done
+# pause for all remaining jobs to complete
+wait
 test_fail $?
 
 cd ${base}
