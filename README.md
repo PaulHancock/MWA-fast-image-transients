@@ -6,7 +6,7 @@ follow up triggers.
 The pipeline is written for the Pawsey-Galaxy system which uses a SLURM job scheduler.
 
 ## Credits
-Please credit Paul Hancock and Gemma Anderson if you use this code, or
+Please credit Paul Hancock, Gemma Anderson and Natasha Hurley-Walker if you use this code, or
 incorporate it into your own workflow, as per the [licence](LICENCE).
 Please acknowledge the use of this code by citing this repository, and until
 we have a publication accepted on this work, we request that we be added as
@@ -216,6 +216,26 @@ obs_im05s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obs
 uses tempaltes:
 - `im05s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE)
   - make one image per 0.5sec time interval with no cleaning
+  - perform primary beam correction on these images
+
+### obs_im5s.sh
+Image an observation once per 5 seconds
+
+Usage:
+```
+obs_im5s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+  -d dep     : job number for dependency (afterok)
+  -q queue   : job queue, default=workq
+  -M cluster : cluster, default=zeus
+  -s imsize  : image size will be imsize x imsize pixels, default 4096
+  -p pixscale: image pixel scale, default is 32asec
+  -t         : test. Don't submit job, just make the batch file
+               and then return the submission command
+  obsnum     : the obsid to process
+```
+uses tempaltes:
+- `im5s.tmpl` (obsnum->OBSNUM/imsize->IMSIZE/scale->SCALE)
+  - make one image per 5sec time interval with no cleaning
   - perform primary beam correction on these images
 
 ### obs_im05s_24c.sh 
