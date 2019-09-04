@@ -1,0 +1,125 @@
+#! /bin/bash -l
+#SBATCH --export=NONE
+#SBATCH -M zeus
+#SBATCH -p workq
+#SBATCH --account=mwasci
+#SBATCH --time=12:00:00
+#SBATCH --nodes=1
+
+base=BASEDIR
+datadir="${base}/processing"
+obsnum=OBSNUM
+imsize=IMSIZE
+pixscale=SCALE
+
+# import the tag and test_fail functions
+. ${base}/bin/functions.sh
+
+# setup a clean environment
+source /group/mwa/software/module-reset.sh
+module use /group/mwa/software/modulefiles
+module load MWA_Tools
+module list
+
+set -x
+
+# turn on timestamps
+{
+#memory in GB
+mem=$(get_mem)
+
+# set the image size
+if [[ ! -z ${imsize} ]]
+then 
+    imsize="-size ${imsize} ${imsize}"
+else
+    imsize="-size 4096 4096"
+fi
+
+# set the image scale
+if [[ ! -z ${pixscale} ]]
+then
+    pixscale="-scale ${pixscale}"
+else
+    pixscale="-scale 32asec"
+fi
+
+
+cd ${base}
+python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
+
+cd ${datadir}/${obsnum}
+
+# detect number of intervals
+dataintervals=$( taql "NELEMENTS([select distinct TIME from ${obsnum}.ms])" )
+
+# either 224 or 240 intervals
+if [[ ${dataintervals} -eq 240 ]]
+then
+    # 240 -> flag first 4s and last 6s
+    #intervals='-interval 8 229'
+    start=8
+    end=218 #(note that interval 218 to 228 will be imaged. Only 0.5s interval 229 is not imaged)
+else
+    # 224 -> process as below
+    #intervals=''
+    end=0
+    end=224
+fi
+
+# WSCLEAN loop to create 5s images where the intervals imaged are known
+echo "##WSCLEAN for 5s images"
+for i in `seq ${start} 10 ${end}`;
+do
+    j=$((i+10))
+    wsclean -name ${obsnum}-5s-t${i}-${j} ${imsize} \
+    -abs-mem ${mem} \
+    -weight briggs -1 -mfs-weighting ${pixscale} \
+    -pol xx,yy -minuv-l 30 \
+    -niter 0 -make-psf  \
+    -interval ${i} ${j} \
+    ${obsnum}.ms
+    test_fail $?
+done
+
+#wsclean -name ${obsnum}-0.5s ${imsize} \
+#    -abs-mem ${mem} \
+#    -weight briggs -1 -mfs-weighting ${pixscale} \
+#    -pol xx,yy -minuv-l 30 \
+#    -niter 0 -make-psf  \
+#    ${intervals} -intervals-out 220 \
+#    ${obsnum}.ms
+#test_fail $?
+
+# delete the dirty images as they are the same as the regular image
+rm ${obsnum}-5s-t*-dirty.fits
+
+# make primary beam models
+beams=$( ls beam-MFS-*.fits | wc -l )
+if [[ ${beams} -ne 8 ]]
+then
+    echo "## Making primary beam"
+    beam -2016 -proto ${obsnum}-5s-t8-18-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+    test_fail $?
+else
+    echo "## primary beam exists"
+fi
+
+# create stokes iquv images
+echo "## making beam corrected images"
+files=`ls ${obsnum}-5s-t*-XX-image.fits`
+for f in ${files}
+do
+  prefix=${f%%-XX-image.fits}
+  pbcorrect ${prefix} image.fits beam-MFS ${prefix}-pbcorr
+  test_fail $?
+done
+
+# delete the QUV images as they don't mean anything (since we only used xx/yy as input)
+rm ${obsnum}-5s-*-pbcorr-[QUV].fits
+
+cd ${base}
+python bin/track_task.py finish --jobid=${SLURM_JOBID} --finish_time=`date +%s`
+
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}' >&2 ) \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
