@@ -16,7 +16,7 @@ exit 1;
 }
 
 #initialize as empty
-depend=
+dep=
 queue='-p workq'
 cluster='-M zeus'
 calid=
@@ -28,7 +28,7 @@ while getopts 'd:q:M:c:t' OPTION
 do
     case "$OPTION" in
         d)
-            depend=${OPTARG}
+            dep=${OPTARG}
             ;;
 	c)
 	    calid=${OPTARG}
@@ -61,10 +61,13 @@ then
 fi
 
 # set dependency
-if [[ ! -z ${depend} ]]
+if [[ ! -z ${dep} ]]
 then
     depend="--dependency=afterok:${dep}"
+else
+    depend=''
 fi
+
 
 # set up extra flags that may be needed
 if [[ ${cluster} == *"zeus"* ]]; then
