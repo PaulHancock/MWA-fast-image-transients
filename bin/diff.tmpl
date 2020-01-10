@@ -3,7 +3,7 @@
 #SBATCH -M zeus
 #SBATCH -p workq
 #SBATCH --account=mwasci
-#SBATCH --time=01:00:00
+#SBATCH --time=00:20:00
 #SBATCH --nodes=1
 
 base=BASEDIR
@@ -39,7 +39,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 cd ${datadir}/${obsnum}
 
 # determine which files need to be diff-ed
-files=(`ls ${obsnum}-0.5s-t????-pbcorr-I.fits`)
+files=(`ls -v ${obsnum}-0.5s-t*-pbcorr-I.fits`)
 nfiles=${#files[@]}
 
 for (( i=1; i<${nfiles}; i++ ))
@@ -48,8 +48,8 @@ do
   ((j=j%${cores})); ((j++==0)) && wait
   # extract the time stamp id from thesecond file
   #id2=`echo ${files[i-1]} | sed "s/${obsnum}-0.5s-\(t????\)-pbcorr-I.fits/\1/g"`
-  id2=`echo ${files[i-1]} | awk -F'[t-]' '{print $4}'`
-  outfile=`echo "${files[i]%%-pbcorr-I.fits}-${id2}-pbcorr-I_diff.fits"`
+  id2i=`echo ${files[i-1]} | awk -F'[-]' '{print $3"-"$4}'`
+  outfile=`echo "${files[i]%%-pbcorr-I.fits}-${id2i}-pbcorr-I_diff.fits"`
   python ${base}/bin/fitssub.py ${files[i]} ${files[i-1]} ${outfile} &
 done
 # pause for all remaining jobs to complete
