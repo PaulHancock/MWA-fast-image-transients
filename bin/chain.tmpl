@@ -1,0 +1,85 @@
+#! /bin/bash
+
+{
+calid=CALID
+obsnum=OBSNUM
+
+#### To delete all my jobs
+#  q | awk '{print "scancel "$1}' > qdel.sh
+# ./qdel.sh
+####
+
+base='/astro/mwasci/phancock/D0009/'
+cd ${base}
+
+# If there is a tile flagging file defined then apply it
+if [[ -e "${base}/processing/${obsnum}_tiles_to_flag.txt" ]]
+then  
+  dep=`. ${base}/bin/obs_flag_tiles.sh ${obsnum} | awk '{print $4}'`
+  echo "Job ID ${dep}: Flagging bad tiles of $obsnum"
+  echo "./bin/obs_flag_tiles.sh ${obsnum}"
+  depend="-d $dep"
+fi
+
+# if we have the calid then these are the calibrator solutions we wish to
+# apply to this measurement set (obsnum)
+# Else, we need to run an infield calibration (the second round of flagging 
+# and calibration is switched off)
+
+if [[ ! -z ${calid} ]]
+then
+  dep=`. ${base}/bin/obs_apply_cal.sh ${depend} -c ${calid} ${obsnum} | awk '{print $4}'` 
+  echo "Job ID ${dep}: Applying calibration solutions from $calid to $obsnum"  
+  echo "./bin/obs_apply_cal.sh ${depend} -c ${calid} ${obsnum}"
+  depend="-d $dep"
+else
+  dep=`. ${base}/bin/obs_infield_cal.sh -a ${depend} ${obsnum} | awk '{print $4}'`
+  echo "Job ID ${dep}: Calculating an infield calibration solution for $obsnum"
+  echo "./bin/obs_infield_cal.sh -a ${depend} ${obsnum}"
+  depend="-d $dep"
+fi
+
+# Now image 2m snapshot - deep cleaning
+
+dep=`. ${base}/bin/obs_image.sh ${depend} -p 16asec -b 80 -c ${obsnum} | awk '{print $4}'`
+echo "Job ID ${dep}: Creating a 2 min snapshot image of $obsnum"
+echo "./bin/obs_image.sh ${depend} -p 16asec -b 80 -c ${obsnum}"
+depend="-d $dep"
+
+# Now make 28s images - deep cleaning
+
+dep=`. ${base}/bin/obs_im28s.sh ${depend} -p 16asec -b 80 -c ${obsnum} | awk '{print $4}'`
+echo "Job ID ${dep}: Creating four 28 second images of $obsnum"
+echo "./bin/obs_im28s.sh ${depend} -p 16asec -b 80 -c ${obsnum}"
+depend="-d $dep"
+
+# Now make 0.5s images
+
+dep=`. ${base}/bin/obs_im05s.sh ${depend} -p 16asec ${obsnum} | awk '{print $4}'`
+echo "Job ID ${dep}: Creating 0.5s image of $obsnum"
+echo "./bin/obs_im05s.sh ${depend} -p 16asec ${obsnum}"
+depend="-d $dep"
+
+# Make 0.5s difference images
+
+dep=`. ${base}/bin/obs_diff.sh ${depend} ${obsnum} | awk '{print $4}'`
+echo "Job ID ${dep}: Creating 0.5s difference images of $obsnum"
+echo "./bin/obs_diff.sh ${depend} ${obsnum}"
+depend="-d $dep"
+
+# Now chgcentre to position of transient
+
+dep=`. ${base}/bin/obs_chgcentre.sh ${depend} -r 11h10m15.9s -e -45d19m56s ${obsnum} | awk '{print $4}'`
+echo "Job ID ${dep}: Changing phase centre of ${obsnum}.ms to transient position"
+echo "./bin/obs_chgcentre.sh ${depend} -r 11h10m15.9s -e -45d19m56s ${obsnum}"
+depend="-d $dep"
+
+# Now create 24 coarse channel 0.5s images
+
+dep=`. ${base}/bin/obs_im05s_24c.sh ${depend} -p 16asec -s 1024 ${obsnum} | awk '{print $4}'`
+echo "Job ID ${dep}: Creating 24 coarse channel images on 0.5s timescales of $obsnum"
+echo "./bin/obs_im05s_24c.sh ${depend} -p 16asec -s 1024 ${obsnum}"
+depend="-d $dep"
+
+} 2> >(awk '{print strftime("%F %T")";",$0; fflush()}') \
+  1> >(awk '{print strftime("%F %T")";",$0; fflush()}')
