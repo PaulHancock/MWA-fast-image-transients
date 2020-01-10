@@ -54,7 +54,8 @@ and then download the resulting measurement set. This replaces the operation of 
 
 usage:
 ```
-obs_asvo.sh [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
+obs_asvo.sh [-g group] [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -c calid   : obsid for calibrator. 
                If a calibration solution exists for calid
@@ -82,7 +83,8 @@ Peel a sky model from a given observation.
 
 Usage:
 ```
-obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-p model] [-n minuvm] [-x maxuvm] [-s steps] [-a] [-t] obsnum
+obs_infield_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-p model] [-n minuvm] [-x maxuvm] [-s steps] [-a] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -106,7 +108,8 @@ This is done in a two stage process, and results in the final calibration soluti
 
 Usage:
 ```
-obs_calibrate.sh [-d dep] [-q queue] [-M cluster] [-n calname] [-a] [-t] obsnum
+obs_calibrate.sh [-g group] [-d dep] [-q queue] [-M cluster] [-n calname] [-a] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -140,7 +143,8 @@ This calibration is done in a two stage process as per obs_calibrate.sh
 
 Usage:
 ```
-obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-c catalog] [-a] [-t] obsnum
+obs_infield_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-c catalog] [-a] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -159,7 +163,8 @@ Apply a pre-existing calibration solution to a measurement set.
 
 Usage:
 ```
-obs_apply_cal.sh [-d dep] [-q queue] [-M cluster] [-c calid] [-t] obsnum
+obs_apply_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-c calid] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -181,7 +186,8 @@ Image a single observation.
 
 Usage: 
 ```
-obs_image.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-c] [-t] obsnum
+obs_image.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-c] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -202,7 +208,8 @@ Image an observation once per 0.5 seconds
 
 Usage:
 ```
-obs_im05s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+obs_im05s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -223,7 +230,8 @@ Image an observation once per 5 seconds
 
 Usage:
 ```
-obs_im5s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+obs_im5s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -243,7 +251,8 @@ Image each of the 24 coarse channels for an observation once per 0.5 seconds
 
 Usage:
 ```
-obs_im05s_24c.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+obs_im05s_24c.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -264,7 +273,8 @@ Image an observation once per 28 seconds
 
 Usage:
 ```
-obs_im28s.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-c] [-t] obsnum
+obs_im28s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-c] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -288,7 +298,8 @@ This consists of running `aoflagger` on the dataset.
 
 Usage:
 ```
-obs_flag.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
+obs_flag.sh [-g group] [-d dep] [-q queue] [-M cluster] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -310,7 +321,8 @@ This does *not* run `aoflagger`.
 
 usage: 
 ```
-obs_flag_tiles.sh [-d dep] [-q queue] [-M cluster] [-f flagfile] [-t] obsnum
+obs_flag_tiles.sh [-g group] [-d dep] [-q queue] [-M cluster] [-f flagfile] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -331,7 +343,8 @@ corrected images for a given observation.
 
 usage:
 ```
-obs_sfind.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
+obs_sfind.sh [-g group] [-d dep] [-q queue] [-M cluster] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
@@ -349,7 +362,8 @@ Create difference images for adjacent pairs of 0.5sec images.
 
 usage:
 ```
-obs_diff.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
+obs_diff.sh [-g group] [-d dep] [-q queue] [-M cluster] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=zeus
