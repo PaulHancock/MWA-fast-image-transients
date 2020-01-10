@@ -6,11 +6,13 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=28
 
+#ensure data is owned by mwasci
+newgrp mwasci
+
 base=BASEDIR
 datadir="${base}/processing"
 obsnum=OBSNUM
 doaoflagger=AOFLAGGER
-
 calibrator=CALIBRATOR
 modeldir="/group/mwa/software/mwa-reduce/mwa-reduce/models"
 

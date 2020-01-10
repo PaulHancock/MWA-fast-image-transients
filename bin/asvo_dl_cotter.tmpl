@@ -5,6 +5,9 @@
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
 
+#ensure that all the data are owned by the mwasci group
+newgrp mwasci
+
 base=BASEDIR
 datadir=${base}/processing
 obsnum=OBSNUM
