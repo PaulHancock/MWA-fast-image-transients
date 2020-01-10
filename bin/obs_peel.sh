@@ -1,7 +1,8 @@
 #! /bin/bash
 usage()
 {
-echo "obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-p model] [-n minuvm] [-x maxuvm] [-s steps] [-a] [-t] obsnum
+echo "obs_infield_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-p model] [-n minuvm] [-x maxuvm] [-s steps] [-a] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=magnus
@@ -17,6 +18,7 @@ exit 1;
 }
 
 #initialize as empty
+account="--account pawsey0345"
 dep=
 queue='-p workq'
 cluster='-M magnus'
@@ -32,9 +34,12 @@ base='/astro/mwasci/phancock/D0009/'
 extras=
 
 # parse args and set options
-while getopts 'd:q:M:p:n:x:s:at' OPTION
+while getopts 'g:d:q:M:p:n:x:s:at' OPTION
 do
     case "$OPTION" in
+	g)
+	    account="--account ${OPTARG}"
+	    ;;
 	d)
 	    dep=${OPTARG}
 	    ;;
@@ -104,7 +109,7 @@ cat ${base}/bin/peel.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/peel_${obsnum}.o%A"
 error="${base}queue/logs/peel_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${extras} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${extras} ${account} ${queue} ${script}"
 
 if [[ ! -z ${tst} ]]
 then

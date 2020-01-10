@@ -2,7 +2,8 @@
 
 usage()
 {
-echo "obs_flag.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
+echo "obs_flag.sh [-g group] [-d dep] [-q queue] [-M cluster] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
   -M cluster : cluster, default=magnus
@@ -13,6 +14,7 @@ exit 1;
 }
 
 #initialize as empty
+account="--account pawsey0345"
 dep=
 queue='-p workq'
 cluster='-M magnus'
@@ -20,9 +22,12 @@ tst=
 extras=
 
 # parse args and set options
-while getopts 'd:q:M:t' OPTION
+while getopts 'g:d:q:M:t' OPTION
 do
     case "$OPTION" in
+	g)
+	    account="--account ${OPTARG}"
+	    ;;
         d)
             dep=${OPTARG}
             ;;
@@ -73,7 +78,7 @@ cat ${base}/bin/flag.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
 output="${base}queue/logs/flag_${obsnum}.o%A"
 error="${base}queue/logs/flag_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${extras} ${queue} ${script}"
+sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${extras} ${account} ${queue} ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"

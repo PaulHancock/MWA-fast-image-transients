@@ -2,7 +2,8 @@
 
 usage()
 {
-echo "obs_chain.sh [-d dep] [-c calid] [-t] obsnum
+echo "obs_chain.sh [-g group] [-d dep] [-c calid] [-t] obsnum
+  -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -c calid   : obsid for calibrator. 
                If a calibration solution exists for calid
@@ -14,6 +15,7 @@ exit 1;
 }
 
 #initialize as empty
+account="--account pawsey0345"
 dep=
 queue='-p workq'
 cluster='-M magnus'
@@ -22,9 +24,12 @@ tst=
 
 
 # parse args and set options
-while getopts 'd:c:t' OPTION
+while getopts 'g:d:c:t' OPTION
 do
     case "$OPTION" in
+	g)
+	    account="--account ${OPTARG}"
+	    ;;
 	d)
 	    dep=${OPTARG} ;;
 	c)
@@ -67,7 +72,7 @@ cat ${base}/bin/chain.tmpl | sed -e "s:OBSNUM:${obsnum}:" \
 #output="${base}queue/logs/chain_${obsnum}.o%A"
 #error="${base}queue/logs/chain_${obsnum}.e%A"
 
-#sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend}  ${script}"
+#sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend}  ${account} ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"
