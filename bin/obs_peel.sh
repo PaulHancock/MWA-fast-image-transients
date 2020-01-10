@@ -4,7 +4,7 @@ usage()
 echo "obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-p model] [-n minuvm] [-x maxuvm] [-s steps] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -p model   : model to peel, 'AO' format
   -n minuvm  : minuv distance in m
   -x maxuvm  : maxuv distance in m
@@ -19,7 +19,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 model=
 minuvm=
 maxuvm=

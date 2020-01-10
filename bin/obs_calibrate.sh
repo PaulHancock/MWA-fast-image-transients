@@ -4,7 +4,7 @@ usage()
 echo "obs_calibrate.sh [-d dep] [-q queue] [-M cluster] [-n calname] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -n calname : The name of the calibrator.
                Implies that this is a calibrator observation 
                and so calibration will be done.
@@ -18,7 +18,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 calname=
 tst=
 doaoflagger=

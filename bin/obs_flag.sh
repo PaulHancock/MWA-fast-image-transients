@@ -5,7 +5,7 @@ usage()
 echo "obs_flag.sh [-d dep] [-q queue] [-M cluster] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -t          : test. Don't submit job, just make the batch file
                 and then return the submission command
   obsnum      : the obsid to process" 1>&2;
@@ -15,7 +15,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 tst=
 extras=
 

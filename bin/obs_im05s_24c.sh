@@ -5,7 +5,7 @@ usage()
 echo "obs_im05s_24c.sh [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
   -t         : test. Don't submit job, just make the batch file
@@ -17,7 +17,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 imsize=
 pixscale=
 tst=

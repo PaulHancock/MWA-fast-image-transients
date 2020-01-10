@@ -4,7 +4,7 @@ usage()
 echo "obs_chgcentre.sh [-d dep] [-q queue] [-M cluster] [-r RA] [-e Dec] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -r RA      : Pointing direction RA, format=00h00m00.0s or 00:00:00.0s
   -e Dec     : Pointing direction Dec, format=00d00m00.0s or 00:00:00.0s
   -t         : test. Don't submit job, just make the batch file
@@ -16,7 +16,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 calname=
 tst=
 extras=

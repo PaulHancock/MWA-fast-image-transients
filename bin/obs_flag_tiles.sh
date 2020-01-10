@@ -5,7 +5,7 @@ usage()
 echo "obs_flag_tiles.sh [-d dep] [-q queue] [-M cluster] [-f flagfile] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -f flagfile : file to use for flagging
                 default is processing/<obsnum>_tiles_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
@@ -17,7 +17,7 @@ exit 1;
 #initialize as empty                                                                                                                                      
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 flagfile=
 tst=
 extras=

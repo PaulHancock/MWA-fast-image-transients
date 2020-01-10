@@ -5,7 +5,7 @@ usage()
 echo "obs_apply_cal.sh [-d dep] [-q queue] [-M cluster] [-c calid] [-t] obsnum
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -c calid    : obsid for calibrator.
                 processing/calid/calid_*_solutions.bin will be used
                 to calibrate if it exists, otherwise job will fail.
@@ -18,7 +18,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 calid=
 tst=
 extras=

@@ -4,7 +4,7 @@ usage()
 echo "obs_infield_cal.sh [-d dep] [-q queue] [-M cluster] [-c catalog] [-a] [-t] obsnum
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -c catalog : catalogue file to use, default=GLEAM_EGC.fits
   -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
@@ -16,7 +16,7 @@ exit 1;
 #initialize as empty
 dep=
 queue='-p workq'
-cluster='-M zeus'
+cluster='-M magnus'
 catfile=
 tst=
 doaoflagger=
