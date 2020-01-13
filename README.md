@@ -25,6 +25,8 @@ co-authors on papers that rely on this code.
 - run `python db/make_db.py`
 - download the GLEAM catalogue into `./catalogues`
   - [Vizier](http://vizier.u-strasbg.fr/viz-bin/VizieR-3?-source=VIII/100/gleamegc) has the most recent version. Download as fits, using the original column names.
+- set your `MWA_ASVO_API_KEY` environment variable
+  - see [ASVO-mwa](https://asvo.mwatelescope.org) for instructions on how/why
 - you are now ready to go
 
 ## scripts and templates
