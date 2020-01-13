@@ -20,6 +20,13 @@ co-authors on papers that rely on this code.
 - queue/logs: log files
 - done: location for final data products (images, catalogues)
 
+## Installing
+- clone this repo
+- run `python db/make_db.py`
+- download the GLEAM catalogue into `./catalogues`
+  - [Vizier](http://vizier.u-strasbg.fr/viz-bin/VizieR-3?-source=VIII/100/gleamegc) has the most recent version. Download as fits, using the original column names.
+- you are now ready to go
+
 ## scripts and templates
 Templates for scripts are `bin/*.tmpl`, these are modified by the `bin/obs_*.sh` scripts and the completed script is then put in `queue/<obsid>_*.sh` and submitted to SLURM.
 
