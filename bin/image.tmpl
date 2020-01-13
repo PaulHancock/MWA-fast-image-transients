@@ -6,6 +6,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=28
 
+#ensure data is owned by mwasci
+newgrp mwasci
 
 base=BASEDIR
 datadir="${base}/processing"
