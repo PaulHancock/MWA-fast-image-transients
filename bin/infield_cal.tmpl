@@ -57,8 +57,8 @@ solutions=${obsnum}_infield_solutions_initial.bin
 
 if [[ ! -e "local_gleam_model.txt" ]]
 then
-    crop_catalogue.py --ra=$RA --dec=$Dec --radius=20 --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile}
-    vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt
+    ${base}/external/GLEAM-X-pipeline/bin/crop_catalogue.py --ra=$RA --dec=$Dec --radius=30 --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile} --fluxcol=S_200
+    ${base}/external/GLEAM-X-pipeline/bin/vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt --racol=RAJ2000 --decol=DEJ2000 --acol=a --bcol=b --pacol=pa --fluxcol=S_200 --alphacol=alpha
 fi
 
 
