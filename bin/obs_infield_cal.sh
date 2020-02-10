@@ -69,7 +69,8 @@ fi
 
 if [[ -z ${catfile} ]]
 then
-    catfile="${base}/catalogues/GLEAM_EGC.fits"
+#    catfile="${base}/catalogues/GLEAM_EGC.fits"
+    catfile="${base}/external/GLEAM-X-pipeline/models/skymodel_only_alpha.fits"
 fi
 if [[ ! -e ${catfile} ]]
 then
