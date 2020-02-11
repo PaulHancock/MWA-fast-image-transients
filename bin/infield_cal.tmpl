@@ -2,7 +2,7 @@
 #SBATCH --export=NONE
 #SBATCH -M zeus
 #SBATCH -p workq
-#SBATCH --time=24:00:00
+#SBATCH --time=12:00:00
 #SBATCH --nodes=1
 #SBATCH --ntasks=28
 
@@ -52,6 +52,7 @@ fi
 
 RA=$( pyhead.py -p RA $metafits | awk '{print $3}' )
 Dec=$( pyhead.py -p DEC $metafits | awk '{print $3}' )
+chan=$( pyhead.py -p CENTCHAN $metafits | awk '{print $3}' )
 
 solutions=${obsnum}_infield_solutions_initial.bin
 
@@ -61,9 +62,16 @@ then
     ${base}/external/GLEAM-X-pipeline/bin/vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt --racol=RAJ2000 --decol=DEJ2000 --acol=a --bcol=b --pacol=pa --fluxcol=S_200 --alphacol=alpha
 fi
 
+# Maximum uv range for calibration based on GLEAM-based sky model
+# In wavelengths, maximum 128T baseline at 200MHz was 1667 lambda long
+# calibrate takes a maximum uv range in metres, i.e. multiply 1667 by the wavelength of the highest frequency
+# lambda = c/nu = 300/1.28*(chan+11)
+# Calculate min uvw in metres
+maxuvm=`echo "234 / ($chan + 11) * 1667" | bc -l`
+
 
 # calibrate
-calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
@@ -83,7 +91,7 @@ then
   
   solutions=${obsnum}_infield_solutions.bin
   # calibrate again!
-  calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 20 -maxuv 2700 ${obsnum}.ms ${solutions}
+  calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
   test_fail $?
   
   #plot again
