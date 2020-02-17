@@ -18,10 +18,10 @@ exit 1;
 }
 
 #initialize as empty
-account="--account pawsey0345"
+account="#SBATCH --account pawsey0345"
 dep=
-queue='-p workq'
-cluster='-M magnus'
+queue='#SBATCH -p workq'
+cluster='#SBATCH -M magnus'
 model=
 minuvm=
 maxuvm=
@@ -31,23 +31,23 @@ dobeam=
 tst=
 
 base='/astro/mwasci/phancock/D0009/'
-extras=
+extras=''
 
 # parse args and set options
 while getopts 'g:d:q:M:p:n:x:s:at' OPTION
 do
     case "$OPTION" in
 	g)
-	    account="--account ${OPTARG}"
+	    account="#SBATCH --account ${OPTARG}"
 	    ;;
 	d)
 	    dep=${OPTARG}
 	    ;;
 	q)
-	    queue="-p ${OPTARG}"
+	    queue="#SBATCH -p ${OPTARG}"
 	    ;;
 	M)
-	    cluster="-M ${OPTARG}"
+	    cluster="#SBATCH -M ${OPTARG}"
 	    ;;
 	p)
 	    model=${OPTARG}
@@ -87,16 +87,28 @@ fi
 # set dependency
 if [[ ! -z ${dep} ]]
 then
-    dep="--dependency=afterok:${dep}"
+    depend="#SBATCH --dependency=afterok:${dep}"
+else
+    depend=''
 fi
 
 # set up extra flags that may be needed
-if [[ ${cluster} == *"zeus"* ]]; then
-    extras="--ntasks=28"
+if [[ ${cluster} == *"zeus"* ]]
+then
+    extras="#SBATCH --ntasks=28"
+else
+    extras=''
 fi
 
 # start the real program
 script="${base}queue/peel_${obsnum}.sh"
+output="${base}queue/logs/peel_${obsnum}.o%A"
+error="${base}queue/logs/peel_${obsnum}.e%A"
+
+# build the sbatch header directives
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}\n${extras}"
+
+# join directives and replace variables into the template
 cat ${base}/bin/peel.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                 -e "s:BASEDIR:${base}:g" \
                                 -e "s:MODEL:${model}:g" \
@@ -104,12 +116,10 @@ cat ${base}/bin/peel.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                 -e "s:MINUVM:${minuvm}:g" \
                                 -e "s:MAXUVM:${maxuvm}:g" \
                                 -e "s:NTSTEPS:${ntsteps}:g" \
-                                -e "s:DOBEAM:${dobeam}:g" > ${script}
+                                -e "s:DOBEAM:${dobeam}:g" \
+                                -e "0,/#! .*/a ${sbatch}" > ${script}
 
-output="${base}queue/logs/peel_${obsnum}.o%A"
-error="${base}queue/logs/peel_${obsnum}.e%A"
-
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${dep} ${cluster} ${extras} ${account} ${queue} ${script}"
+sub="sbatch --begin=now+15 ${script}"
 
 if [[ ! -z ${tst} ]]
 then

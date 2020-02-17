@@ -14,28 +14,28 @@ exit 1;
 }
 
 #initialize as empty
-account="--account pawsey0345"
+account="#SBATCH --account pawsey0345"
 dep=
 queue='-p workq'
 cluster='-M magnus'
 tst=
-extras=
+extras=''
 
 # parse args and set options
 while getopts 'g:d:q:M:t' OPTION
 do
     case "$OPTION" in
 	g)
-	    account="--account ${OPTARG}"
+	    account="#SBATCH --account ${OPTARG}"
 	    ;;
 	d)
 	    dep=${OPTARG}
 	    ;;
 	q)
-	    queue="-p ${OPTARG}"
+	    queue="#SBATCH -p ${OPTARG}"
 	    ;;
 	M)
-	    cluster="-M ${OPTARG}"
+	    cluster="#SBATCH -M ${OPTARG}"
 	    ;;
 	t)
 	    tst=1
@@ -59,26 +59,35 @@ fi
 # set dependency
 if [[ ! -z ${dep} ]]
 then
-    depend="--dependency=afterok:${dep}"
+    depend="#SBATCH --dependency=afterok:${dep}"
+else
+    depend=''
 fi
 
 # set up extra flags that may be needed
-if [[ ${cluster} == *"zeus"* ]]; then
-    extras="--ntasks=28"
+if [[ ${cluster} == *"zeus"* ]]
+then
+    extras="#SBATCH --ntasks=28"
+else
+    extras=''
 fi
 
 # set up extra flags that may be needed
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/diff_${obsnum}.sh"
-cat ${base}/bin/diff.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
-                                -e "s:BASEDIR:${base}:g"  > ${script}
-
 output="${base}queue/logs/diff_${obsnum}.o%A"
 error="${base}queue/logs/diff_${obsnum}.e%A"
 
+# build the sbatch header directives
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}\n${extras}"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${cluster} ${extras} ${account} ${queue} ${script}"
+# join directives and replace variables into the template
+cat ${base}/bin/diff.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
+                                -e "s:BASEDIR:${base}:g"  \
+                                -e "0,/#! .*/a ${sbatch}" > ${script}
+
+sub="sbatch --begin=now+15 ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"
@@ -86,7 +95,7 @@ then
     echo "${sub}"
     exit 0
 fi
-    
+
 # submit job
 jobid=($(${sub}))
 jobid=${jobid[3]}

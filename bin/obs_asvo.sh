@@ -23,7 +23,7 @@ exit 1;
 }
 
 #initialize as empty
-account="--account pawsey0345"
+account="#SBATCH --account pawsey0345"
 calid=
 calname=
 minbad=2
@@ -37,7 +37,7 @@ while getopts 'g:d:c:n:m:s:k:t' OPTION
 do
     case "$OPTION" in
 	g)
-	    account="--account ${OPTARG}"
+	    account="#SBATCH --account ${OPTARG}"
 	    ;;
 	d)
 	    dep=${OPTARG} ;;
@@ -82,25 +82,32 @@ fi
 
 if [[ ! -z ${dep} ]]
 then
-    depend="--dependency=afterok:${dep}"
+    depend="#SBATCH --dependency=afterok:${dep}"
+else
+    depend=''
 fi
 
 
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/asvo_${obsnum}.sh"
-cat ${base}/bin/asvo_dl_cotter.tmpl | sed -e "s:OBSNUM:${obsnum}:" \
-                                          -e "s:TRES:${timeav}:g" \
-                                          -e "s:FRES:${freqav}:g" \
-                                          -e "s:BASEDIR:${base}:"  > ${script}
-# submit extra jobs when the d/l completes
-cat ${base}/bin/chain_asvo.tmpl | sed "s:CALNAME:${calname}:" | sed "s:CALID:${calid}:" >> ${script}
-
-
 output="${base}queue/logs/asvo_${obsnum}.o%A"
 error="${base}queue/logs/asvo_${obsnum}.e%A"
 
-sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${account} ${script}"
+# build the sbatch header directives
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}"
+
+# join directives and replace variables into the template
+cat ${base}/bin/asvo_dl_cotter.tmpl | sed -e "s:OBSNUM:${obsnum}:" \
+                                          -e "s:TRES:${timeav}:g" \
+                                          -e "s:FRES:${freqav}:g" \
+                                          -e "s:BASEDIR:${base}:"  \
+                                          -e "0,/#! .*/a ${sbatch}" > ${script}
+# submit extra jobs when the d/l completes
+cat ${base}/bin/chain_asvo.tmpl | sed -e "s:CALNAME:${calname}:" \
+                                      -e "s:CALID:${calid}:" >> ${script}
+
+sub="sbatch --begin=now+15 ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"
@@ -108,7 +115,7 @@ then
     echo "${sub}"
     exit 0
 fi
-    
+
 # submit job
 jobid=($(${sub}))
 jobid=${jobid[3]}

@@ -17,10 +17,10 @@ exit 1;
 }
 
 #initialize as empty
-account="--account pawsey0345"
+account="#SBATCH --account pawsey0345"
 dep=
-queue='-p workq'
-cluster='-M magnus'
+queue='#SBATCH -p workq'
+cluster='#SBATCH -M magnus'
 calid=
 tst=
 extras=''
@@ -30,7 +30,7 @@ while getopts 'g:d:q:M:c:t' OPTION
 do
     case "$OPTION" in
 	g)
-	    account="--account ${OPTARG}"
+	    account="#SBATCH --account ${OPTARG}"
 	    ;;
         d)
             dep=${OPTARG}
@@ -39,10 +39,10 @@ do
 	    calid=${OPTARG}
 	    ;;
 	q)
-	    queue="-p ${OPTARG}"
+	    queue="#SBATCH -p ${OPTARG}"
 	    ;;
 	M)
-	    cluster="-M ${OPTARG}"
+	    cluster="#SBATCH -M ${OPTARG}"
 	    ;;
         t)
             tst=1
@@ -75,8 +75,11 @@ fi
 
 
 # set up extra flags that may be needed
-if [[ ${cluster} == *"zeus"* ]]; then
+if [[ ${cluster} == *"zeus"* ]]
+then
     extras="#SBATCH --ntasks=28"
+else
+    extras=''
 fi
 
 base='/astro/mwasci/phancock/D0009/'

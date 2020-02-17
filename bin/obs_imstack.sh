@@ -4,21 +4,27 @@ obsnum=$1
 dep=$2
 
 depend=""
-if [[ -z ${dep} ]] 
+if [[ -z ${dep} ]]
 then
-depend="--dependency=afterok:${dep}"
+    depend="#SBATCH --dependency=afterok:${dep}"
 fi
 
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/stack_${obsnum}.sh"
-cat ${base}/bin/image.tmpl | sed "s:OBSNUM:${obsnum}:g" | sed "s:BASEDIR:${base}:g"  > ${script}
-
 output="${base}queue/logs/stack_${obsnum}.o%A"
-error="${base}queue/logs/stack_${obsnum}.e%A"
+error="${base}queue/logs/stak_${obsnum}.e%A"
+
+# build the sbatch header directives
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}\n${extras}"
+
+# join directives and replace variables into the template
+cat ${base}/bin/image.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
+                                 -e "s:BASEDIR:${base}:g"  \
+                                 -e "0,/#! .*/a ${sbatch}" > ${script}
 
 # submit job
-jobid=(`sbatch --begin=now+15 --output=${output} --error=${error} ${depend} ${account} ${queue} ${script}`)
+jobid=(`sbatch --begin=now+15 ${script}`)
 jobid=${jobid[3]}
 
 # rename the err/output files as we now know the jobid

@@ -24,7 +24,7 @@ exit 1;
 }
 
 #initialize as empty
-account="--account pawsey0345"
+account="#SBATCH --account pawsey0345"
 dep=
 queue='-p workq'
 cluster='-M magnus'
@@ -44,7 +44,7 @@ while getopts 'g:d:c:a:s:p:b:c:r:e:t' OPTION
 do
     case "$OPTION" in
 	g)
-	    account="--account ${OPTARG}"
+	    account="#SBATCH --account ${OPTARG}"
 	    ;;
 	d)
 	    dep=${OPTARG} ;;
@@ -92,13 +92,22 @@ fi
 
 if [[ ! -z ${dep} ]]
 then
-    depend="--dependency=afterok:${dep}"
+    depend="#SBATCH --dependency=afterok:${dep}"
+else
+    depend=''
 fi
 
 
 base='/astro/mwasci/phancock/D0009/'
 
 script="${base}queue/chain_${obsnum}.sh"
+output="${base}queue/logs/chain_${obsnum}.o%A"
+error="${base}queue/logs/chain_${obsnum}.e%A"
+
+# build the sbatch header directives
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}"
+
+# join directives and replace variables into the template
 cat ${base}/bin/chain.tmpl | sed -e "s:OBSNUM:${obsnum}:" \
                                  -e "s:CALID:${calid}:g" \
                                  -e "s:BASEDIR:${base}:" \
@@ -108,15 +117,10 @@ cat ${base}/bin/chain.tmpl | sed -e "s:OBSNUM:${obsnum}:" \
                                  -e "s:BEAM:${beamsize}:g"   \
                                  -e "s:CLEAN:${clean}:g" \
                                  -e "s;RAPOINT;${ra};g" \
-                                 -e "s;DECPOINT;${dec};g"> ${script}
-# submit extra jobs when the d/l completes
-#cat ${base}/bin/chain_asvo.tmpl | sed "s:CALNAME:${calname}:" | sed "s:CALID:${calid}:" >> ${script}
+                                 -e "s;DECPOINT;${dec};g" \
+                                 -e "0,/#! .*/a ${sbatch}" > ${script}
 
-
-#output="${base}queue/logs/chain_${obsnum}.o%A"
-#error="${base}queue/logs/chain_${obsnum}.e%A"
-
-#sub="sbatch --begin=now+15 --output=${output} --error=${error} ${depend}  ${script}"
+#sub="sbatch --begin=now+15 ${script}"
 if [[ ! -z ${tst} ]]
 then
     echo "script is ${script}"
@@ -124,7 +128,7 @@ then
     echo "${sub}"
     exit 0
 fi
-    
+
 
 # Run script
 
