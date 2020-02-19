@@ -10,6 +10,7 @@ base=BASEDIR
 datadir="${base}/processing"
 obsnum=OBSNUM
 catfile=CATFILE
+radius=RADIUS
 doaoflagger=AOFLAGGER
 
 # import the tag and test_fail functions
@@ -53,9 +54,18 @@ chan=$( pyhead.py -p CENTCHAN $metafits | awk '{print $3}' )
 
 solutions=${obsnum}_infield_solutions_initial.bin
 
+# set a user input radius for cropping the sky model
+if [[ ! -z ${radius} ]]
+then
+    radius="--radius=${radius}"
+else
+    radius="--radius=30"
+fi
+
+
 if [[ ! -e "local_gleam_model.txt" ]]
 then
-    ${base}/external/GLEAM-X-pipeline/bin/crop_catalogue.py --ra=$RA --dec=$Dec --radius=30 --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile} --fluxcol=S_200
+    ${base}/external/GLEAM-X-pipeline/bin/crop_catalogue.py --ra=$RA --dec=$Dec ${radius} --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile} --fluxcol=S_200
     ${base}/external/GLEAM-X-pipeline/bin/vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt --racol=RAJ2000 --decol=DEJ2000 --acol=a --bcol=b --pacol=pa --fluxcol=S_200 --alphacol=alpha
 fi
 
