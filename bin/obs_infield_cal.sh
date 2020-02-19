@@ -1,12 +1,13 @@
 #! /bin/bash
 usage()
 {
-echo "obs_infield_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-c catalog] [-a] [-t] obsnum
+echo "obs_infield_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-c catalog] [-r radius] [-a] [-t] obsnum
   -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=magnus
-  -c catalog : catalogue file to use, default=GLEAM_EGC.fits
+  -c catalog : catalogue file to use, default=skymodel_only_alpha.fits from GLEAM-X github
+  -r radius  : radius (degrees) of sky model used for calibration, default=30
   -a         : turn OFF aoflagger and second iteration of calibration
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
@@ -21,12 +22,13 @@ queue='#SBATCH -p workq'
 cluster='#SBATCH -M magnus'
 catfile=
 tst=
+radius=
 doaoflagger=
 base='/astro/mwasci/phancock/D0009/'
 extras=''
 
 # parse args and set options
-while getopts 'g:d:q:M:c:at' OPTION
+while getopts 'g:d:q:M:c:r:at' OPTION
 do
     case "$OPTION" in
 	g)
@@ -43,6 +45,9 @@ do
 	    ;;
 	c)
 	    catfile=${OPTARG}
+	    ;;
+	r)
+	    radius=${OPTARG}
 	    ;;
 	a)
 	    aoflagger='no'
@@ -107,6 +112,7 @@ sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n
 cat ${base}/bin/infield_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                        -e "s:BASEDIR:${base}:g" \
                                        -e "s:CATFILE:${catfile}:g" \
+                                       -e "s:RADIUS:${radius}:g" \
                                        -e "s:AOFLAGGER:${doaoflagger}:g" \
                                        -e "0,/#! .*/a ${sbatch}" > ${script}
 
