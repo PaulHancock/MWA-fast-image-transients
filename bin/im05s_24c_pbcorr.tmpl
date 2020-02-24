@@ -11,6 +11,7 @@ datadir="${base}/processing"
 obsnum=OBSNUM
 imsize=IMSIZE
 pixscale=SCALE
+padding=PADDING
 
 # import the tag and test_fail functions
 . ${base}/bin/functions.sh
@@ -44,6 +45,13 @@ else
     pixscale="-scale 32asec"
 fi
 
+# set the padding value
+if [[ ! -z ${padding} ]]
+then
+    padding="-padding ${padding}"
+else
+    padding="-padding 1.2"
+fi
 
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
@@ -88,6 +96,7 @@ do
     -pol xx,yy -minuv-l 30 \
     -niter 0 -make-psf \
     -interval ${i} ${j} -channels-out 24 \
+    ${padding} \
     ${obsnum}.ms
     test_fail $?
 done
