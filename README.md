@@ -217,13 +217,14 @@ Image an observation once per 0.5 seconds
 
 Usage:
 ```
-obs_im05s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+obs_im05s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-P padding] [-t] obsnum
   -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
+  -P padding : padding value in wsclean, default 1.2
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
@@ -260,13 +261,14 @@ Image each of the 24 coarse channels for an observation once per 0.5 seconds
 
 Usage:
 ```
-obs_im05s_24c.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+obs_im05s_24c.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-P padding] [-t] obsnum
   -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=zeus
+  -M cluster : cluster, default=magnus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
+  -P padding : padding value in wsclean, default 1.2
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process
