@@ -11,6 +11,7 @@ datadir="${base}/processing"
 obsnum=OBSNUM
 imsize=IMSIZE
 pixscale=SCALE
+padding=PADDING
 
 # import the tag and test_fail functions
 . ${base}/bin/functions.sh
@@ -42,6 +43,14 @@ then
     pixscale="-scale ${pixscale}"
 else
     pixscale="-scale 32asec"
+fi
+
+# set the padding value
+if [[ ! -z ${padding} ]]
+then
+    padding="-padding ${padding}"
+else
+    padding="-padding 1.2"
 fi
 
 
@@ -78,21 +87,11 @@ do
     -pol xx,yy -minuv-l 30 \
     -niter 0 -make-psf  \
     -interval ${i} ${j} \
+    ${padding} \
     ${obsnum}.ms
     test_fail $?
 done
 
-# Old wsclean command below
-#wsclean -name ${obsnum}-0.5s ${imsize} \
-#    -abs-mem ${mem} \
-#    -weight briggs -1 -mfs-weighting ${pixscale} \
-#    -pol xx,yy -minuv-l 30 \
-#    -niter 0 -make-psf  \
-#    ${intervals} -intervals-out 220 \
-#    ${obsnum}.ms
-#test_fail $?
-
-# delete the dirty images as they are the same as the regular image
 rm ${obsnum}-0.5s-t*-dirty.fits
 
 # make primary beam models
