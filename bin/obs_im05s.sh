@@ -2,13 +2,14 @@
 
 usage()
 {
-echo "obs_im05s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-t] obsnum
+echo "obs_im05s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-P padding] [-t] obsnum
   -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=magnus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
+  -P padding : padding value in wsclean, default 1.2
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
@@ -22,11 +23,12 @@ queue='#SBATCH -p workq'
 cluster='#SBATCH -M magnus'
 imsize=
 pixscale=
+padding=
 tst=
 extras=''
 
 # parse args and set options
-while getopts 'g:d:q:M:s:p:t' OPTION
+while getopts 'g:d:q:M:s:p:P:t' OPTION
 do
     case "$OPTION" in
 	g)
@@ -47,6 +49,9 @@ do
 	p)
 	    pixscale=${OPTARG}
 	    ;;
+        P)
+            padding=${OPTARG}
+            ;;
 	t)
 	    tst=1
 	    ;;
@@ -94,6 +99,7 @@ sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n
 cat ${base}/bin/im05s.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                  -e "s:IMSIZE:${imsize}:g" \
                                  -e "s:SCALE:${pixscale}:g" \
+                                 -e "s:PADDING:${padding}:g" \
                                  -e "s:BASEDIR:${base}:g"  \
                                  -e "0,/#! .*/a ${sbatch}" > ${script}
 
