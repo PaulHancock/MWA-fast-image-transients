@@ -2,6 +2,7 @@
 #SBATCH --export=NONE
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
+#SBATCH --cpus-per-task=28
 
 #ensure data is owned by mwasci
 newgrp mwasci
@@ -11,6 +12,7 @@ datadir="${base}/processing"
 obsnum=OBSNUM
 imsize=IMSIZE
 pixscale=SCALE
+mgain=MGAIN
 beamsize=BEAM
 clean=CLEAN
 
@@ -51,6 +53,14 @@ else
     pixscale="-scale 32asec"
 fi
 
+# set the mgain value
+if [[ ! -z ${mgain} ]]
+then
+    mgain="-mgain ${mgain}"
+else
+    mgain="-mgain 1"
+fi
+
 # set a user input circular beam
 if [[ ! -z ${beamsize} ]]
 then
@@ -78,7 +88,7 @@ wsclean -name ${obsnum}-2m ${imsize} \
     -weight briggs -1 -mfs-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
     ${beamsize} -make-psf \
-    ${clean} ${obsnum}.ms
+    ${clean} ${mgain} ${obsnum}.ms
 test_fail $?
 
 # make primary beam models iff they don't already exist

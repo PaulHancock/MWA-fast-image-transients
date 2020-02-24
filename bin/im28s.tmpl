@@ -2,6 +2,7 @@
 #SBATCH --export=NONE
 #SBATCH --time=12:00:00
 #SBATCH --nodes=1
+#SBATCH --cpus-per-task=28
 
 #ensure data is owned by mwasci
 newgrp mwasci
@@ -11,6 +12,7 @@ datadir="${base}/processing"
 obsnum=OBSNUM
 imsize=IMSIZE
 pixscale=SCALE
+mgain=MGAIN
 beamsize=BEAM
 clean=CLEAN
 
@@ -46,6 +48,15 @@ then
 else
     pixscale="-scale 32asec"
 fi
+
+# set the mgain value
+if [[ ! -z ${mgain} ]]
+then
+    mgain="-mgain ${mgain}"
+else
+    mgain="-mgain 1"
+fi
+
 
 # set a user input circular beam
 if [[ ! -z ${beamsize} ]]
@@ -90,14 +101,19 @@ fi
 
 
 echo "##WSCLEAN"
-wsclean -name ${obsnum}-28s ${imsize} \
-    -abs-mem ${mem} \
-    -weight briggs -1 -mfs-weighting ${pixscale} \
-    -pol xx,yy -minuv-l 30 \
-    ${intervals} -intervals-out 4 \
-    ${beamsize} -make-psf \
-    ${clean} ${obsnum}.ms
-test_fail $?
+for i in `seq 0 3`;
+do
+   j=$((8+56*i))
+   k=$((j+56))
+   wsclean -name ${obsnum}-28s-t000${i} ${imsize} \
+   -abs-mem ${mem} \
+   -weight briggs -1 -mfs-weighting ${pixscale} \
+   -pol xx,yy -minuv-l 30 \
+   -interval ${j} ${k} \
+   ${beamsize} -make-psf \
+   ${clean} ${mgain} ${obsnum}.ms
+   test_fail $?
+done
 
 # delete the dirty images as they are the same as the regular image
 rm ${obsnum}-28s-*-dirty.fits

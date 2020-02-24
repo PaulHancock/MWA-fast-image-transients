@@ -2,13 +2,14 @@
 
 usage()
 {
-echo "obs_im28s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-b beamsize] [-c] [-t] obsnum
+echo "obs_im28s.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-m mgain] [-b beamsize] [-c] [-t] obsnum
   -g group   : pawsey group (account) to run as, default=pawsey0345
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
   -M cluster : cluster, default=magnus
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
+  -m mgain   : mgain value in wsclean, default 1
   -b beamsize: circular beam size in arcsecond, default is no circular beam
   -c         : clean image. Default False.
   -t         : test. Don't submit job, just make the batch file
@@ -24,13 +25,14 @@ queue='#SBATCH -p workq'
 cluster='#SBATCH -M magnus'
 imsize=
 pixscale=
+mgain=
 beamsize=
 clean=
 tst=
 extras=''
 
 # parse args and set options
-while getopts 'g:d:q:M:s:p:b:ct' OPTION
+while getopts 'g:d:q:M:s:p:m:b:ct' OPTION
 do
     case "$OPTION" in
 	g)
@@ -51,6 +53,9 @@ do
 	p)
 	    pixscale=${OPTARG}
 	    ;;
+        m)
+            mgain=${OPTARG}
+            ;;
 	b)
 	    beamsize=${OPTARG}
 	    ;;
@@ -105,6 +110,7 @@ cat ${base}/bin/im28s.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
                                  -e "s:BASEDIR:${base}:g"  \
                                  -e "s:IMSIZE:${imsize}:g" \
                                  -e "s:SCALE:${pixscale}:g" \
+                                 -e "s:MGAIN:${mgain}:g" \
                                  -e "s:BEAM:${beamsize}:g"   \
                                  -e "s:CLEAN:${clean}:g" \
                                  -e "0,/#! .*/a ${sbatch}" > ${script}
