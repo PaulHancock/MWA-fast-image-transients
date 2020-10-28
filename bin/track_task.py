@@ -1,4 +1,5 @@
 #! python
+from __future__ import print_function
 
 __author__ = "PaulHancock"
 
@@ -49,7 +50,7 @@ def require(args, reqlist):
     """
     for r in reqlist:
         if not getattr(args, r):
-            print "Directive {0} requires argument {1}".format(args.directive, r)
+            print("Directive {0} requires argument {1}".format(args.directive, r))
             sys.exit()
     return True
 
@@ -83,4 +84,4 @@ if __name__ == "__main__":
         require(args, ['jobid', 'finish_time'])
         fail_job(args.jobid, args.finish_time)
     else:
-        print "I don't know what you are asking please include a queue/start/finish/fail directive"
+        print("I don't know what you are asking please include a queue/start/finish/fail directive")
