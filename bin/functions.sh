@@ -24,6 +24,9 @@ function get_mem {
     elif [[ ${SLURM_CLUSTER_NAME} == 'galaxy' ]] ; then
 	# gpuq
 	mem=32
+    elif [[ ${SLURM_CLUSTER_NAME} == 'garrawarla' ]] ; then
+	# workq
+	mem=360
     elif [[ ${SLURM_CLUSTER_NAME} == 'magnus' ]] ; then
 	# workq
 	mem=64
@@ -44,6 +47,9 @@ function get_cores {
     elif [[ ${SLURM_CLUSTER_NAME} == 'galaxy' ]] ; then
 	# gpuq
 	cores=16
+    elif [[ ${SLURM_CLUSTER_NAME} == 'garrawarla' ]] ; then
+        # workq 
+	cores=38
     elif [[ ${SLURM_CLUSTER_NAME} == 'magnus' ]] ; then
 	# workq
 	cores=48
