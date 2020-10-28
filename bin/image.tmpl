@@ -18,11 +18,14 @@ clean=CLEAN
 
 # import the tag and test_fail functions
 . ${base}/bin/functions.sh
+# setup the container mappings
+. ${base}/bin/containers.sh
 
 # setup a clean environment
-source /group/mwa/software/module-reset.sh
-module use /group/mwa/software/modulefiles
-module load MWA_Tools
+module load singularity
+#source /group/mwa/software/module-reset.sh
+#module use /group/mwa/software/modulefiles
+#module load MWA_Tools
 module list
 
 set -x
@@ -77,13 +80,13 @@ then
     clean="-join-polarizations -niter 10000000 -auto-mask 3 -auto-threshold 1" 
 fi
 
-# start download
+# start work
 cd ${base}
 python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 
 cd ${datadir}/${obsnum}
 
-wsclean -name ${obsnum}-2m ${imsize} \
+${Cwsclean} wsclean -name ${obsnum}-2m ${imsize} \
     -abs-mem ${mem} \
     -weight briggs -1 -mfs-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
@@ -96,14 +99,14 @@ beams=$( ls beam-MFS-*.fits | wc -l )
 if [[ ${beams} -ne 8 ]]
 then
     echo "## Making primary beam"
-    beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
+    ${Creduce} beam -2016 -proto ${obsnum}-2m-XX-image.fits -ms ${obsnum}.ms -name beam-MFS
     test_fail $?
 else
     echo "## primary beam exists"
 fi
 
 # create stokes iquv images
-pbcorrect ${obsnum}-2m image.fits beam-MFS ${obsnum}-2m-pbcorr
+${Creduce} pbcorrect ${obsnum}-2m image.fits beam-MFS ${obsnum}-2m-pbcorr
 test_fail $?
 
 cd ${base}
