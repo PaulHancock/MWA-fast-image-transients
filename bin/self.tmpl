@@ -19,9 +19,10 @@ clean=CLEAN
 . ${base}/bin/containers.sh
 
 # setup a clean environment
-source /group/mwa/software/module-reset.sh
-module use /group/mwa/software/modulefiles
-module load MWA_Tools
+module load singularity
+#source /group/mwa/software/module-reset.sh
+#module use /group/mwa/software/modulefiles
+#module load MWA_Tools
 module list
 
 set -x
@@ -79,7 +80,7 @@ robust=-1.0
 # Initial clean
 if [[ ! -e ${obsnum}_initial-MFS-image.fits ]]
 then
-    wsclean -j $cores \
+    ${Cwsclean} wsclean -j $cores \
         -apply-primary-beam \
         -mwa-path /group/mwa/software/mwa_pb/mwa_pb/mwa_pb/data/ \
         -name ${obsnum}_initial \
@@ -104,7 +105,7 @@ then
 fi
 
 # Self-cal -- using the now-populated MODEL column
-calibrate -j ${cores} -minuv $minuvm ${obsnum}.ms ${obsnum}_self_solutions.bin
+${Creduce} calibrate -j ${cores} -minuv $minuvm ${obsnum}.ms ${obsnum}_self_solutions.bin
 
 aocal_plot.py --refant=127 ${obsnum}_self_solutions.bin
 

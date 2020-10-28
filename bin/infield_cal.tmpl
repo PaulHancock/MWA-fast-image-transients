@@ -19,14 +19,15 @@ doaoflagger=AOFLAGGER
 . ${base}/bin/containers.sh
 
 # setup a clean environment
-source /group/mwa/software/module-reset.sh
-module use /group/mwa/software/modulefiles
+module load singularity
+#source /group/mwa/software/module-reset.sh
+#module use /group/mwa/software/modulefiles
 # use MWA_Tools/mwa-sci_test to work around some h5py and crop_catalogue.py issues
-module load MWA_Tools/mwa-sci_test
+#module load MWA_Tools/mwa-sci_test
 # use /master_2 to make crop_catalogue.py available
 #module load mwapy/master_2
-module load scipy
-module load numpy
+#module load scipy
+#module load numpy
 module list
 
 set -x

@@ -16,9 +16,10 @@ obsnum=OBSNUM
 . ${base}/bin/containers.sh
 
 # setup a clean environment
-source /group/mwa/software/module-reset.sh
-module use /group/mwa/software/modulefiles
-module load MWA_Tools
+module load singularity
+#source /group/mwa/software/module-reset.sh
+#module use /group/mwa/software/modulefiles
+#module load MWA_Tools
 module list
 
 set -x
@@ -37,9 +38,9 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 test_fail $?
 
 # stack the xx and yy images separately
-python bin/imstack.py --files=${xxfiles} --out=${xout}
+${Crobbie} python bin/imstack.py --files=${xxfiles} --out=${xout}
 test_fail $?
-python bin/imstack.py --files=${yyfiles} --out=${yout}
+${Crobbie} python bin/imstack.py --files=${yyfiles} --out=${yout}
 test_fail $?
 # form median images
 # TODO:!
