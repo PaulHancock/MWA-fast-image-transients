@@ -1,9 +1,10 @@
+from __future__ import print_function
 import astropy
 from astropy.io import fits
 import numpy as np
 import sys
 
-__author__ = 'hancock'
+__author__ = 'Paul Hancock'
 
 
 def stack(files, outname):
@@ -23,7 +24,7 @@ if __name__ == "__main__":
 
     args = ps.parse_args()
     if len(args.files) < 2:
-        print "Require at least two input files"
+        print("Require at least two input files")
         ps.print_help()
         sys.exit(1)
     stack(args.files, args.out)
