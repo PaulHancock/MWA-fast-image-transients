@@ -1,5 +1,5 @@
 #! /usr/bin/env python
-from __future__ import print_statement
+from __future__ import print_function
 
 import astropy
 from astropy.io import fits
@@ -35,7 +35,7 @@ def where_is_Sun(obstime, meta):
     """
     # Calculate sun eleveation
     if el < 0:
-        return SUB_BELOW_HORIZON
+        return SUN_BELOW_HORIZON
 
     # calculate beam in the direction of the sun
     if beam < 0.1:
