@@ -4,6 +4,7 @@ Ccotter=''
 Cmwalib=''
 Crobbie=''
 Cwsclean=''
+Crfiseeker=''
 
 # If we are on garrawarla then set up the containers
 if [[ ${SLURM_CLUSTER_NAME} == 'garrawarla' ]] ; then
@@ -17,5 +18,6 @@ if [[ ${SLURM_CLUSTER_NAME} == 'garrawarla' ]] ; then
   Cmwalib="${container_exec} ${container_base}/pymwalib/pymwalib_latest.sif"
   Crobbie="${container_exec} ${container_base}/robbie/robbie-next.sif"
   Cwsclean="${container_exec} ${container_base}/wsclean/wsclean_2.9.2.img"
+  Crfiseeker="${container_exec} ${container_base}/rfi_seeker/rfi_seeker.img"
 fi
 
