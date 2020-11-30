@@ -51,9 +51,9 @@ then
     test_fail $?
 fi
 
-RA=$( pyhead.py -p RA $metafits | awk '{print $3}' )
-Dec=$( pyhead.py -p DEC $metafits | awk '{print $3}' )
-chan=$( pyhead.py -p CENTCHAN $metafits | awk '{print $3}' )
+RA=$( ${Crfiseekr} gethead RA $metafits )
+Dec=$( ${Crfiseekr} gethead DEC $metafits )
+chan=$( ${Crfiseekr} gethead CENTCHAN $metafits )
 
 solutions=${obsnum}_infield_solutions_initial.bin
 
@@ -68,8 +68,8 @@ fi
 
 if [[ ! -e "local_gleam_model.txt" ]]
 then
-    ${base}/external/GLEAM-X-pipeline/bin/crop_catalogue.py --ra=$RA --dec=$Dec ${radius} --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile} --fluxcol=S_200
-    ${base}/external/GLEAM-X-pipeline/bin/vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt --racol=RAJ2000 --decol=DEJ2000 --acol=a --bcol=b --pacol=pa --fluxcol=S_200 --alphacol=alpha
+    ${rfiseeker} ${base}/external/GLEAM-X-pipeline/bin/crop_catalogue.py --ra=$RA --dec=$Dec ${radius} --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile} --fluxcol=S_200
+    ${rfiseeker} ${base}/external/GLEAM-X-pipeline/bin/vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt --racol=RAJ2000 --decol=DEJ2000 --acol=a --bcol=b --pacol=pa --fluxcol=S_200 --alphacol=alpha
 fi
 
 # Maximum uv range for calibration based on GLEAM-based sky model
@@ -81,35 +81,35 @@ maxuvm=`echo "234 / ($chan + 11) * 1667" | bc -l`
 
 
 # calibrate
-calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
+$Creduce} calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
-aocal_plot.py --refant=127 --amp_max=2 ${solutions}
+${Creuce} aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 test_fail $?
 
 # apply calibration
-applysolutions ${obsnum}.ms ${solutions}
+${Creduce} applysolutions ${obsnum}.ms ${solutions}
 test_fail $?
 
 if [[ ! -z ${doaoflagger} ]]
 then
   # run aoflagger
   # default is to work on the corrected data column
-  aoflagger ${obsnum}.ms 
+  ${cotter} aoflagger ${obsnum}.ms 
   test_fail $?
   
   solutions=${obsnum}_infield_solutions.bin
   # calibrate again!
-  calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
+  ${Creduce} calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
   test_fail $?
   
   #plot again
-  aocal_plot.py --refant=127 --amp_max=2 ${solutions}
+  ${Creduce} aocal_plot.py --refant=127 --amp_max=2 ${solutions}
   test_fail $?
   
   # apply calibration again
-  applysolutions ${obsnum}.ms ${solutions}
+  ${Creduce} applysolutions ${obsnum}.ms ${solutions}
   test_fail $?
 else
   ## rename the calibration file to be the same "final" filename
