@@ -95,7 +95,7 @@ output="${base}queue/logs/asvo_${obsnum}.o%A"
 error="${base}queue/logs/asvo_${obsnum}.e%A"
 
 # build the sbatch header directives
-sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}"
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n${queue}\n${cluster}\n${account}\n${depend}"
 
 # join directives and replace variables into the template
 cat ${base}/bin/asvo_dl_cotter.tmpl | sed -e "s:OBSNUM:${obsnum}:" \

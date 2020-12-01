@@ -16,7 +16,7 @@ output="${base}queue/logs/stack_${obsnum}.o%A"
 error="${base}queue/logs/stak_${obsnum}.e%A"
 
 # build the sbatch header directives
-sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}\n${extras}"
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n${queue}\n${cluster}\n${account}\n${depend}\n${extras}"
 
 # join directives and replace variables into the template
 cat ${base}/bin/image.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
