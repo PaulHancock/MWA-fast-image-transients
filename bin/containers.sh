@@ -5,6 +5,7 @@ Cmwalib=''
 Crobbie=''
 Cwsclean=''
 Crfiseeker=''
+Cgleamx=''
 
 # If we are on garrawarla then set up the containers
 if [[ ${SLURM_CLUSTER_NAME} == 'garrawarla' ]] ; then
@@ -19,5 +20,6 @@ if [[ ${SLURM_CLUSTER_NAME} == 'garrawarla' ]] ; then
   Crobbie="${container_exec} ${container_base}/robbie/robbie-next.sif"
   Cwsclean="${container_exec} ${container_base}/wsclean/wsclean_2.9.2.img"
   Crfiseeker="${container_exec} ${container_base}/rfi_seeker/rfi_seeker.img"
+  Cgleamx="${container_exec} -B /astro/mwasci/tgalvin/GLEAM_Pipeline/GLEAM-X-pipeline/data/pb:/pb_lookup/ /astro/mwasci/tgalvin/gleamx_testing_small.img"
 fi
 
