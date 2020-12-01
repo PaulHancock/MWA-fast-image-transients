@@ -3,10 +3,10 @@
 usage()
 {
 echo "obs_apply_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-c calid] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
-  -M cluster : cluster, default=magnus
+  -M cluster : cluster, default=garrawarla
   -c calid    : obsid for calibrator.
                 processing/calid/calid_*_solutions.bin will be used
                 to calibrate if it exists, otherwise job will fail.
@@ -17,10 +17,10 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 dep=
 queue='#SBATCH -p workq'
-cluster='#SBATCH -M magnus'
+cluster='#SBATCH -M garrawarla'
 calid=
 tst=
 extras=''

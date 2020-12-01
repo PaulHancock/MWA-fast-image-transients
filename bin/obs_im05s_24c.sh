@@ -3,10 +3,10 @@
 usage()
 {
 echo "obs_im05s_24c.sh [-g group] [-d dep] [-q queue] [-M cluster] [-s imsize] [-p pixscale] [-P padding] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=magnus
+  -M cluster : cluster, default=garrawarla
   -s imsize  : image size will be imsize x imsize pixels, default 4096
   -p pixscale: image pixel scale, default is 32asec
   -P padding : padding value in wsclean, default 1.2
@@ -17,10 +17,10 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 dep=
 queue='#SBATCH -p workq'
-cluster='#SBATCH -M magnus'
+cluster='#SBATCH -M garrawarla'
 imsize=
 pixscale=
 padding=

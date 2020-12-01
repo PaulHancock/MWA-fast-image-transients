@@ -3,7 +3,7 @@
 usage()
 {
 echo "obs_asvo.sh [-g group] [-d dep] [-c calid] [-n calname] [-s timeav] [-k freqav] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep     : job number for dependency (afterok)
   -c calid   : obsid for calibrator. 
                If a calibration solution exists for calid
@@ -23,7 +23,7 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 calid=
 calname=
 minbad=2

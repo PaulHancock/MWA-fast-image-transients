@@ -2,10 +2,10 @@
 usage()
 {
 echo "obs_infield_cal.sh [-g group] [-d dep] [-q queue] [-M cluster] [-p model] [-n minuvm] [-x maxuvm] [-s steps] [-a] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=magnus
+  -M cluster : cluster, default=garrawarla
   -p model   : model to peel, 'AO' format
   -n minuvm  : minuv distance in m
   -x maxuvm  : maxuv distance in m
@@ -18,10 +18,10 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 dep=
 queue='#SBATCH -p workq'
-cluster='#SBATCH -M magnus'
+cluster='#SBATCH -M garrawarla'
 model=
 minuvm=
 maxuvm=

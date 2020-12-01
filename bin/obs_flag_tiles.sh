@@ -3,10 +3,10 @@
 usage()
 {
 echo "obs_flag_tiles.sh [-g group] [-d dep] [-q queue] [-M cluster] [-f flagfile] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep      : job number for dependency (afterok)
   -q queue    : job queue, default=workq
-  -M cluster : cluster, default=magnus
+  -M cluster : cluster, default=garrawarla
   -f flagfile : file to use for flagging
                 default is processing/<obsnum>_tiles_to_flag.txt
   -t          : test. Don't submit job, just make the batch file
@@ -16,10 +16,10 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 dep=
 queue='#SBATCH -p workq'
-cluster='#SBATCH -M magnus'
+cluster='#SBATCH -M garrawarla'
 flagfile=
 tst=
 extras=''

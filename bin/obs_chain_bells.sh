@@ -5,7 +5,7 @@
 usage()
 {
 echo "obs_chain.sh [-g group] [-d dep] [-l calid] [-a] [-s imsize] [-p pixscale] [-b beamsize] [-c] [-r RA] [-e Dec] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep     : job number for dependency (afterok)
   -l calid   : obsid for calibrator. 
                If a calibration solution exists for calid
@@ -24,10 +24,10 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 dep=
 queue='-p workq'
-cluster='-M magnus'
+cluster='-M garrawarla'
 calid=
 doaoflagger=
 imsize=

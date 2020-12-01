@@ -3,10 +3,10 @@
 usage()
 {
 echo "obs_diff.sh [-g group] [-d dep] [-q queue] [-M cluster] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=magnus
+  -M cluster : cluster, default=garrawarla
   -t         : test. Don't submit job, just make the batch file
                and then return the submission command
   obsnum     : the obsid to process" 1>&2;
@@ -14,10 +14,10 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 dep=
 queue='-p workq'
-cluster='-M magnus'
+cluster='-M garrawarla'
 tst=
 extras=''
 

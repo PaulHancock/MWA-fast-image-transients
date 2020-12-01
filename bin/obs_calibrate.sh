@@ -2,10 +2,10 @@
 usage()
 {
 echo "obs_calibrate.sh [-g group] [-d dep] [-q queue] [-M cluster] [-n calname] [-a] [-t] obsnum
-  -g group   : pawsey group (account) to run as, default=pawsey0345
+  -g group   : pawsey group (account) to run as, default=mwasci
   -d dep     : job number for dependency (afterok)
   -q queue   : job queue, default=workq
-  -M cluster : cluster, default=magnus
+  -M cluster : cluster, default=garrawarla
   -n calname : The name of the calibrator.
                Implies that this is a calibrator observation 
                and so calibration will be done.
@@ -17,10 +17,10 @@ exit 1;
 }
 
 #initialize as empty
-account="#SBATCH --account pawsey0345"
+account="#SBATCH --account mwasci"
 dep=
 queue='-p workq'
-cluster='-M magnus'
+cluster='-M garrawarla'
 calname=
 tst=
 doaoflagger=
