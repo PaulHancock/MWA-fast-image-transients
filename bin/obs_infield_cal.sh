@@ -75,7 +75,7 @@ fi
 if [[ -z ${catfile} ]]
 then
 #    catfile="${base}/catalogues/GLEAM_EGC.fits"
-    catfile="${base}/external/GLEAM-X-pipeline/models/skymodel_only_alpha.fits"
+    catfile="${base}/external/GLEAM-X-pipeline/models/skymodel_walpha.fits"
 fi
 if [[ ! -e ${catfile} ]]
 then
@@ -106,7 +106,7 @@ output="${base}queue/logs/infield_cal_${obsnum}.o%A"
 error="${base}queue/logs/infield_cal_${obsnum}.e%A"
 
 # build the sbatch header directives
-sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n#SBATCH ${queue}\n#SBATCH ${cluster}\n#SBATCH ${account}\n${depend}\n${extras}"
+sbatch="#SBATCH --output=${output}\n#SBATCH --error=${error}\n${queue}\n${cluster}\n${account}\n${depend}\n${extras}"
 
 # join directives and replace variables into the template
 cat ${base}/bin/infield_cal.tmpl | sed -e "s:OBSNUM:${obsnum}:g" \
