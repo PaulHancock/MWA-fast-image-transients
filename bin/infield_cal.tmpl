@@ -51,9 +51,9 @@ then
     test_fail $?
 fi
 
-RA=$( ${Crfiseekr} gethead RA $metafits )
-Dec=$( ${Crfiseekr} gethead DEC $metafits )
-chan=$( ${Crfiseekr} gethead CENTCHAN $metafits )
+RA=$( ${Crfiseeker} gethead RA $metafits )
+Dec=$( ${Crfiseeker} gethead DEC $metafits )
+chan=$( ${Crfiseeker} gethead CENTCHAN $metafits )
 
 solutions=${obsnum}_infield_solutions_initial.bin
 
