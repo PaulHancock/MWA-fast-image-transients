@@ -33,7 +33,7 @@ set -x
 
 #memory in GB
 mem=$(get_mem)
-
+cores=$(get_cores)
 
 cd ${datadir}
 
@@ -63,16 +63,13 @@ cd ${datadir}/${obsnum}
 metafits=`ls -t ${obsnum}*metafits* | head -1`
 
 # Set up channel-dependent options
-chan=`pyhead.py -p CENTCHAN ${metafits} | awk '{print $3}'`
+chan=$( ${Crfiseeker} gethead CENTCHAN $metafits )
 
 # Minimum baseline of 75 lambda (=250m at 88 MHz) for self-calibration
 minuv=75
 
 # Calculate min uvw in metres
 minuvm=`echo "234 * $minuv / $chan" | bc -l`
-
-# Number of cores
-cores=`grep -P '^core id\t' /proc/cpuinfo  | wc -l`
 
 # Hard-coding since MWA-fast-transients doesn't auto-set based on telescope config
 robust=-1.0
@@ -107,7 +104,7 @@ fi
 # Self-cal -- using the now-populated MODEL column
 ${Creduce} calibrate -j ${cores} -minuv $minuvm ${obsnum}.ms ${obsnum}_self_solutions.bin
 
-aocal_plot.py --refant=127 ${obsnum}_self_solutions.bin
+${Creuce} aocal_plot.py --refant=127 ${obsnum}_self_solutions.bin
 
 flaggedchans=`grep "gains to NaN" calibrate.log | awk '{printf("%03d\n",$2)}' | sort | uniq | wc -l`
 
