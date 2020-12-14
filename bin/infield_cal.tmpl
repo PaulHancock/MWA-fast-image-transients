@@ -60,7 +60,7 @@ fi
 if [[ ! -e "local_gleam_model.txt" ]]
 then
     ${Cgleamx} crop_catalogue.py --ra=$RA --dec=$Dec ${radius} --minflux=1.0 --attenuate --metafits=${metafits} --catalogue=${catfile} --fluxcol=S_200
-    ${Cgleamx} bin/vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt --racol=RAJ2000 --decol=DEJ2000 --acol=a --bcol=b --pacol=pa --fluxcol=S_200 --alphacol=alpha
+    ${Cgleamx} vo2model.py --catalogue=cropped_catalogue.fits --point --output=local_gleam_model.txt --racol=RAJ2000 --decol=DEJ2000 --acol=a --bcol=b --pacol=pa --fluxcol=S_200 --alphacol=alpha
 fi
 
 # Maximum uv range for calibration based on GLEAM-based sky model
@@ -72,7 +72,7 @@ maxuvm=`echo "234 / ($chan + 11) * 1667" | bc -l`
 
 
 # calibrate
-$Creduce} calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
+${Creduce} calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv ${maxuvm} ${obsnum}.ms ${solutions}
 test_fail $?
 
 # plot calibration solutions
@@ -87,7 +87,7 @@ if [[ ! -z ${doaoflagger} ]]
 then
   # run aoflagger
   # default is to work on the corrected data column
-  ${cotter} aoflagger ${obsnum}.ms 
+  ${Ccotter} aoflagger ${obsnum}.ms 
   test_fail $?
   
   solutions=${obsnum}_infield_solutions.bin
