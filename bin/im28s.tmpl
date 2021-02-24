@@ -97,7 +97,7 @@ then
 else
     # 224 -> process as below
     #intervals=''
-    end=0
+    start=0
     end=224
 fi
 
@@ -109,7 +109,7 @@ do
    k=$((j+56))
    wsclean -name ${obsnum}-28s-t000${i} ${imsize} \
    -abs-mem ${mem} \
-   -weight briggs -1 -mfs-weighting ${pixscale} \
+   -weight briggs -1 -mf-weighting ${pixscale} \
    -pol xx,yy -minuv-l 30 \
    -interval ${j} ${k} \
    ${beamsize} -make-psf \

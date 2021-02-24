@@ -88,7 +88,7 @@ cd ${datadir}/${obsnum}
 
 ${Cwsclean} wsclean -name ${obsnum}-2m ${imsize} \
     -abs-mem ${mem} \
-    -weight briggs -1 -mfs-weighting ${pixscale} \
+    -weight briggs -1 -mf-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
     ${beamsize} -make-psf \
     ${clean} ${mgain} ${obsnum}.ms

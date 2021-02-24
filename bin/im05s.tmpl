@@ -74,7 +74,7 @@ then
 else
     # 224 -> process as below
     #intervals=''
-    end=0
+    start=0
     end=224
 fi
 
@@ -85,7 +85,7 @@ do
     j=$((i+1))
     wsclean -name ${obsnum}-0.5s-t${i}-${j} ${imsize} \
     -abs-mem ${mem} \
-    -weight briggs -1 -mfs-weighting ${pixscale} \
+    -weight briggs -1 -mf-weighting ${pixscale} \
     -pol xx,yy -minuv-l 30 \
     -niter 0 -make-psf  \
     -interval ${i} ${j} \
