@@ -16,7 +16,7 @@ Creduce="${container_exec} -B /pawsey/mwa:/usr/lib/python3/dist-packages/mwapy/d
 Ccotter="${container_exec} ${container_base}/cotter/cotter_latest.sif"
 Cmwalib="${container_exec} ${container_base}/pymwalib/pymwalib_latest.sif"
 Crobbie="${container_exec} ${container_base}/robbie/robbie-next.sif"
-Cwsclean="${container_exec} ${container_base}/wsclean/wsclean_2.9.2.img"
+Cwsclean="${container_exec} ${container_base}/wsclean/wsclean.img"
 Crfiseeker="${container_exec} ${container_base}/rfi_seeker/rfi_seeker.img"
 Cgleamx="${container_exec} -B /astro/mwasci/tgalvin/GLEAM_Pipeline/GLEAM-X-pipeline/data/pb:/pb_lookup/ /astro/mwasci/tgalvin/gleamx_testing_small.img"
 
