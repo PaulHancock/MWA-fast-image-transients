@@ -62,7 +62,7 @@ python bin/track_task.py start --jobid=${SLURM_JOBID} --start_time=`date +%s`
 cd ${datadir}/${obsnum}
 
 # detect number of intervals
-dataintervals=$( taql "NELEMENTS([select distinct TIME from ${obsnum}.ms])" )
+dataintervals=$( ${Cwsclean} taql "NELEMENTS([select distinct TIME from ${obsnum}.ms])" )
 
 # either 224 or 240 intervals
 if [[ ${dataintervals} -eq 240 ]]
