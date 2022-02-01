@@ -8,9 +8,8 @@ The pipeline is written for the Pawsey-Galaxy system which uses a SLURM job sche
 ## Credits
 Please credit Paul Hancock, Gemma Anderson and Natasha Hurley-Walker if you use this code, or
 incorporate it into your own workflow, as per the [licence](LICENCE).
-Please acknowledge the use of this code by citing this repository, and until
-we have a publication accepted on this work, we request that we be added as
-co-authors on papers that rely on this code.
+Please acknowledge the use of this code by citing this github repository and citing [Anderson et al. 2021, PASA, 38, 26](https://ui.adsabs.harvard.edu/abs/2021PASA...38...26A/abstract).
+If developers provided help in the form of advice, bug fixes, or new features please consider making them co-authors on the relevent papers.
 
 ## Structure
 - bin: executable files and template scripts
