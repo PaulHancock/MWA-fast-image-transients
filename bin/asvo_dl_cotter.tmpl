@@ -20,10 +20,10 @@ csvfile="${obsnum}_dl.csv"
 . ${base}/bin/containers.sh
 
 # setup a clean environment
-source /group/mwa/software/module-reset.sh
+#source /group/mwa/software/module-reset.sh
 module use /group/mwa/software/modulefiles
-module load mwapy
-module load manta-ray-client
+#module load mwapy
+module load manta-ray-client/python3
 module list
 
 set -x
