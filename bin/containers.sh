@@ -6,12 +6,14 @@ Crobbie=''
 Cwsclean=''
 Crfiseeker=''
 Cgleamx=''
-
+Cmanta=''
 container_base="/pawsey/mwa/singularity"
 container_exec="singularity exec -B $PWD"
   
 # need to super-hack the path to make sure that the .h5 beam file is found within the right python path within the container
 Creduce="${container_exec} -B /pawsey/mwa:/usr/lib/python3/dist-packages/mwapy/data ${container_base}/mwa-reduce/mwa-reduce.img"
+# need to pass some environment variables
+Cmanta="${container_exec} --env MWA_ASVO_API_KEY=${MWA_ASVO_API_KEY} ${container_base}/manta-ray-client_latest.sif"
 # these work nice as is
 Ccotter="${container_exec} ${container_base}/cotter/cotter_latest.sif"
 Cmwalib="${container_exec} ${container_base}/pymwalib/pymwalib_latest.sif"

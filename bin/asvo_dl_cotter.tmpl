@@ -21,9 +21,9 @@ csvfile="${obsnum}_dl.csv"
 
 # setup a clean environment
 #source /group/mwa/software/module-reset.sh
-module use /group/mwa/software/modulefiles
+#module use /group/mwa/software/modulefiles
 #module load mwapy
-module load manta-ray-client/python3
+#module load manta-ray-client/python3
 module list
 
 set -x
@@ -61,7 +61,7 @@ elif [[ -e "${msfile}" ]]
 then
     echo "${msfile} exists, not downloading again"
 else
-    mwa_client --csv=${csvfile} --dir=${datadir}/${obsnum}
+    ${Cmanta} mwa_client --csv=${csvfile} --dir=${datadir}/${obsnum}
     test_fail $?
 fi
 
