@@ -76,7 +76,7 @@ ${Creduce} calibrate -absmem ${mem} -m local_gleam_model.txt -minuv 200 -maxuv $
 test_fail $?
 
 # plot calibration solutions
-${Creuce} aocal_plot.py --refant=127 --amp_max=2 ${solutions}
+${Creduce} aocal_plot.py --refant=127 --amp_max=2 ${solutions}
 test_fail $?
 
 # apply calibration
