@@ -19,11 +19,7 @@ csvfile="${obsnum}_dl.csv"
 # setup the container mappings
 . ${base}/bin/containers.sh
 
-# setup a clean environment
-#source /group/mwa/software/module-reset.sh
-#module use /group/mwa/software/modulefiles
-#module load mwapy
-#module load manta-ray-client/python3
+module load singularity
 module list
 
 set -x
